@@ -1,0 +1,961 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FICHE MEMBRE — EDUCPASS 2026</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Calibri',Arial,sans-serif;}
+body{background:#dce3ef;min-height:100vh;}
+
+/* ── HEADER ── */
+.hdr{background:#1e3a6e;color:#fff;display:flex;align-items:center;padding:7px 14px;gap:10px;box-shadow:0 2px 6px rgba(0,0,0,.4);}
+.hdr-logo{font-size:11px;color:#a8c8f8;font-style:italic;margin-right:6px;}
+.hdr-title{font-size:15px;font-weight:700;flex:1;letter-spacing:1.5px;text-transform:uppercase;}
+.btn{padding:5px 13px;border:none;cursor:pointer;font-weight:700;font-size:12px;border-radius:3px;transition:filter .15s;white-space:nowrap;}
+.btn:hover{filter:brightness(1.12);}
+.btn-workshop{background:#c55a11;color:#fff;}
+.btn-recherche{background:#2e75b6;color:#fff;}
+.btn-nouveau{background:#375623;color:#fff;}
+.btn-save{background:#1a7a3d;color:#fff;font-size:13px;}
+.btn-back{background:#2b579a;color:#fff;}
+.btn-print{background:#404040;color:#fff;}
+.btn-cancel{background:#7a7a7a;color:#fff;}
+
+/* ── NAME BAR ── */
+.name-bar{background:#2e5096;color:#fff;padding:7px 16px;font-size:18px;font-weight:700;letter-spacing:2px;text-align:center;border-bottom:3px solid #1e3a6e;}
+
+/* ── SEARCH BAR ── */
+.search-bar{background:#fff;padding:7px 14px;display:flex;align-items:center;gap:10px;border-bottom:2px solid #2e5096;}
+.search-bar label{font-size:12px;font-weight:700;color:#1e3a6e;white-space:nowrap;}
+.search-bar input[type=text]{padding:5px 8px;border:1px solid #aaa;border-radius:3px;font-size:13px;width:180px;}
+.search-bar select{padding:5px 8px;border:1px solid #aaa;border-radius:3px;font-size:13px;width:340px;}
+.status-msg{font-size:11px;color:#555;flex:1;text-align:right;}
+
+/* ── ACTIONS BAR ── */
+.actions-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;}
+.save-info{font-size:12px;color:#333;}
+
+/* ── VIEWS ── */
+.view{display:none;}
+.view.active{display:block;}
+.main{padding:10px 12px;max-width:1500px;margin:0 auto;}
+
+/* ── SECTION HEADER ── */
+.sec{background:#2e5096;color:#fff;padding:4px 10px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.8px;margin-top:7px;border-left:4px solid #ffd966;}
+
+/* ── FORM GRID ── */
+.fg{background:#fff;border:1px solid #c0cce0;}
+.fr{display:flex;border-bottom:1px solid #e0e8f0;}
+.fr:last-child{border-bottom:none;}
+.fr:nth-child(even){background:#f0f5fb;}
+.fl{background:#dce6f5;color:#1e3a6e;font-size:11px;font-weight:600;padding:4px 8px;min-width:150px;display:flex;align-items:center;border-right:1px solid #c0cce0;flex-shrink:0;}
+.fv{padding:3px 6px;flex:1;display:flex;align-items:center;flex-wrap:wrap;gap:4px;}
+.fv input,.fv select,.fv textarea{border:1px solid transparent;padding:2px 4px;font-size:12px;background:transparent;font-family:inherit;width:100%;}
+.fv input{width:auto;min-width:80px;}
+.fv input[type=tel],.fv input[type=email],.fv input[type=url]{width:100%;}
+.fv input[type=number]{width:80px;}
+.fv input[type=date]{width:130px;}
+.fv select{width:100%;}
+.fv textarea{width:100%;min-height:55px;resize:vertical;}
+.fv input:focus,.fv select:focus,.fv textarea:focus{border-color:#2e75b6;background:#fff;outline:none;border-radius:2px;}
+
+/* ── TWO COLUMN ── */
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+
+/* ── PUBLICATIONS TABLE ── */
+.pt{width:100%;border-collapse:collapse;background:#fff;font-size:11px;}
+.pt th{background:#1e3a6e;color:#fff;padding:4px 5px;text-align:center;border:1px solid #4472c4;}
+.pt th.sub{background:#2e75b6;}
+.pt td{padding:3px 5px;text-align:center;border:1px solid #c0cce0;}
+.pt tr:nth-child(even) td{background:#f0f5fb;}
+.pt td.yl{background:#dce6f5;font-weight:700;color:#1e3a6e;text-align:left;padding-left:8px;}
+.pt input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#217346;}
+.pt input[type=text]{width:52px;text-align:center;border:1px solid #bbb;border-radius:2px;font-size:11px;padding:1px 3px;}
+.pt input[type=text]:focus{border-color:#2e75b6;outline:none;}
+
+/* ── TRIM TABLE ── */
+.tt{width:100%;border-collapse:collapse;background:#fff;font-size:11px;}
+.tt th{background:#6f2da8;color:#fff;padding:4px 6px;border:1px solid #9b59b6;}
+.tt th.sub2{background:#8e44ad;}
+.tt td{padding:3px 5px;border:1px solid #c0cce0;text-align:center;}
+.tt tr:nth-child(even) td{background:#f8f3ff;}
+.tt td.pl{background:#f0e6ff;font-weight:700;color:#5b2082;text-align:left;padding-left:8px;font-size:10px;}
+.tt td.nl{background:#f0e6ff;font-weight:700;color:#5b2082;text-align:center;}
+.tt input[type=checkbox]{width:16px;height:16px;cursor:pointer;accent-color:#6f2da8;}
+.tt input[type=text]{width:60px;text-align:center;border:1px solid #bbb;border-radius:2px;font-size:11px;padding:1px 3px;}
+
+/* ── RECHERCHE TABLE ── */
+.rt{width:100%;border-collapse:collapse;font-size:12px;}
+.rt th{background:#1e3a6e;color:#fff;padding:7px 9px;text-align:left;position:sticky;top:0;z-index:1;}
+.rt td{padding:5px 9px;border-bottom:1px solid #dde3ee;}
+.rt tr:nth-child(even) td{background:#f0f5fb;}
+.rt tr:hover td{background:#d0e0f8;cursor:pointer;}
+.rt .num{text-align:center;font-weight:700;color:#1e3a6e;}
+.rt .badge{display:inline-block;padding:1px 6px;border-radius:10px;font-size:10px;font-weight:700;}
+.badge-fr{background:#dae3f3;color:#2e5096;}
+.badge-nl{background:#e2efda;color:#375623;}
+.badge-ok{background:#e2efda;color:#375623;}
+
+/* ── CONFIRMATION ── */
+.conf-doc{background:#fff;max-width:820px;margin:18px auto;padding:38px 44px;box-shadow:0 3px 12px rgba(0,0,0,.18);font-size:12.5px;line-height:1.6;}
+.conf-title{font-size:17px;font-weight:700;color:#1e3a6e;text-align:center;text-transform:uppercase;letter-spacing:2px;margin:14px 0;}
+.conf-sub{font-size:10px;color:#666;text-align:center;}
+.conf-table{width:100%;border-collapse:collapse;margin:12px 0;}
+.conf-table td{padding:4px 6px;}
+.conf-table .lbl{font-weight:700;width:160px;color:#1e3a6e;}
+.prog-table{width:100%;font-size:12px;}
+.prog-table td{padding:2px 4px;}
+.prog-table .time{font-weight:700;width:60px;color:#1e3a6e;}
+.part-table{width:100%;border-collapse:collapse;margin:12px 0;font-size:12px;}
+.part-table th{background:#1e3a6e;color:#fff;padding:5px 8px;border:1px solid #888;}
+.part-table td{padding:5px 8px;border:1px solid #ccc;}
+.part-table .total-row td{background:#f0f5fb;font-weight:700;}
+
+@media print{
+  .hdr,.search-bar,.actions-bar,.view:not(.active),.btn-back,.btn-print{display:none!important;}
+  .conf-doc{box-shadow:none;margin:0;padding:20px;}
+}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ════════════════════════════════
+     HEADER
+════════════════════════════════ -->
+<div class="hdr">
+  <span class="hdr-logo">EDUCPASS</span>
+  <span class="hdr-title">📋 FICHE MEMBRE ATTRACTION-MUSÉE 2026</span>
+  <button class="btn btn-workshop" onclick="showView('confirmation')">⚡ CONFIRMATION WORKSHOP</button>
+  <button class="btn btn-recherche" onclick="showView('recherche')">🔍 RECHERCHE 2026 →</button>
+  <button class="btn btn-nouveau" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
+</div>
+
+<!-- NAME BAR -->
+<div class="name-bar" id="name-bar">— SÉLECTIONNEZ UN MEMBRE —</div>
+
+<!-- SEARCH BAR -->
+<div class="search-bar">
+  <label>🔎 Recherche :</label>
+  <input type="text" id="srch" placeholder="N° ou nom..." oninput="filterSelect()">
+  <select id="msel" onchange="loadMember()">
+    <option value="">— Choisir un membre —</option>
+  </select>
+  <span class="status-msg" id="status">⏳ Connexion Airtable...</span>
+</div>
+
+<!-- ACTIONS BAR -->
+<div class="actions-bar">
+  <button class="btn btn-save" onclick="saveMember()">💾 Enregistrer</button>
+  <button class="btn btn-cancel" onclick="loadMember()">↩ Annuler</button>
+  <span class="save-info" id="save-info"></span>
+</div>
+
+<!-- ════════════════════════════════
+     VUE : FICHE MEMBRE
+════════════════════════════════ -->
+<div id="view-fiche" class="view active">
+<div class="main">
+
+  <!-- Date bar -->
+  <div style="background:#fff;border:1px solid #c0cce0;padding:5px 10px;display:flex;gap:18px;font-size:11px;align-items:center;margin-bottom:1px;">
+    <span><b style="color:#1e3a6e;">Date de création :</b>
+      <input type="date" id="f-entree" style="border:1px solid #bbb;padding:2px 4px;font-size:11px;margin-left:4px;"></span>
+    <span><b style="color:#1e3a6e;">Date de modification :</b>
+      <input type="date" id="f-modif" style="border:1px solid #bbb;padding:2px 4px;font-size:11px;margin-left:4px;"></span>
+    <span style="margin-left:auto;font-size:13px;">
+      <b style="color:#1e3a6e;">N° :</b>
+      <span id="f-num" style="font-size:17px;font-weight:700;color:#c55a11;margin-left:5px;"></span>
+    </span>
+  </div>
+
+  <div class="two-col">
+
+    <!-- ── COLONNE GAUCHE ── -->
+    <div>
+      <div class="sec">📋 Informations du membre</div>
+      <div class="fg">
+        <div class="fr"><div class="fl">ATTRACTION :</div><div class="fv"><input type="text" id="f-attr" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Catégorie :</div><div class="fv">
+          <select id="f-cat" style="width:100%;">
+            <option value="">—</option>
+            <option>MUSEE</option><option>PARC</option><option>NATURE</option>
+            <option>SPORT</option><option>CULTURE</option><option>LOISIRS</option>
+            <option>PATRIMOINE</option><option>TOURISME</option><option>AUTRE</option>
+          </select></div></div>
+        <div class="fr"><div class="fl">Enseigne commerciale :</div><div class="fv"><input type="text" id="f-ens" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Rue :</div><div class="fv"><input type="text" id="f-rue" style="width:100%;"></div></div>
+        <div class="fr">
+          <div class="fl">CP :</div><div class="fv" style="flex:0 0 100px;"><input type="text" id="f-cp" style="width:70px;"></div>
+          <div class="fl" style="min-width:80px;">Localité :</div><div class="fv"><input type="text" id="f-com" style="width:100%;"></div>
+        </div>
+        <div class="fr"><div class="fl">Tél. Général :</div><div class="fv"><input type="tel" id="f-tel" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Fax :</div><div class="fv"><input type="tel" id="f-fax" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">E-mail général :</div><div class="fv"><input type="email" id="f-email" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Site internet :</div><div class="fv"><input type="url" id="f-site" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">N° TVA :</div><div class="fv"><input type="text" id="f-tva" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="f-prov" style="width:100%;"></div></div>
+      </div>
+
+      <div class="sec" style="margin-top:7px;">👤 Contacts</div>
+      <div class="fg">
+        <!-- C1 -->
+        <div class="fr" style="background:#dce6f5;">
+          <div class="fl" style="background:#1e3a6e;color:#fff;min-width:100px;">CONTACT 1</div>
+          <div class="fv"><input type="text" id="f-c1" placeholder="Nom" style="width:100%;"></div>
+          <div class="fl" style="min-width:55px;background:#1e3a6e;color:#fff;">Titre :</div>
+          <div class="fv"><input type="text" id="f-t1" placeholder="Fonction" style="width:100%;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">GSM 1 :</div><div class="fv" style="flex:1;"><input type="tel" id="f-g1" style="width:100%;"></div>
+          <div class="fl" style="min-width:70px;">E-mail 1 :</div><div class="fv" style="flex:2;"><input type="email" id="f-e1" style="width:100%;"></div>
+        </div>
+        <!-- C2 -->
+        <div class="fr" style="background:#dce6f5;">
+          <div class="fl" style="background:#2e5096;color:#fff;min-width:100px;">CONTACT 2</div>
+          <div class="fv"><input type="text" id="f-c2" style="width:100%;"></div>
+          <div class="fl" style="min-width:55px;background:#2e5096;color:#fff;">Titre :</div>
+          <div class="fv"><input type="text" id="f-t2" style="width:100%;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">GSM 2 :</div><div class="fv" style="flex:1;"><input type="tel" id="f-g2" style="width:100%;"></div>
+          <div class="fl" style="min-width:70px;">E-mail 2 :</div><div class="fv" style="flex:2;"><input type="email" id="f-e2" style="width:100%;"></div>
+        </div>
+        <!-- C3 -->
+        <div class="fr" style="background:#dce6f5;">
+          <div class="fl" style="background:#2e5096;color:#fff;min-width:100px;">CONTACT 3</div>
+          <div class="fv"><input type="text" id="f-c3" style="width:100%;"></div>
+          <div class="fl" style="min-width:55px;background:#2e5096;color:#fff;">Titre :</div>
+          <div class="fv"><input type="text" id="f-t3" style="width:100%;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">GSM 3 :</div><div class="fv" style="flex:1;"><input type="tel" id="f-g3" style="width:100%;"></div>
+          <div class="fl" style="min-width:70px;">E-mail 3 :</div><div class="fv" style="flex:2;"><input type="email" id="f-e3" style="width:100%;"></div>
+        </div>
+        <!-- C4 -->
+        <div class="fr" style="background:#dce6f5;">
+          <div class="fl" style="background:#2e5096;color:#fff;min-width:100px;">CONTACT 4</div>
+          <div class="fv"><input type="text" id="f-c4" style="width:100%;"></div>
+          <div class="fl" style="min-width:55px;background:#2e5096;color:#fff;">Titre :</div>
+          <div class="fv"><input type="text" id="f-t4" style="width:100%;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">GSM 4 :</div><div class="fv" style="flex:1;"><input type="tel" id="f-g4" style="width:100%;"></div>
+          <div class="fl" style="min-width:70px;">E-mail 4 :</div><div class="fv" style="flex:2;"><input type="email" id="f-e4" style="width:100%;"></div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:7px;">🌐 Langue & Abonnements</div>
+      <div class="fg">
+        <div class="fr">
+          <div class="fl">Langue :</div>
+          <div class="fv" style="flex:0 0 90px;">
+            <select id="f-lang" style="width:70px;">
+              <option>FR</option><option>NL</option><option>DE</option><option>EN</option>
+            </select>
+          </div>
+          <div class="fl" style="min-width:110px;">Coupon accepté :</div>
+          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-coupon" style="width:70px;"></div>
+          <div class="fl" style="min-width:90px;">VIP accepté :</div>
+          <div class="fv"><input type="text" id="f-vip" style="width:60px;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">Agent :</div>
+          <div class="fv" style="flex:0 0 140px;"><input type="text" id="f-agent" style="width:110px;"></div>
+          <div class="fl" style="min-width:60px;">Code :</div>
+          <div class="fv"><input type="text" id="f-code" style="width:70px;"></div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:7px;">💶 Cotisations annuelles</div>
+      <div class="fg">
+        <div class="fr">
+          <div class="fl">Cotisation BE :</div>
+          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-cotbe" style="width:70px;"></div>
+          <div class="fl" style="min-width:90px;">Montant BE :</div>
+          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montbe" style="width:70px;"> €</div>
+          <div class="fl" style="min-width:90px;">Échéance BE :</div>
+          <div class="fv"><input type="date" id="f-echbe"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">Cotisation LU :</div>
+          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-cotlu" style="width:70px;"></div>
+          <div class="fl" style="min-width:90px;">Montant LU :</div>
+          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montlu" style="width:70px;"> €</div>
+          <div class="fl" style="min-width:90px;">Échéance LU :</div>
+          <div class="fv"><input type="date" id="f-echlu"></div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:7px;">📝 Remarques</div>
+      <div class="fg">
+        <div class="fr">
+          <div class="fl">Remarques générales :</div>
+          <div class="fv"><textarea id="f-rem"></textarea></div>
+        </div>
+      </div>
+
+      <div class="sec" style="margin-top:7px;">🔄 Suivi</div>
+      <div class="fg">
+        <div class="fr">
+          <div class="fl">Mise à jour données :</div>
+          <div class="fv" style="flex:0 0 160px;"><input type="date" id="f-majd"></div>
+          <div class="fl" style="min-width:100px;">Effectué par :</div>
+          <div class="fv"><input type="text" id="f-majp" style="width:120px;"></div>
+        </div>
+      </div>
+    </div><!-- /left col -->
+
+    <!-- ── COLONNE DROITE : PUBLICATIONS ── -->
+    <div>
+      <div class="sec">📰 Publications Annuelles</div>
+      <table class="pt">
+        <thead>
+          <tr>
+            <th style="width:50px;">ANNÉE</th>
+            <th colspan="2" style="background:#1a5276;">SORTIES SCOLAIRES<br>Belux</th>
+            <th colspan="2" style="background:#1a5276;">SORTIES SCOLAIRES<br>France</th>
+            <th colspan="2" style="background:#7d6608;">TIPS voor<br>SCHOOLTRIPS</th>
+            <th colspan="2" style="background:#633974;">SÉJOURS<br>SCOLAIRES</th>
+          </tr>
+          <tr>
+            <th class="sub"></th>
+            <th class="sub" style="background:#2980b9;">✓</th><th class="sub" style="background:#2980b9;">Page</th>
+            <th class="sub" style="background:#2980b9;">✓</th><th class="sub" style="background:#2980b9;">Page</th>
+            <th class="sub" style="background:#d4ac0d;">✓</th><th class="sub" style="background:#d4ac0d;">Page</th>
+            <th class="sub" style="background:#9b59b6;">✓</th><th class="sub" style="background:#9b59b6;">Page</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="yl">2023</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+            <td><input type="checkbox" id="p-sej23"></td>
+            <td><input type="text" id="p-sej23p"></td>
+          </tr>
+          <tr>
+            <td class="yl">2025</td>
+            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
+            <td><input type="checkbox" id="p-sej25"></td>
+            <td><input type="text" id="p-sej25p"></td>
+          </tr>
+          <tr>
+            <td class="yl">2026</td>
+            <td><input type="checkbox" id="p-bx26"></td><td><input type="text" id="p-bx26p"></td>
+            <td>—</td><td>—</td>
+            <td><input type="checkbox" id="p-tp26"></td><td><input type="text" id="p-tp26p"></td>
+            <td>—</td><td>—</td>
+          </tr>
+          <tr>
+            <td class="yl">2027</td>
+            <td><input type="checkbox" id="p-bx27"></td><td><input type="text" id="p-bx27p"></td>
+            <td><input type="checkbox" id="p-fr27"></td><td><input type="text" id="p-fr27p"></td>
+            <td><input type="checkbox" id="p-tp27"></td><td><input type="text" id="p-tp27p"></td>
+            <td><input type="checkbox" id="p-sej27"></td><td><input type="text" id="p-sej27p"></td>
+          </tr>
+          <tr>
+            <td class="yl">2028</td>
+            <td><input type="checkbox" id="p-bx28"></td><td><input type="text" id="p-bx28p"></td>
+            <td><input type="checkbox" id="p-fr28"></td><td><input type="text" id="p-fr28p"></td>
+            <td><input type="checkbox" id="p-tp28"></td><td><input type="text" id="p-tp28p"></td>
+            <td>—</td><td>—</td>
+          </tr>
+          <tr>
+            <td class="yl">2029</td>
+            <td>—</td><td>—</td>
+            <td><input type="checkbox" id="p-fr29"></td><td><input type="text" id="p-fr29p"></td>
+            <td>—</td><td>—</td><td>—</td><td>—</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sec" style="margin-top:7px;">📆 Publications Trimestrielles</div>
+      <table class="tt">
+        <thead>
+          <tr>
+            <th style="width:38px;">N°</th>
+            <th>PÉRIODE</th>
+            <th colspan="2" class="sub2">NEWS SCOLAIRES Belux</th>
+            <th colspan="2" class="sub2">NEWS SCOLAIRES France</th>
+          </tr>
+          <tr>
+            <th class="sub2"></th><th class="sub2"></th>
+            <th class="sub2" style="width:35px;">✓</th><th class="sub2">Format</th>
+            <th class="sub2" style="width:35px;">✓</th><th class="sub2">Format</th>
+          </tr>
+        </thead>
+        <tbody id="trim-body"></tbody>
+      </table>
+
+      <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
+      <table class="pt">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding-left:8px;">SERVICE</th>
+            <th style="width:40px;">✓</th>
+            <th style="width:70px;">Tarif</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="yl">Newsletter MENSUELLE</td>
+            <td><input type="checkbox" id="p-nlm"></td>
+            <td><input type="text" id="p-nlmt" style="width:60px;"></td>
+          </tr>
+          <tr>
+            <td class="yl">Newsletter PERSONNALISÉE</td>
+            <td><input type="checkbox" id="p-nlp"></td>
+            <td><input type="text" id="p-nlpt" style="width:60px;"></td>
+          </tr>
+          <tr>
+            <td class="yl">Bannière sur SITE WEB</td>
+            <td><input type="checkbox" id="p-ban"></td>
+            <td><input type="text" id="p-bant" style="width:60px;"></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="sec" style="margin-top:7px;">📊 Totaux Sorties Scolaires</div>
+      <div class="fg">
+        <div class="fr">
+          <div class="fl">Sorties BELUX (trim.) :</div>
+          <div class="fv"><input type="text" id="f-ss-bxt" style="width:70px;"></div>
+          <div class="fl" style="min-width:130px;">Sorties BELUX (annuel) :</div>
+          <div class="fv"><input type="text" id="f-ss-bxa" style="width:70px;"></div>
+        </div>
+        <div class="fr">
+          <div class="fl">News BELUX (trim.) :</div>
+          <div class="fv"><input type="text" id="f-ns-bxt" style="width:70px;"></div>
+          <div class="fl" style="min-width:130px;">News BELUX (annuel) :</div>
+          <div class="fv"><input type="text" id="f-ns-bxa" style="width:70px;"></div>
+        </div>
+      </div>
+    </div><!-- /right col -->
+  </div><!-- /two-col -->
+  <div style="height:25px;"></div>
+</div><!-- /main -->
+</div><!-- /view-fiche -->
+
+<!-- ════════════════════════════════
+     VUE : RECHERCHE
+════════════════════════════════ -->
+<div id="view-recherche" class="view">
+<div class="main">
+  <div style="display:flex;align-items:center;gap:12px;margin:12px 0 8px;">
+    <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
+    <h2 style="color:#1e3a6e;font-size:16px;font-weight:700;">🔍 LISTE DES MEMBRES 2026</h2>
+    <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
+      oninput="filterTable()"
+      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:300px;font-size:13px;">
+    <span id="rch-cnt" style="font-size:12px;color:#555;"></span>
+    <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
+  </div>
+  <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
+  <div style="overflow-x:auto;">
+    <table class="rt" id="rch-tbl" style="display:none;">
+      <thead>
+        <tr>
+          <th>N°</th>
+          <th>ENSEIGNE</th>
+          <th>ATTRACTION / MUSÉE</th>
+          <th>CATÉGORIE</th>
+          <th>COMMUNE</th>
+          <th>PROVINCE</th>
+          <th>AGENT</th>
+          <th>LANGUE</th>
+          <th>COTIS. BE</th>
+          <th>ÉCHÉANCE BE</th>
+        </tr>
+      </thead>
+      <tbody id="rch-tbody"></tbody>
+    </table>
+  </div>
+</div>
+</div><!-- /view-recherche -->
+
+<!-- ════════════════════════════════
+     VUE : CONFIRMATION WORKSHOP
+════════════════════════════════ -->
+<div id="view-confirmation" class="view">
+  <div style="display:flex;gap:8px;padding:8px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;">
+    <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
+    <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>
+  </div>
+  <div class="conf-doc" id="conf-doc">
+    <div class="conf-sub">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
+    <div class="conf-title">Confirmation « Workshop »</div>
+
+    <table class="conf-table">
+      <tr><td class="lbl">Concerne :</td><td><b>PROFS-CONTACTS 2026</b></td>
+          <td class="lbl">Enseigne :</td><td><b id="cc-ens">—</b></td></tr>
+      <tr><td class="lbl">Lieu :</td><td>Musée Royal Afrique Centrale</td>
+          <td class="lbl">Responsable :</td><td id="cc-resp">—</td></tr>
+      <tr><td class="lbl"></td><td></td>
+          <td class="lbl">Rue + N° :</td><td id="cc-rue">—</td></tr>
+      <tr><td class="lbl">Date :</td><td><b>Dimanche 27 septembre 2026</b></td>
+          <td class="lbl">CP + Localité :</td><td id="cc-cpl">—</td></tr>
+      <tr><td class="lbl"></td><td></td>
+          <td class="lbl">Réf. Educpass :</td><td>26-<span id="cc-ref">—</span></td></tr>
+      <tr><td class="lbl"></td><td></td>
+          <td class="lbl">TEL n° :</td><td id="cc-tel">—</td></tr>
+      <tr><td class="lbl"></td><td></td>
+          <td class="lbl">GSM n° :</td><td id="cc-gsm">—</td></tr>
+    </table>
+
+    <div style="text-align:right;font-size:11px;color:#555;margin-bottom:14px;">Stoumont, le ___________________</div>
+
+    <p style="margin-bottom:12px;font-size:13px;">Suite à votre inscription, veuillez vérifier les données ci-après.</p>
+
+    <table class="part-table">
+      <thead>
+        <tr><th>TABLE N°</th><th>NOM DU PARTICIPANT</th><th>REPAS</th><th>STATUT</th><th>MONTANT</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="text-align:center;">1</td>
+          <td id="cc-part">—</td>
+          <td style="text-align:center;"></td>
+          <td style="text-align:center;background:#e2efda;font-weight:700;">MEMBRE</td>
+          <td style="text-align:right;font-weight:700;">195 €</td>
+        </tr>
+        <tr>
+          <td></td><td>Repas supplémentaire(s)</td>
+          <td style="text-align:center;">0</td><td></td><td></td>
+        </tr>
+        <tr><td colspan="2">Participation au drink</td><td></td><td></td><td></td></tr>
+        <tr><td colspan="2">Table commune</td><td style="text-align:center;">0</td><td></td><td></td></tr>
+        <tr class="total-row">
+          <td colspan="2">Code : <span id="cc-code">—</span></td>
+          <td colspan="2" style="text-align:right;">TOTAL à payer =</td>
+          <td style="text-align:right;color:#c00;">195 €</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p style="margin:12px 0 6px;"><b>Envoyer à :</b></p>
+    <div style="background:#fff3cd;border:1px solid #ffc107;padding:9px 12px;margin-bottom:14px;font-size:12px;">
+      <b>RENDEZ-VOUS à partir de 08h15</b> dans la Salle d'expositions. Parking gratuit sur le site.
+    </div>
+
+    <h3 style="color:#1e3a6e;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Programme de la journée :</h3>
+    <table class="prog-table">
+      <tr><td class="time">08h45 :</td><td>Accueil exposant</td></tr>
+      <tr><td class="time">08h55 :</td><td>Café de bienvenue (café ou jus d'orange + viennoiseries)</td></tr>
+      <tr><td class="time">09h30 :</td><td>Ouverture du workshop</td></tr>
+      <tr><td class="time">13h00 :</td><td>Fin du workshop</td></tr>
+      <tr><td class="time">13h15 :</td><td>Apéritif</td></tr>
+      <tr><td class="time">13h30 :</td><td>Repas des exposants : 1 verre + ½ litre d'eau + 1 café.</td></tr>
+      <tr><td class="time">15h45 :</td><td>Visite guidée du Musée et de l'expo temporaire.</td></tr>
+      <tr><td class="time">17h00 :</td><td>Drink de clôture</td></tr>
+      <tr><td class="time">17h30 :</td><td>Fin d'activité.</td></tr>
+    </table>
+  </div>
+</div><!-- /view-confirmation -->
+
+</div><!-- /app -->
+
+<script>
+// ══════════════════════════════════════
+//  CONFIG AIRTABLE
+// ══════════════════════════════════════
+const B='appixzcrs5T5kRQ36', T='tblMiiIYVibfpe0L3';
+const TK='pat2HkJhQsqj6clFJ.a1fb4a3a4d51f8f7e57d4eca2a0c633051bd89b80b90c2edbf66e93ed5657bcd';
+const URL=`https://api.airtable.com/v0/${B}/${T}`;
+
+// ══════════════════════════════════════
+//  PÉRIODES TRIMESTRIELLES
+// ══════════════════════════════════════
+const TRIMS=[
+  {n:'N°3',p:'SEPT-OCT-NOV 2026',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
+  {n:'N°4',p:'DÉC-JAN-FÉV 2027', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
+  {n:'N°5',p:'MARS-AVR-MAI 2027', bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
+  {n:'N°6',p:'JUIN-JUIL-AOÛT 2027',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
+  {n:'N°7',p:'SEPT-OCT-NOV 2027', bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
+  {n:'N°8',p:'DÉC-JAN-FÉV 2028', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
+  {n:'N°9',p:'MARS-AVR-MAI 2028', bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
+];
+const tb=document.getElementById('trim-body');
+TRIMS.forEach((t,i)=>{
+  tb.innerHTML+=`<tr>
+    <td class="nl">${t.n}</td>
+    <td class="pl">${t.p}</td>
+    <td><input type="checkbox" id="tr-bx${i}"></td>
+    <td><input type="text" id="tr-bxf${i}" placeholder="format"></td>
+    <td><input type="checkbox" id="tr-fr${i}"></td>
+    <td><input type="text" id="tr-frf${i}" placeholder="format"></td>
+  </tr>`;
+});
+
+// ══════════════════════════════════════
+//  STATE
+// ══════════════════════════════════════
+let members=[], curId=null;
+
+// ══════════════════════════════════════
+//  API HELPERS
+// ══════════════════════════════════════
+const hdrs={'Authorization':'Bearer '+TK};
+async function atGet(p=''){
+  const r=await fetch(URL+p,{headers:hdrs});
+  return r.json();
+}
+async function atPatch(id,fields){
+  const r=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
+    body:JSON.stringify({records:[{id,fields}],typecast:true})});
+  return r.json();
+}
+async function atPost(fields){
+  const r=await fetch(URL,{method:'POST',headers:{...hdrs,'Content-Type':'application/json'},
+    body:JSON.stringify({records:[{fields}],typecast:true})});
+  return r.json();
+}
+
+// ══════════════════════════════════════
+//  LOAD ALL MEMBERS (pagination)
+// ══════════════════════════════════════
+async function loadAll(){
+  setSt('⏳ Chargement des membres...');
+  members=[];
+  let off='';
+  try{
+    do{
+      const p='?pageSize=100'+(off?'&offset='+off:'');
+      const d=await atGet(p);
+      if(d.records) members.push(...d.records);
+      off=d.offset||'';
+    } while(off);
+    members.sort((a,b)=>{
+      const na=(a.fields['NOM ATTRACTION']||'').toLowerCase();
+      const nb=(b.fields['NOM ATTRACTION']||'').toLowerCase();
+      return na.localeCompare(nb,'fr');
+    });
+    buildSelect();
+    buildTable();
+    setSt(`✅ ${members.length} membres chargés`);
+  } catch(e){
+    setSt('⚠️ Erreur connexion Airtable');
+    console.error(e);
+  }
+}
+
+function buildSelect(){
+  const sel=document.getElementById('msel');
+  const cur=sel.value;
+  sel.innerHTML='<option value="">— Choisir un membre —</option>';
+  members.forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.id;
+    o.textContent=m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||m.id;
+    sel.appendChild(o);
+  });
+  if(cur) sel.value=cur;
+}
+
+function filterSelect(){
+  const q=document.getElementById('srch').value.toLowerCase();
+  const sel=document.getElementById('msel');
+  sel.innerHTML='<option value="">— Choisir un membre —</option>';
+  members.filter(m=>{
+    const n=(m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||'').toLowerCase();
+    return !q||n.includes(q)||String(m.fields['Nº de membre']||'').includes(q);
+  }).forEach(m=>{
+    const o=document.createElement('option');
+    o.value=m.id; o.textContent=m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||m.id;
+    sel.appendChild(o);
+  });
+}
+
+// ══════════════════════════════════════
+//  LOAD SINGLE MEMBER
+// ══════════════════════════════════════
+async function loadMember(){
+  const id=document.getElementById('msel').value;
+  if(!id) return;
+  setSt('⏳ Chargement...');
+  try{
+    const d=await atGet('/'+id);
+    curId=id;
+    fillForm(d.fields);
+    showView('fiche');
+    setSt('✅ Membre chargé');
+  }catch(e){setSt('⚠️ Erreur');console.error(e);}
+}
+
+// ══════════════════════════════════════
+//  FILL FORM
+// ══════════════════════════════════════
+function fmtDate(v){
+  if(!v) return '';
+  if(typeof v==='string'&&v.length>=10) return v.substring(0,10);
+  return '';
+}
+function sv(id,val,cb=false){
+  const el=document.getElementById(id); if(!el) return;
+  if(cb) el.checked=!!val;
+  else el.value=val||'';
+}
+
+function fillForm(f){
+  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['ENSEIGNE']||'— MEMBRE —';
+  document.getElementById('f-num').textContent=f['Nº de membre']||f['﻿N°']||'';
+
+  sv('f-entree', fmtDate(f['DATE ENTRÉE']));
+  sv('f-modif',  fmtDate(f['Date de modification']));
+  sv('f-attr',   f['NOM ATTRACTION']);
+  sv('f-cat',    f['CATÉGORIE']);
+  sv('f-ens',    f['Enseigne commerciale']||f['ENSEIGNE']);
+  sv('f-rue',    f['RUE']);
+  sv('f-cp',     f['CP']);
+  sv('f-com',    f['COMMUNE']);
+  sv('f-tel',    f['TÉLÉPHONE']);
+  sv('f-fax',    f['FAX']);
+  sv('f-email',  f['EMAIL']);
+  sv('f-site',   f['SITE INTERNET']);
+  sv('f-tva',    f['N° TVA']);
+  sv('f-prov',   f['PROVINCE']);
+
+  sv('f-c1',f['CONTACT']); sv('f-t1',f['TITRE']); sv('f-g1',f['GSM']); sv('f-e1',f['EMAIL_CONTACT']);
+  sv('f-c2',f['CONTACT 2']); sv('f-t2',f['TITRE 2']); sv('f-g2',f['GSM 2']); sv('f-e2',f['EMAIL 2']);
+  sv('f-c3',f['CONTACT 3']); sv('f-t3',f['TITRE 3']); sv('f-g3',f['GSM 3']); sv('f-e3',f['EMAIL 3']);
+  sv('f-c4',f['CONTACT 4']); sv('f-t4',f['TITRE 4']); sv('f-g4',f['GSM 4']); sv('f-e4',f['EMAIL 4']);
+
+  sv('f-lang',  f['LANGUE']||'FR');
+  sv('f-coupon',f['COUPON ACCEPTÉ']);
+  sv('f-vip',   f['VIP ACCEPTÉ']);
+  sv('f-agent', f['AGENT']);
+  sv('f-code',  f['CODE']);
+
+  sv('f-cotbe', f['COTISATION BE']);
+  sv('f-montbe',f['MONTANT BE']);
+  sv('f-echbe', fmtDate(f['ÉCHÉANCE BE']));
+  sv('f-cotlu', f['COTISATION LU']);
+  sv('f-montlu',f['MONTANT LU']);
+  sv('f-echlu', fmtDate(f['ÉCHÉANCE LU']));
+
+  sv('f-rem',  f['REMARQUES']);
+  sv('f-majd', fmtDate(f['Date mise à jour données']));
+  sv('f-majp', f['Effectué par']);
+
+  // Totaux sorties
+  sv('f-ss-bxt',f['SORTIES SCOLAIRES BELUX (trim.)']);
+  sv('f-ss-bxa',f['SORTIES SCOLAIRES BELUX (annuel)']);
+  sv('f-ns-bxt',f['NEWS SCOLAIRES BELUX (trim.)']);
+  sv('f-ns-bxa',f['NEWS SCOLAIRES BELUX (annuel)']);
+
+  // Publications annuelles
+  sv('p-bx26',f['SORTIES SCOLAIRES BELUX 2026']||f['PUB BELUX 2026'],true);
+  sv('p-bx27',f['SORTIES SCOLAIRES BELUX 2027']||f['PUB BELUX 2027'],true);
+  sv('p-bx28',f['SORTIES SCOLAIRES BELUX 2028']||f['PUB BELUX 2028'],true);
+  sv('p-fr27',f['SORTIES SCOLAIRES FRANCE 2027']||f['PUB FRANCE 2027'],true);
+  sv('p-fr28',f['SORTIES SCOLAIRES FRANCE 2028']||f['PUB FRANCE 2028'],true);
+  sv('p-fr29',f['SORTIES SCOLAIRES FRANCE 2029']||f['PUB FRANCE 2029'],true);
+  sv('p-tp26',f['TIPS voor SCHOOLTRIPS 2026']||f['PUB TIPS 2026'],true);
+  sv('p-tp27',f['TIPS voor SCHOOLTRIPS 2027']||f['PUB TIPS 2027'],true);
+  sv('p-tp28',f['TIPS voor SCHOOLTRIPS 2028']||f['PUB TIPS 2028'],true);
+  sv('p-sej23',f['SEJOURS SCOLAIRES 2023'],true);
+  sv('p-sej25',f['SEJOURS SCOLAIRES 2025']||f['PUB SEJOURS 2025'],true);
+  sv('p-sej27',f['SEJOURS SCOLAIRES 2027']||f['PUB SEJOURS 2027'],true);
+
+  // Pages
+  sv('p-bx26p',f['Page gratuite SORTIES SCOLAIRES Belux 2026']||f['PUB BELUX PAGE']);
+  sv('p-fr27p',f['Page gratuite SORTIES SCOLAIRES France 2027']||f['PUB FRANCE PAGE']);
+  sv('p-tp26p',f['Page gratuite TIPS voor SCHOOLTRIPS 2026']||f['PUB TIPS PAGE']);
+  sv('p-sej25p',f['PUB SEJOURS PAGE']);
+
+  // Trimestrielles
+  TRIMS.forEach((t,i)=>{
+    sv(`tr-bx${i}`,f[t.bx],true);
+    sv(`tr-fr${i}`,f[t.fr],true);
+  });
+
+  // Newsletters
+  sv('p-nlm',f['NL MENSUELLE'],true);
+  sv('p-nlp',f['NL PERSO'],true);
+  sv('p-ban',f['BANNIERE SITE'],true);
+
+  // Fill confirmation
+  fillConf(f);
+}
+
+function fillConf(f){
+  const st=(id,v)=>{const e=document.getElementById(id);if(e)e.textContent=v||'—';};
+  st('cc-ens',  f['ENSEIGNE']||f['NOM ATTRACTION']);
+  st('cc-resp', f['CONTACT']);
+  st('cc-rue',  f['RUE']);
+  st('cc-cpl',  (f['CP']||'')+(f['CP']?' ':'')+( f['COMMUNE']||''));
+  st('cc-tel',  f['TÉLÉPHONE']);
+  st('cc-gsm',  f['GSM']);
+  st('cc-ref',  f['Nº de membre']||'');
+  st('cc-part', f['CONTACT']||f['ENSEIGNE']);
+  st('cc-code', f['CODE']);
+}
+
+// ══════════════════════════════════════
+//  COLLECT FORM DATA
+// ══════════════════════════════════════
+function gv(id){
+  const e=document.getElementById(id); if(!e) return null;
+  if(e.type==='checkbox') return e.checked;
+  return e.value||null;
+}
+
+function collectFields(){
+  const F={
+    'NOM ATTRACTION':gv('f-attr'),
+    'CATÉGORIE':gv('f-cat'),
+    'Enseigne commerciale':gv('f-ens'),
+    'RUE':gv('f-rue'), 'CP':gv('f-cp'), 'COMMUNE':gv('f-com'),
+    'TÉLÉPHONE':gv('f-tel'), 'FAX':gv('f-fax'), 'EMAIL':gv('f-email'),
+    'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
+    'LANGUE':gv('f-lang'), 'COUPON ACCEPTÉ':gv('f-coupon'), 'VIP ACCEPTÉ':gv('f-vip'),
+    'AGENT':gv('f-agent'), 'CODE':gv('f-code'),
+    'CONTACT':gv('f-c1'),'TITRE':gv('f-t1'),'GSM':gv('f-g1'),'EMAIL_CONTACT':gv('f-e1'),
+    'CONTACT 2':gv('f-c2'),'TITRE 2':gv('f-t2'),'GSM 2':gv('f-g2'),'EMAIL 2':gv('f-e2'),
+    'CONTACT 3':gv('f-c3'),'TITRE 3':gv('f-t3'),'GSM 3':gv('f-g3'),'EMAIL 3':gv('f-e3'),
+    'CONTACT 4':gv('f-c4'),'TITRE 4':gv('f-t4'),'GSM 4':gv('f-g4'),'EMAIL 4':gv('f-e4'),
+    'COTISATION BE':gv('f-cotbe'),'MONTANT BE':gv('f-montbe'),'ÉCHÉANCE BE':gv('f-echbe')||null,
+    'COTISATION LU':gv('f-cotlu'),'MONTANT LU':gv('f-montlu'),'ÉCHÉANCE LU':gv('f-echlu')||null,
+    'REMARQUES':gv('f-rem'),
+    'Date mise à jour données':gv('f-majd')||null,
+    'Effectué par':gv('f-majp'),
+    // Publications annuelles
+    'SORTIES SCOLAIRES BELUX 2026':gv('p-bx26'),'SORTIES SCOLAIRES BELUX 2027':gv('p-bx27'),'SORTIES SCOLAIRES BELUX 2028':gv('p-bx28'),
+    'SORTIES SCOLAIRES FRANCE 2027':gv('p-fr27'),'SORTIES SCOLAIRES FRANCE 2028':gv('p-fr28'),'SORTIES SCOLAIRES FRANCE 2029':gv('p-fr29'),
+    'TIPS voor SCHOOLTRIPS 2026':gv('p-tp26'),'TIPS voor SCHOOLTRIPS 2027':gv('p-tp27'),'TIPS voor SCHOOLTRIPS 2028':gv('p-tp28'),
+    'SEJOURS SCOLAIRES 2023':gv('p-sej23'),'SEJOURS SCOLAIRES 2025':gv('p-sej25'),'SEJOURS SCOLAIRES 2027':gv('p-sej27'),
+    // Pub fields
+    'PUB BELUX 2026':gv('p-bx26'),'PUB BELUX 2027':gv('p-bx27'),'PUB BELUX 2028':gv('p-bx28'),
+    'PUB FRANCE 2027':gv('p-fr27'),'PUB FRANCE 2028':gv('p-fr28'),'PUB FRANCE 2029':gv('p-fr29'),
+    'PUB TIPS 2026':gv('p-tp26'),'PUB TIPS 2027':gv('p-tp27'),'PUB TIPS 2028':gv('p-tp28'),
+    'PUB SEJOURS 2025':gv('p-sej25'),'PUB SEJOURS 2027':gv('p-sej27'),
+    // Newsletters
+    'NL MENSUELLE':gv('p-nlm'),'NL PERSO':gv('p-nlp'),'BANNIERE SITE':gv('p-ban'),
+  };
+  TRIMS.forEach((t,i)=>{ F[t.bx]=gv(`tr-bx${i}`); F[t.fr]=gv(`tr-fr${i}`); });
+  // Remove null/empty strings
+  Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]==='') delete F[k]; });
+  return F;
+}
+
+// ══════════════════════════════════════
+//  SAVE
+// ══════════════════════════════════════
+async function saveMember(){
+  const info=document.getElementById('save-info');
+  info.textContent='⏳ Enregistrement...';
+  const fields=collectFields();
+  try{
+    let res;
+    if(curId){
+      res=await atPatch(curId,fields);
+    } else {
+      res=await atPost(fields);
+      if(res.records&&res.records[0]){
+        curId=res.records[0].id;
+        members.push(res.records[0]);
+        buildSelect();
+        document.getElementById('msel').value=curId;
+      }
+    }
+    if(res.error){
+      info.textContent='❌ '+res.error.message;
+    } else {
+      info.textContent='✅ Enregistré avec succès';
+      document.getElementById('name-bar').textContent=fields['NOM ATTRACTION']||'— MEMBRE —';
+      // Update member list name
+      const idx=members.findIndex(m=>m.id===curId);
+      if(idx>=0&&fields['NOM ATTRACTION']){
+        members[idx].fields['NOM ATTRACTION']=fields['NOM ATTRACTION'];
+        buildSelect(); document.getElementById('msel').value=curId;
+      }
+      setTimeout(()=>info.textContent='',4000);
+    }
+  } catch(e){info.textContent='❌ Erreur réseau';console.error(e);}
+}
+
+// ══════════════════════════════════════
+//  NEW MEMBER
+// ══════════════════════════════════════
+function newMember(){
+  curId=null;
+  document.getElementById('msel').value='';
+  document.getElementById('srch').value='';
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  document.getElementById('f-num').textContent='';
+  // Clear all inputs
+  document.querySelectorAll('#view-fiche input[type=text],#view-fiche input[type=email],#view-fiche input[type=tel],#view-fiche input[type=url],#view-fiche input[type=number],#view-fiche input[type=date],#view-fiche textarea,#view-fiche select')
+    .forEach(el=>el.value='');
+  document.querySelectorAll('#view-fiche input[type=checkbox]').forEach(el=>el.checked=false);
+  document.getElementById('f-lang').value='FR';
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-entree').value=today;
+  document.getElementById('f-majd').value=today;
+  document.getElementById('save-info').textContent='💡 Remplissez la fiche puis cliquez sur Enregistrer';
+  showView('fiche');
+}
+
+// ══════════════════════════════════════
+//  RECHERCHE TABLE
+// ══════════════════════════════════════
+function buildTable(){
+  const tbody=document.getElementById('rch-tbody');
+  tbody.innerHTML='';
+  members.forEach(m=>{
+    const f=m.fields;
+    const tr=document.createElement('tr');
+    const lang=f['LANGUE']||'';
+    const badge=lang?`<span class="badge ${lang==='NL'?'badge-nl':'badge-fr'}">${lang}</span>`:'';
+    tr.innerHTML=`
+      <td class="num">${f['Nº de membre']||f['﻿N°']||''}</td>
+      <td>${f['ENSEIGNE']||''}</td>
+      <td><b>${f['NOM ATTRACTION']||''}</b></td>
+      <td>${f['CATÉGORIE']||''}</td>
+      <td>${f['COMMUNE']||''}</td>
+      <td>${f['PROVINCE']||''}</td>
+      <td>${f['AGENT']||''}</td>
+      <td style="text-align:center;">${badge}</td>
+      <td style="text-align:center;">${f['COTISATION BE']||''}</td>
+      <td style="text-align:center;font-size:11px;">${fmtDate(f['ÉCHÉANCE BE'])}</td>`;
+    tr.onclick=()=>{
+      document.getElementById('msel').value=m.id;
+      loadMember();
+    };
+    tbody.appendChild(tr);
+  });
+  document.getElementById('rch-loading').style.display='none';
+  document.getElementById('rch-tbl').style.display='';
+  document.getElementById('rch-cnt').textContent=`${members.length} membres`;
+}
+
+function filterTable(){
+  const q=document.getElementById('rch-f').value.toLowerCase();
+  let n=0;
+  document.querySelectorAll('#rch-tbody tr').forEach(tr=>{
+    const ok=!q||tr.textContent.toLowerCase().includes(q);
+    tr.style.display=ok?'':'none';
+    if(ok) n++;
+  });
+  document.getElementById('rch-cnt').textContent=`${n} / ${members.length} membres`;
+}
+
+// ══════════════════════════════════════
+//  VIEW SWITCH
+// ══════════════════════════════════════
+function showView(name){
+  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
+  document.getElementById('view-'+name).classList.add('active');
+}
+
+// ══════════════════════════════════════
+//  STATUS
+// ══════════════════════════════════════
+function setSt(msg){document.getElementById('status').textContent=msg;}
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+loadAll();
+</script>
+</body>
+</html>
