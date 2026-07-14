@@ -75,6 +75,17 @@ body{background:#dce3ef;min-height:100vh;}
 .pt input[type=text]:focus{border-color:#2e75b6;outline:none;}
 .sel-page{width:52px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;text-align:center;}
 .sel-tarif{width:62px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;text-align:center;}
+/* ── PUB CARDS ── */
+.pub-card{border:1px solid #c0cce0;border-radius:3px;overflow:hidden;margin-bottom:2px;}
+.pub-hdr{padding:4px 8px;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;}
+.pub-years{display:flex;gap:14px;padding:5px 8px;background:#fffff8;align-items:center;}
+.pub-years label{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:700;cursor:pointer;}
+.pub-years input[type=checkbox]{width:15px;height:15px;accent-color:#217346;}
+.pub-ft{width:100%;border-collapse:collapse;font-size:11px;background:#fff;}
+.pub-ft td{padding:3px 6px;vertical-align:middle;}
+.pub-lbl{font-weight:600;color:#1e3a6e;white-space:nowrap;min-width:90px;}
+.pub-ft input[type=text]{width:100%;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;}
+.pub-ft input[type=text]:focus{border-color:#2e75b6;outline:none;}
 
 /* ── TRIM TABLE ── */
 .tt{width:100%;border-collapse:collapse;background:#fff;font-size:11px;}
@@ -264,9 +275,17 @@ body{background:#dce3ef;min-height:100vh;}
             </select>
           </div>
           <div class="fl" style="min-width:110px;">Coupon accepté :</div>
-          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-coupon" style="width:70px;"></div>
+          <div class="fv" style="flex:0 0 90px;">
+            <select id="f-coupon" onchange="markDirty()" style="width:70px;">
+              <option value="">—</option><option>OUI</option><option>NON</option>
+            </select>
+          </div>
           <div class="fl" style="min-width:90px;">VIP accepté :</div>
-          <div class="fv"><input type="text" id="f-vip" style="width:60px;"></div>
+          <div class="fv">
+            <select id="f-vip" onchange="markDirty()" style="width:60px;">
+              <option value="">—</option><option>OUI</option><option>NON</option>
+            </select>
+          </div>
         </div>
         <div class="fr">
           <div class="fl" style="min-width:55px;">Code :</div>
@@ -290,15 +309,23 @@ body{background:#dce3ef;min-height:100vh;}
       <div class="fg">
         <div class="fr">
           <div class="fl">Cotisation BE :</div>
-          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-cotbe" style="width:70px;"></div>
+          <div class="fv" style="flex:0 0 90px;">
+            <select id="f-cotbe" onchange="markDirty()" style="width:70px;">
+              <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+            </select>
+          </div>
           <div class="fl" style="min-width:90px;">Montant BE :</div>
-          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montbe" style="width:70px;"> €</div>
+          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montbe" style="width:70px;" oninput="markDirty()"> €</div>
           <div class="fl" style="min-width:90px;">Échéance BE :</div>
-          <div class="fv"><input type="date" id="f-echbe"></div>
+          <div class="fv"><input type="date" id="f-echbe" onchange="markDirty()"></div>
         </div>
         <div class="fr">
           <div class="fl">Cotisation LU :</div>
-          <div class="fv" style="flex:0 0 90px;"><input type="text" id="f-cotlu" style="width:70px;"></div>
+          <div class="fv" style="flex:0 0 90px;">
+            <select id="f-cotlu" onchange="markDirty()" style="width:70px;">
+              <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+            </select>
+          </div>
           <div class="fl" style="min-width:90px;">Montant LU :</div>
           <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montlu" style="width:70px;"> €</div>
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
@@ -320,7 +347,11 @@ body{background:#dce3ef;min-height:100vh;}
           <div class="fl">Mise à jour données :</div>
           <div class="fv" style="flex:0 0 160px;"><input type="date" id="f-majd"></div>
           <div class="fl" style="min-width:100px;">Effectué par :</div>
-          <div class="fv"><input type="text" id="f-majp" style="width:120px;"></div>
+          <div class="fv">
+            <select id="f-majp" onchange="markDirty()" style="width:110px;">
+              <option value="">—</option><option>MARC</option><option>MAITE</option><option>PASCAL</option><option>VANESSA</option>
+            </select>
+          </div>
         </div>
       </div>
     </div><!-- /left col -->
@@ -328,101 +359,143 @@ body{background:#dce3ef;min-height:100vh;}
     <!-- ── COLONNE DROITE : PUBLICATIONS ── -->
     <div>
       <div class="sec">📰 Publications Annuelles</div>
-      <table class="pt">
-        <thead>
-          <tr>
-            <th style="width:50px;">ANNÉE</th>
-            <th colspan="3" style="background:#1a5276;">SORTIES SCOLAIRES<br>Belux</th>
-            <th colspan="3" style="background:#1a5276;">SORTIES SCOLAIRES<br>France</th>
-            <th colspan="3" style="background:#7d6608;">TIPS voor<br>SCHOOLTRIPS</th>
-            <th colspan="3" style="background:#633974;">SÉJOURS<br>SCOLAIRES</th>
-          </tr>
-          <tr>
-            <th class="sub"></th>
-            <th class="sub" style="background:#2980b9;">✓</th><th class="sub" style="background:#2980b9;">Page</th><th class="sub" style="background:#2980b9;">Tarif</th>
-            <th class="sub" style="background:#2980b9;">✓</th><th class="sub" style="background:#2980b9;">Page</th><th class="sub" style="background:#2980b9;">Tarif</th>
-            <th class="sub" style="background:#d4ac0d;">✓</th><th class="sub" style="background:#d4ac0d;">Page</th><th class="sub" style="background:#d4ac0d;">Tarif</th>
-            <th class="sub" style="background:#9b59b6;">✓</th><th class="sub" style="background:#9b59b6;">Page</th><th class="sub" style="background:#9b59b6;">Tarif</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="yl">2023</td>
-            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
-            <td><input type="checkbox" id="p-sej23" onchange="markDirty()"></td>
-            <td><select id="p-sej23p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-sej23t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-          </tr>
-          <tr>
-            <td class="yl">2025</td>
-            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
-            <td><input type="checkbox" id="p-sej25" onchange="markDirty()"></td>
-            <td><select id="p-sej25p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-sej25t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-          </tr>
-          <tr>
-            <td class="yl">2026</td>
-            <td><input type="checkbox" id="p-bx26" onchange="markDirty()"></td>
-            <td><select id="p-bx26p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-bx26t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td>—</td><td>—</td><td>—</td>
-            <td><input type="checkbox" id="p-tp26" onchange="markDirty()"></td>
-            <td><select id="p-tp26p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-tp26t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td>—</td><td>—</td><td>—</td>
-          </tr>
-          <tr>
-            <td class="yl">2027</td>
-            <td><input type="checkbox" id="p-bx27" onchange="markDirty()"></td>
-            <td><select id="p-bx27p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-bx27t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td><input type="checkbox" id="p-fr27" onchange="markDirty()"></td>
-            <td><select id="p-fr27p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-fr27t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td><input type="checkbox" id="p-tp27" onchange="markDirty()"></td>
-            <td><select id="p-tp27p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-tp27t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td><input type="checkbox" id="p-sej27" onchange="markDirty()"></td>
-            <td><select id="p-sej27p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-sej27t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-          </tr>
-          <tr>
-            <td class="yl">2028</td>
-            <td><input type="checkbox" id="p-bx28" onchange="markDirty()"></td>
-            <td><select id="p-bx28p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-bx28t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td><input type="checkbox" id="p-fr28" onchange="markDirty()"></td>
-            <td><select id="p-fr28p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-fr28t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td><input type="checkbox" id="p-tp28" onchange="markDirty()"></td>
-            <td><select id="p-tp28p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-tp28t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td>—</td><td>—</td><td>—</td>
-          </tr>
-          <tr>
-            <td class="yl">2029</td>
-            <td>—</td><td>—</td><td>—</td>
-            <td><input type="checkbox" id="p-fr29" onchange="markDirty()"></td>
-            <td><select id="p-fr29p" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-            <td><select id="p-fr29t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
-            <td>—</td><td>—</td><td>—</td><td>—</td><td>—</td><td>—</td>
-          </tr>
-        </tbody>
-      </table>
+
+      <!-- 2×2 pub cards -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:5px;margin-bottom:5px;">
+
+        <!-- BELUX card (JAUNE) -->
+        <div class="pub-card">
+          <div class="pub-hdr" style="background:#ffd966;color:#1e3a6e;">📗 SORTIES SCOLAIRES Belux</div>
+          <div class="pub-years">
+            <label><input type="checkbox" id="p-bx26" onchange="markDirty()"> 2026</label>
+            <label><input type="checkbox" id="p-bx27" onchange="markDirty()"> 2027</label>
+            <label><input type="checkbox" id="p-bx28" onchange="markDirty()"> 2028</label>
+          </div>
+          <table class="pub-ft">
+            <tr>
+              <td class="pub-lbl">Page gratuite :</td>
+              <td><select id="p-bx-pg" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-bx-t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Page payante :</td>
+              <td><select id="p-bx-pp" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Commentaires :</td>
+              <td colspan="3"><input type="text" id="p-bx-com" oninput="markDirty()"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- FRANCE card (BLEU) -->
+        <div class="pub-card">
+          <div class="pub-hdr" style="background:#1a5276;color:#fff;">📘 SORTIES SCOLAIRES France</div>
+          <div class="pub-years">
+            <label><input type="checkbox" id="p-fr27" onchange="markDirty()"> 2027</label>
+            <label><input type="checkbox" id="p-fr28" onchange="markDirty()"> 2028</label>
+            <label><input type="checkbox" id="p-fr29" onchange="markDirty()"> 2029</label>
+          </div>
+          <table class="pub-ft">
+            <tr>
+              <td class="pub-lbl">Page gratuite :</td>
+              <td><select id="p-fr-pg" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-fr-t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Page payante :</td>
+              <td><select id="p-fr-pp" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Commentaires :</td>
+              <td colspan="3"><input type="text" id="p-fr-com" oninput="markDirty()"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- TIPS card (OR) -->
+        <div class="pub-card">
+          <div class="pub-hdr" style="background:#7d6608;color:#fff;">📙 TIPS voor SCHOOLTRIPS</div>
+          <div class="pub-years">
+            <label><input type="checkbox" id="p-tp26" onchange="markDirty()"> 2026</label>
+            <label><input type="checkbox" id="p-tp27" onchange="markDirty()"> 2027</label>
+            <label><input type="checkbox" id="p-tp28" onchange="markDirty()"> 2028</label>
+          </div>
+          <table class="pub-ft">
+            <tr>
+              <td class="pub-lbl">Page gratuite :</td>
+              <td><select id="p-tp-pg" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-tp-t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Page payante :</td>
+              <td><select id="p-tp-pp" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Commentaires :</td>
+              <td colspan="3"><input type="text" id="p-tp-com" oninput="markDirty()"></td>
+            </tr>
+          </table>
+        </div>
+
+        <!-- SÉJOURS card (VIOLET) -->
+        <div class="pub-card">
+          <div class="pub-hdr" style="background:#633974;color:#fff;">🏕️ SÉJOURS SCOLAIRES</div>
+          <div class="pub-years">
+            <label><input type="checkbox" id="p-sej23" onchange="markDirty()"> 2023</label>
+            <label><input type="checkbox" id="p-sej25" onchange="markDirty()"> 2025</label>
+            <label><input type="checkbox" id="p-sej27" onchange="markDirty()"> 2027</label>
+          </div>
+          <table class="pub-ft">
+            <tr>
+              <td class="pub-lbl">Page gratuite :</td>
+              <td><select id="p-sej-pg" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-sej-t" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Page payante :</td>
+              <td><select id="p-sej-pp" class="sel-page" onchange="markDirty()"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
+              <td colspan="2"></td>
+            </tr>
+            <tr>
+              <td class="pub-lbl">Commentaires :</td>
+              <td colspan="3"><input type="text" id="p-sej-com" oninput="markDirty()"></td>
+            </tr>
+          </table>
+        </div>
+
+      </div><!-- /2x2 grid -->
 
       <div class="sec" style="margin-top:7px;">📆 Publications Trimestrielles</div>
-      <table class="tt">
+      <table class="tt" style="font-size:10px;">
         <thead>
           <tr>
-            <th style="width:38px;">N°</th>
+            <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
-            <th colspan="2" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="2" class="sub2">NEWS SCOLAIRES France</th>
+            <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
+            <th colspan="6" class="sub2">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
-            <th class="sub2" style="width:35px;">✓</th><th class="sub2">Format</th>
-            <th class="sub2" style="width:35px;">✓</th><th class="sub2">Format</th>
+            <th class="sub2" style="width:22px;">✓</th>
+            <th class="sub2" style="width:30px;">Nbr</th>
+            <th class="sub2" style="width:80px;">Format</th>
+            <th class="sub2" style="width:28px;">DEC</th>
+            <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">TOTAL</th>
+            <th class="sub2" style="width:22px;">✓</th>
+            <th class="sub2" style="width:30px;">Nbr</th>
+            <th class="sub2" style="width:80px;">Format</th>
+            <th class="sub2" style="width:28px;">DEC</th>
+            <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">TOTAL</th>
           </tr>
         </thead>
         <tbody id="trim-body"></tbody>
@@ -434,19 +507,31 @@ body{background:#dce3ef;min-height:100vh;}
           <tr>
             <th style="text-align:left;padding-left:8px;">SERVICE</th>
             <th style="width:40px;">✓</th>
-            <th style="width:70px;">Tarif</th>
+            <th style="width:120px;">Période / Tarif</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td class="yl">Newsletter MENSUELLE</td>
             <td><input type="checkbox" id="p-nlm" onchange="markDirty()"></td>
-            <td><select id="p-nlmt" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            <td><select id="p-nlmt" class="sel-tarif" style="width:115px;" onchange="markDirty()">
+              <option value="">—</option>
+              <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+              <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+              <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+              <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+            </select></td>
           </tr>
           <tr>
             <td class="yl">Newsletter PERSONNALISÉE</td>
             <td><input type="checkbox" id="p-nlp" onchange="markDirty()"></td>
-            <td><select id="p-nlpt" class="sel-tarif" onchange="markDirty()"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+            <td><select id="p-nlpt" class="sel-tarif" style="width:115px;" onchange="markDirty()">
+              <option value="">—</option>
+              <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+              <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+              <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+              <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+            </select></td>
           </tr>
           <tr>
             <td class="yl">Bannière sur SITE WEB</td>
@@ -620,14 +705,24 @@ const TRIMS=[
   {n:'N°9',p:'MARS-AVR-MAI 2028', bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
+const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
+const _inp=(id,w,type='text')=>`<input type="${type}" id="${id}" style="width:${w}px;font-size:10px;" oninput="markDirty()">`;
 TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
-    <td><input type="checkbox" id="tr-bx${i}"></td>
-    <td><input type="text" id="tr-bxf${i}" placeholder="format"></td>
-    <td><input type="checkbox" id="tr-fr${i}"></td>
-    <td><input type="text" id="tr-frf${i}" placeholder="format"></td>
+    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty()"></td>
+    <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
+    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
+    <td>${_inp(`tr-bxd${i}`,24)}</td>
+    <td>${_inp(`tr-bxp${i}`,36,'number')}</td>
+    <td>${_inp(`tr-bxt${i}`,36)}</td>
+    <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
+    <td>${_inp(`tr-frn${i}`,26,'number')}</td>
+    <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
+    <td>${_inp(`tr-frd${i}`,24)}</td>
+    <td>${_inp(`tr-frp${i}`,36,'number')}</td>
+    <td>${_inp(`tr-frt${i}`,36)}</td>
   </tr>`;
 });
 
@@ -815,7 +910,7 @@ function fillForm(f){
   sv('f-ns-bxt',f['NEWS SCOLAIRES BELUX (trim.)']);
   sv('f-ns-bxa',f['NEWS SCOLAIRES BELUX (annuel)']);
 
-  // Publications annuelles
+  // Publications annuelles — checkboxes
   sv('p-bx26',f['SORTIES SCOLAIRES BELUX 2026']||f['PUB BELUX 2026'],true);
   sv('p-bx27',f['SORTIES SCOLAIRES BELUX 2027']||f['PUB BELUX 2027'],true);
   sv('p-bx28',f['SORTIES SCOLAIRES BELUX 2028']||f['PUB BELUX 2028'],true);
@@ -829,49 +924,49 @@ function fillForm(f){
   sv('p-sej25',f['SEJOURS SCOLAIRES 2025']||f['PUB SEJOURS 2025'],true);
   sv('p-sej27',f['SEJOURS SCOLAIRES 2027']||f['PUB SEJOURS 2027'],true);
 
-  // Pages (select dropdowns)
-  sv('p-bx26p',f['PUB BELUX 2026 PAGE']||f['Page gratuite SORTIES SCOLAIRES Belux 2026']||f['PUB BELUX PAGE']);
-  sv('p-bx27p',f['PUB BELUX 2027 PAGE']);
-  sv('p-bx28p',f['PUB BELUX 2028 PAGE']);
-  sv('p-fr27p',f['PUB FRANCE 2027 PAGE']||f['Page gratuite SORTIES SCOLAIRES France 2027']||f['PUB FRANCE PAGE']);
-  sv('p-fr28p',f['PUB FRANCE 2028 PAGE']);
-  sv('p-fr29p',f['PUB FRANCE 2029 PAGE']);
-  sv('p-tp26p',f['PUB TIPS 2026 PAGE']||f['Page gratuite TIPS voor SCHOOLTRIPS 2026']||f['PUB TIPS PAGE']);
-  sv('p-tp27p',f['PUB TIPS 2027 PAGE']);
-  sv('p-tp28p',f['PUB TIPS 2028 PAGE']);
-  sv('p-sej23p',f['PUB SEJOURS 2023 PAGE']);
-  sv('p-sej25p',f['PUB SEJOURS 2025 PAGE']||f['PUB SEJOURS PAGE']);
-  sv('p-sej27p',f['PUB SEJOURS 2027 PAGE']);
-
-  // Tarifs (select dropdowns)
-  sv('p-bx26t',f['PUB BELUX TARIF']);
-  sv('p-bx27t',f['PUB BELUX 2027 TARIF']);
-  sv('p-bx28t',f['PUB BELUX 2028 TARIF']);
-  sv('p-fr27t',f['PUB FRANCE TARIF']);
-  sv('p-fr28t',f['PUB FRANCE 2028 TARIF']);
-  sv('p-fr29t',f['PUB FRANCE 2029 TARIF']);
-  sv('p-tp26t',f['PUB TIPS TARIF']);
-  sv('p-tp27t',f['PUB TIPS 2027 TARIF']);
-  sv('p-tp28t',f['PUB TIPS 2028 TARIF']);
-  sv('p-sej23t',f['PUB SEJOURS 2023 TARIF']);
-  sv('p-sej25t',f['PUB SEJOURS TARIF']);
-  sv('p-sej27t',f['PUB SEJOURS 2027 TARIF']);
+  // Publications annuelles — page gratuite, page payante, tarif, commentaires
+  sv('p-bx-pg',f['PUB BELUX PAGE GRATUITE']||f['PUB BELUX PAGE']);
+  sv('p-bx-pp',f['PUB BELUX PAGE PAYANTE']);
+  sv('p-bx-t', f['PUB BELUX TARIF']!==undefined ? String(f['PUB BELUX TARIF']) : null);
+  sv('p-bx-com',f['PUB BELUX COMMENTAIRES']);
+  sv('p-fr-pg',f['PUB FRANCE PAGE GRATUITE']||f['PUB FRANCE PAGE']);
+  sv('p-fr-pp',f['PUB FRANCE PAGE PAYANTE']);
+  sv('p-fr-t', f['PUB FRANCE TARIF']!==undefined ? String(f['PUB FRANCE TARIF']) : null);
+  sv('p-fr-com',f['PUB FRANCE COMMENTAIRES']);
+  sv('p-tp-pg',f['PUB TIPS PAGE GRATUITE']||f['PUB TIPS PAGE']);
+  sv('p-tp-pp',f['PUB TIPS PAGE PAYANTE']);
+  sv('p-tp-t', f['PUB TIPS TARIF']!==undefined ? String(f['PUB TIPS TARIF']) : null);
+  sv('p-tp-com',f['PUB TIPS COMMENTAIRES']);
+  sv('p-sej-pg',f['PUB SEJOURS PAGE GRATUITE']||f['PUB SEJOURS PAGE']);
+  sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
+  sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
+  sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
 
   // Trimestrielles
   TRIMS.forEach((t,i)=>{
     sv(`tr-bx${i}`,f[t.bx],true);
+    sv(`tr-bxn${i}`,f[t.bx+' NBR']);
+    sv(`tr-bxf${i}`,f[t.bx+' FORMAT']);
+    sv(`tr-bxd${i}`,f[t.bx+' DEC']);
+    sv(`tr-bxp${i}`,f[t.bx+' PRIX']);
+    sv(`tr-bxt${i}`,f[t.bx+' TOTAL']);
     sv(`tr-fr${i}`,f[t.fr],true);
+    sv(`tr-frn${i}`,f[t.fr+' NBR']);
+    sv(`tr-frf${i}`,f[t.fr+' FORMAT']);
+    sv(`tr-frd${i}`,f[t.fr+' DEC']);
+    sv(`tr-frp${i}`,f[t.fr+' PRIX']);
+    sv(`tr-frt${i}`,f[t.fr+' TOTAL']);
   });
 
   // Newsletters / Bannière
   sv('p-nlm',f['NL MENSUELLE'],true);
-  sv('p-nlmt',f['NL MENSUELLE TARIF']);
+  sv('p-nlmt',f['NL MENSUELLE PERIODE']||f['NL MENSUELLE TARIF']);
   sv('p-nlp',f['NL PERSO'],true);
-  sv('p-nlpt',f['NL PERSO TARIF']);
+  sv('p-nlpt',f['NL PERSO PERIODE']||f['NL PERSO TARIF']);
   sv('p-ban',f['BANNIERE SITE'],true);
-  sv('p-bant',f['BANNIERE TARIF']);
+  sv('p-bant',f['BANNIERE TARIF']!==undefined ? String(f['BANNIERE TARIF']) : null);
 
-  // Fill confirmation
+  // Confirmation view
   fillConf(f);
 }
 
@@ -907,9 +1002,9 @@ function collectFields(){
     'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
     'LANGUE':gv('f-lang'), 'COUPON ACCEPTÉ':gv('f-coupon'), 'VIP ACCEPTÉ':gv('f-vip'),
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
-    'Clé de TRI 2':gv('f-tri1') !== null && gv('f-tri1') !== '' ? Number(gv('f-tri1')) : null,
-    'Clé de TRI 3':gv('f-tri2') !== null && gv('f-tri2') !== '' ? Number(gv('f-tri2')) : null,
-    'Clé de TRI 4':gv('f-tri3') !== null && gv('f-tri3') !== '' ? Number(gv('f-tri3')) : null,
+    'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
+    'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
+    'Clé de TRI 4':gv('f-tri3')!==null&&gv('f-tri3')!=='' ? Number(gv('f-tri3')) : null,
     'CONTACT':gv('f-c1'),'TITRE':gv('f-t1'),'GSM':gv('f-g1'),'EMAIL_CONTACT':gv('f-e1'),
     'CONTACT 2':gv('f-c2'),'TITRE 2':gv('f-t2'),'GSM 2':gv('f-g2'),'EMAIL 2':gv('f-e2'),
     'CONTACT 3':gv('f-c3'),'TITRE 3':gv('f-t3'),'GSM 3':gv('f-g3'),'EMAIL 3':gv('f-e3'),
@@ -924,65 +1019,58 @@ function collectFields(){
     'SORTIES SCOLAIRES FRANCE 2027':gv('p-fr27'),'SORTIES SCOLAIRES FRANCE 2028':gv('p-fr28'),'SORTIES SCOLAIRES FRANCE 2029':gv('p-fr29'),
     'TIPS voor SCHOOLTRIPS 2026':gv('p-tp26'),'TIPS voor SCHOOLTRIPS 2027':gv('p-tp27'),'TIPS voor SCHOOLTRIPS 2028':gv('p-tp28'),
     'SEJOURS SCOLAIRES 2023':gv('p-sej23'),'SEJOURS SCOLAIRES 2025':gv('p-sej25'),'SEJOURS SCOLAIRES 2027':gv('p-sej27'),
-    'PUB BELUX 2026':gv('p-bx26'),'PUB BELUX 2027':gv('p-bx27'),'PUB BELUX 2028':gv('p-bx28'),
-    'PUB FRANCE 2027':gv('p-fr27'),'PUB FRANCE 2028':gv('p-fr28'),'PUB FRANCE 2029':gv('p-fr29'),
-    'PUB TIPS 2026':gv('p-tp26'),'PUB TIPS 2027':gv('p-tp27'),'PUB TIPS 2028':gv('p-tp28'),
-    'PUB SEJOURS 2025':gv('p-sej25'),'PUB SEJOURS 2027':gv('p-sej27'),
-    // Pages
-    'PUB BELUX 2026 PAGE':gv('p-bx26p') ? Number(gv('p-bx26p')) : null,
-    'PUB BELUX 2027 PAGE':gv('p-bx27p') ? Number(gv('p-bx27p')) : null,
-    'PUB BELUX 2028 PAGE':gv('p-bx28p') ? Number(gv('p-bx28p')) : null,
-    'PUB FRANCE 2027 PAGE':gv('p-fr27p') ? Number(gv('p-fr27p')) : null,
-    'PUB FRANCE 2028 PAGE':gv('p-fr28p') ? Number(gv('p-fr28p')) : null,
-    'PUB FRANCE 2029 PAGE':gv('p-fr29p') ? Number(gv('p-fr29p')) : null,
-    'PUB TIPS 2026 PAGE':gv('p-tp26p') ? Number(gv('p-tp26p')) : null,
-    'PUB TIPS 2027 PAGE':gv('p-tp27p') ? Number(gv('p-tp27p')) : null,
-    'PUB TIPS 2028 PAGE':gv('p-tp28p') ? Number(gv('p-tp28p')) : null,
-    'PUB SEJOURS 2023 PAGE':gv('p-sej23p') ? Number(gv('p-sej23p')) : null,
-    'PUB SEJOURS 2025 PAGE':gv('p-sej25p') ? Number(gv('p-sej25p')) : null,
-    'PUB SEJOURS 2027 PAGE':gv('p-sej27p') ? Number(gv('p-sej27p')) : null,
-    // Tarifs
-    'PUB BELUX TARIF':gv('p-bx26t') ? Number(gv('p-bx26t')) : null,
-    'PUB BELUX 2027 TARIF':gv('p-bx27t') ? Number(gv('p-bx27t')) : null,
-    'PUB BELUX 2028 TARIF':gv('p-bx28t') ? Number(gv('p-bx28t')) : null,
-    'PUB FRANCE TARIF':gv('p-fr27t') ? Number(gv('p-fr27t')) : null,
-    'PUB FRANCE 2028 TARIF':gv('p-fr28t') ? Number(gv('p-fr28t')) : null,
-    'PUB FRANCE 2029 TARIF':gv('p-fr29t') ? Number(gv('p-fr29t')) : null,
-    'PUB TIPS TARIF':gv('p-tp26t') ? Number(gv('p-tp26t')) : null,
-    'PUB TIPS 2027 TARIF':gv('p-tp27t') ? Number(gv('p-tp27t')) : null,
-    'PUB TIPS 2028 TARIF':gv('p-tp28t') ? Number(gv('p-tp28t')) : null,
-    'PUB SEJOURS 2023 TARIF':gv('p-sej23t') ? Number(gv('p-sej23t')) : null,
-    'PUB SEJOURS TARIF':gv('p-sej25t') ? Number(gv('p-sej25t')) : null,
-    'PUB SEJOURS 2027 TARIF':gv('p-sej27t') ? Number(gv('p-sej27t')) : null,
+    // Publications annuelles — page gratuite, page payante, tarif, commentaires
+    'PUB BELUX PAGE GRATUITE':gv('p-bx-pg') ? Number(gv('p-bx-pg')) : null,
+    'PUB BELUX PAGE PAYANTE':gv('p-bx-pp') ? Number(gv('p-bx-pp')) : null,
+    'PUB BELUX TARIF':gv('p-bx-t') ? Number(gv('p-bx-t')) : null,
+    'PUB BELUX COMMENTAIRES':gv('p-bx-com'),
+    'PUB FRANCE PAGE GRATUITE':gv('p-fr-pg') ? Number(gv('p-fr-pg')) : null,
+    'PUB FRANCE PAGE PAYANTE':gv('p-fr-pp') ? Number(gv('p-fr-pp')) : null,
+    'PUB FRANCE TARIF':gv('p-fr-t') ? Number(gv('p-fr-t')) : null,
+    'PUB FRANCE COMMENTAIRES':gv('p-fr-com'),
+    'PUB TIPS PAGE GRATUITE':gv('p-tp-pg') ? Number(gv('p-tp-pg')) : null,
+    'PUB TIPS PAGE PAYANTE':gv('p-tp-pp') ? Number(gv('p-tp-pp')) : null,
+    'PUB TIPS TARIF':gv('p-tp-t') ? Number(gv('p-tp-t')) : null,
+    'PUB TIPS COMMENTAIRES':gv('p-tp-com'),
+    'PUB SEJOURS PAGE GRATUITE':gv('p-sej-pg') ? Number(gv('p-sej-pg')) : null,
+    'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
+    'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
+    'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
     // Newsletters / Bannière
-    'NL MENSUELLE':gv('p-nlm'),'NL MENSUELLE TARIF':gv('p-nlmt') ? Number(gv('p-nlmt')) : null,
-    'NL PERSO':gv('p-nlp'),'NL PERSO TARIF':gv('p-nlpt') ? Number(gv('p-nlpt')) : null,
+    'NL MENSUELLE':gv('p-nlm'),'NL MENSUELLE PERIODE':gv('p-nlmt')||null,
+    'NL PERSO':gv('p-nlp'),'NL PERSO PERIODE':gv('p-nlpt')||null,
     'BANNIERE SITE':gv('p-ban'),'BANNIERE TARIF':gv('p-bant') ? Number(gv('p-bant')) : null,
   };
-  TRIMS.forEach((t,i)=>{ F[t.bx]=gv(`tr-bx${i}`); F[t.fr]=gv(`tr-fr${i}`); });
-  // Remove null/empty strings
-  Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]==='') delete F[k]; });
+  TRIMS.forEach((t,i)=>{
+    F[t.bx]=gv(`tr-bx${i}`);
+    F[t.bx+' NBR']=gv(`tr-bxn${i}`) ? Number(gv(`tr-bxn${i}`)) : null;
+    F[t.bx+' FORMAT']=gv(`tr-bxf${i}`);
+    F[t.bx+' DEC']=gv(`tr-bxd${i}`);
+    F[t.bx+' PRIX']=gv(`tr-bxp${i}`) ? Number(gv(`tr-bxp${i}`)) : null;
+    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`);
+    F[t.fr]=gv(`tr-fr${i}`);
+    F[t.fr+' NBR']=gv(`tr-frn${i}`) ? Number(gv(`tr-frn${i}`)) : null;
+    F[t.fr+' FORMAT']=gv(`tr-frf${i}`);
+    F[t.fr+' DEC']=gv(`tr-frd${i}`);
+    F[t.fr+' PRIX']=gv(`tr-frp${i}`) ? Number(gv(`tr-frp${i}`)) : null;
+    F[t.fr+' TOTAL']=gv(`tr-frt${i}`);
+  });
+  // Remove null/empty/false
+  Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
   return F;
 }
 
 // ══════════════════════════════════════
-//  SAVE
+//  SAVE MEMBER
 // ══════════════════════════════════════
 async function saveMember(){
-  // Validate AGENT is selected
-  const agent=document.getElementById('f-agent').value;
-  if(!agent){
-    alert('⚠️ Veuillez sélectionner un AGENT avant d\'enregistrer.');
-    document.getElementById('f-agent').focus();
-    return;
-  }
-  // Auto-update date de modification to today
+  const agent=gv('f-agent');
+  if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('f-modif').value=today;
   const info=document.getElementById('save-info');
   info.textContent='⏳ Enregistrement...';
   const fields=collectFields();
-  // Ensure date de modification is in the fields
   fields['Date de modification']=today;
   try{
     let res;
@@ -990,99 +1078,128 @@ async function saveMember(){
       res=await atPatch(curId,fields);
     } else {
       res=await atPost(fields);
-      if(res.records&&res.records[0]){
-        curId=res.records[0].id;
-        members.push(res.records[0]);
-        buildSelect();
-        document.getElementById('msel').value=curId;
-      }
+      if(res.records&&res.records[0]) curId=res.records[0].id;
     }
-    if(res.error){
-      info.textContent='❌ '+res.error.message;
-    } else {
-      clearDirty();
-      info.textContent='✅ Enregistré avec succès';
-      document.getElementById('name-bar').textContent=fields['NOM ATTRACTION']||'— MEMBRE —';
-      // Update member list name
-      const idx=members.findIndex(m=>m.id===curId);
-      if(idx>=0&&fields['NOM ATTRACTION']){
-        members[idx].fields['NOM ATTRACTION']=fields['NOM ATTRACTION'];
-        buildSelect(); document.getElementById('msel').value=curId;
-      }
-      setTimeout(()=>info.textContent='',4000);
-    }
-  } catch(e){info.textContent='❌ Erreur réseau';console.error(e);}
-}
-
-// ══════════════════════════════════════
-//  NEW MEMBER
-// ══════════════════════════════════════
-function newMember(){
-  if(isDirty){
-    if(!confirm('Des modifications non sauvegardées seront perdues. Créer un nouveau membre quand même ?')) return;
+    if(res.error){info.textContent='⚠️ '+res.error.message;return;}
     clearDirty();
-  }
-  curId=null;
-  document.getElementById('msel').value='';
-  document.getElementById('srch').value='';
-  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  document.getElementById('f-num').textContent='';
-  // Clear all inputs
-  document.querySelectorAll('#view-fiche input[type=text],#view-fiche input[type=email],#view-fiche input[type=tel],#view-fiche input[type=url],#view-fiche input[type=number],#view-fiche input[type=date],#view-fiche textarea,#view-fiche select')
-    .forEach(el=>el.value='');
-  document.querySelectorAll('#view-fiche input[type=checkbox]').forEach(el=>el.checked=false);
-  document.getElementById('f-lang').value='FR';
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('f-entree').value=today;
-  document.getElementById('f-majd').value=today;
-  document.getElementById('save-info').textContent='💡 Remplissez la fiche puis cliquez sur Enregistrer';
-  showView('fiche');
+    info.textContent='✅ Sauvegardé';
+    setTimeout(()=>info.textContent='',3000);
+    await loadAll();
+    if(curId) document.getElementById('msel').value=curId;
+  }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
 }
 
 // ══════════════════════════════════════
-//  RECHERCHE TABLE
+//  BUILD RECHERCHE TABLE
 // ══════════════════════════════════════
 function buildTable(){
   const tbody=document.getElementById('rch-tbody');
+  const tbl=document.getElementById('rch-tbl');
+  const loading=document.getElementById('rch-loading');
+  const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
-  members.forEach(m=>{
+  const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
+  const filtered=members.filter(m=>{
+    if(!q) return true;
+    const f=m.fields;
+    return [f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+            String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
+      .some(v=>(v||'').toLowerCase().includes(q));
+  });
+  filtered.forEach(m=>{
     const f=m.fields;
     const tr=document.createElement('tr');
-    const lang=f['LANGUE']||'';
-    const badge=lang?`<span class="badge ${lang==='NL'?'badge-nl':'badge-fr'}">${lang}</span>`:'';
-    tr.innerHTML=`
-      <td class="num">${f['Nº de membre']||f['﻿N°']||''}</td>
-      <td>${f['ENSEIGNE']||''}</td>
-      <td><b>${f['NOM ATTRACTION']||''}</b></td>
-      <td>${f['CATÉGORIE']||''}</td>
-      <td>${f['COMMUNE']||''}</td>
-      <td>${f['PROVINCE']||''}</td>
-      <td style="text-align:center;">${f['CODE']!=null?f['CODE']:''}</td>
-      <td style="text-align:center;">${f['Clé de TRI 2']!=null?f['Clé de TRI 2']:''}</td>
-      <td style="text-align:center;">${f['Clé de TRI 3']!=null?f['Clé de TRI 3']:''}</td>
-      <td style="text-align:center;">${f['Clé de TRI 4']!=null?f['Clé de TRI 4']:''}</td>
-      <td>${f['AGENT']||''}</td>
-      <td style="text-align:center;">${badge}</td>
-      <td style="text-align:center;">${f['COTISATION BE']||''}</td>
-      <td style="text-align:center;font-size:11px;">${fmtDate(f['ÉCHÉANCE BE'])}</td>`;
+    tr.style.cursor='pointer';
     tr.onclick=()=>{
+      if(isDirty){
+        if(!confirm('Des modifications non sauvegardées seront perdues. Charger quand même ?')) return;
+        clearDirty();
+      }
       document.getElementById('msel').value=m.id;
-      loadMember();
+      curId=m.id;
+      fillForm(f);
+      clearDirty();
+      showView('fiche');
+      setSt('✅ Membre chargé');
     };
+    const td=(v,right)=>{
+      const d=document.createElement('td');
+      d.textContent=v||'';
+      if(right) d.style.textAlign='right';
+      return d;
+    };
+    tr.appendChild(td(f['Nº de membre']||f['﻿N°']||''));
+    tr.appendChild(td(f['ENSEIGNE']||''));
+    tr.appendChild(td(f['NOM ATTRACTION']||''));
+    tr.appendChild(td(f['CATÉGORIE']||''));
+    tr.appendChild(td(f['COMMUNE']||''));
+    tr.appendChild(td(f['PROVINCE']||''));
+    tr.appendChild(td(f['CODE']||''));
+    tr.appendChild(td(f['Clé de TRI 2']||'',true));
+    tr.appendChild(td(f['Clé de TRI 3']||'',true));
+    tr.appendChild(td(f['Clé de TRI 4']||'',true));
+    tr.appendChild(td(f['AGENT']||''));
+    tr.appendChild(td(f['LANGUE']||''));
+    tr.appendChild(td(f['COTISATION BE']||''));
+    tr.appendChild(td(f['ÉCHÉANCE BE']?f['ÉCHÉANCE BE'].substring(0,10):''));
     tbody.appendChild(tr);
   });
-  document.getElementById('rch-loading').style.display='none';
-  document.getElementById('rch-tbl').style.display='';
-  document.getElementById('rch-cnt').textContent=`${members.length} membres`;
+  if(loading) loading.style.display='none';
+  if(tbl) tbl.style.display='';
+  if(cnt) cnt.textContent=filtered.length+' / '+members.length+' membres';
 }
 
 function filterTable(){
-  const q=document.getElementById('rch-f').value.toLowerCase();
-  let n=0;
-  document.querySelectorAll('#rch-tbody tr').forEach(tr=>{
-    const ok=!q||tr.textContent.toLowerCase().includes(q);
-    tr.style.display=ok?'':'none';
-    if(ok) n++;
+  buildTable();
+}
+
+// ══════════════════════════════════════
+//  VIEW NAVIGATION
+// ══════════════════════════════════════
+function showView(v){
+  if(v!=='fiche'&&isDirty){
+    if(!confirm('Des modifications non sauvegardées seront perdues. Continuer ?')) return;
+    clearDirty();
+  }
+  ['fiche','recherche','confirmation'].forEach(id=>{
+    const el=document.getElementById('view-'+id);
+    if(el) el.style.display=(id===v)?'':'none';
+  });
+  if(v==='recherche') buildTable();
+}
+
+function newMember(){
+  if(isDirty){
+    if(!confirm('Des modifications non sauvegardées seront perdues. Nouveau membre quand même ?')) return;
+  }
+  curId=null;
+  clearDirty();
+  document.querySelectorAll('#view-fiche input').forEach(el=>{
+    if(el.type==='checkbox') el.checked=false;
+    else el.value='';
+  });
+  document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
+  document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  document.getElementById('f-num').textContent='';
+  const le=document.getElementById('f-lang');
+  if(le) le.value='FR';
+  showView('fiche');
+}
+
+function setSt(msg){
+  const el=document.getElementById('status');
+  if(el) el.textContent=msg;
+}
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+loadAll();
+</script>
+</body>
+</html>
+) n++;
   });
   document.getElementById('rch-cnt').textContent=`${n} / ${members.length} membres`;
 }
