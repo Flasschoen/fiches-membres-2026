@@ -403,7 +403,7 @@ body{background:#dce3ef;min-height:100vh;}
 
         <!-- FRANCE card (BLEU) -->
         <div class="pub-card">
-          <div class="pub-hdr" style="background:#1a5276;color:#fff;">📘 SORTIES SCOLAIRES France</div>
+          <div class="pub-hdr" style="background:#2980b9;color:#fff;">📘 SORTIES SCOLAIRES France</div>
           <div class="pub-years">
             <label><input type="checkbox" id="p-fr27" onchange="markDirty()"> 2027</label>
             <label><input type="checkbox" id="p-fr28" onchange="markDirty()"> 2028</label>
@@ -506,7 +506,7 @@ body{background:#dce3ef;min-height:100vh;}
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="7" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="7" class="sub2">NEWS SCOLAIRES France</th>
+            <th colspan="7" class="sub2" style="background:#c39bd3;color:#6c3483;">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
@@ -517,13 +517,13 @@ body{background:#dce3ef;min-height:100vh;}
             <th class="sub2" style="width:40px;">PRIX</th>
             <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
-            <th class="sub2" style="width:22px;">✓</th>
-            <th class="sub2" style="width:30px;">Nbr</th>
-            <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:28px;">DEC</th>
-            <th class="sub2" style="width:40px;">PRIX</th>
-            <th class="sub2" style="width:40px;">CRÉDIT</th>
-            <th class="sub2" style="width:40px;">TOTAL</th>
+            <th class="sub2" style="width:22px;background:#c39bd3;color:#6c3483;">✓</th>
+            <th class="sub2" style="width:30px;background:#c39bd3;color:#6c3483;">Nbr</th>
+            <th class="sub2" style="width:80px;background:#c39bd3;color:#6c3483;">Format</th>
+            <th class="sub2" style="width:28px;background:#c39bd3;color:#6c3483;">DEC</th>
+            <th class="sub2" style="width:40px;background:#c39bd3;color:#6c3483;">PRIX</th>
+            <th class="sub2" style="width:40px;background:#c39bd3;color:#6c3483;">CRÉDIT</th>
+            <th class="sub2" style="width:40px;background:#c39bd3;color:#6c3483;">TOTAL</th>
           </tr>
         </thead>
         <tbody id="trim-body"></tbody>
@@ -542,9 +542,9 @@ body{background:#dce3ef;min-height:100vh;}
               <th style="width:20px;">✓</th>
               <th>NL MENSUELLE</th>
               <th style="width:52px;">Tarif (€)</th>
-              <th style="width:20px;">✓</th>
-              <th>NL PERSONNALISÉE</th>
-              <th style="width:52px;">Tarif (€)</th>
+              <th style="width:20px;background:#2980b9;color:#fff;">✓</th>
+              <th style="background:#2980b9;color:#fff;">NL PERSONNALISÉE</th>
+              <th style="width:52px;background:#2980b9;color:#fff;">Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
@@ -693,7 +693,49 @@ body{background:#dce3ef;min-height:100vh;}
       </div>
 
       <div class="sec" style="margin-top:7px;">📊 TOTAUX ÉDITIONS</div>
-      <table style="font-size:10px;border-collapse:collapse;width:100%;margin-top:3px;" id="tot-ed-table">
+
+      <!-- ── Brochures annuelles ── -->
+      <div style="font-size:10px;font-weight:700;color:#1e3a6e;margin:3px 0 2px;padding-left:2px;">📗 Brochures annuelles</div>
+      <table style="font-size:10px;border-collapse:collapse;width:100%;margin-bottom:6px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:2px 6px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;min-width:55px;"></th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">PAGES</th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">TARIF</th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">CRÉDIT</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#fffde7;">
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">BELUX</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-bx-pg" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-bx-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-bx-cr" style="font-weight:700;color:#217346;">—</span></td>
+          </tr>
+          <tr style="background:#e8f4fb;">
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">FRANCE</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-fr-pg" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-fr-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-fr-cr" style="font-weight:700;color:#217346;">—</span></td>
+          </tr>
+          <tr>
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">TIPS</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-tp-pg" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-tp-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-tp-cr" style="font-weight:700;color:#217346;">—</span></td>
+          </tr>
+          <tr style="background:#f5eef8;">
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">SÉJOURS</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-sej-pg" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-sej-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-sej-cr" style="font-weight:700;color:#217346;">—</span></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <!-- ── NEWS Scolaires ── -->
+      <div style="font-size:10px;font-weight:700;color:#1e3a6e;margin:3px 0 2px;padding-left:2px;">📰 NEWS Scolaires</div>
+      <table style="font-size:10px;border-collapse:collapse;width:100%;margin-bottom:3px;" id="tot-ed-table">
         <thead>
           <tr>
             <th style="text-align:center;padding:2px 4px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;width:28px;">N°</th>
@@ -705,26 +747,30 @@ body{background:#dce3ef;min-height:100vh;}
         <tbody id="tot-ed-rows">
           <!-- Rempli dynamiquement par buildTotEdRows() -->
         </tbody>
-        <tfoot>
-          <tr style="background:#e8f4fb;">
-            <td colspan="2" style="padding:3px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;font-size:10px;">TOTAL PAGES</td>
-            <td colspan="2" style="text-align:center;border:1px solid #c0cce0;padding:3px 4px;font-weight:700;color:#217346;" id="tot-pg-row">
-              BX&nbsp;<span id="tot-bx-pg">—</span>&nbsp;/ FR&nbsp;<span id="tot-fr-pg">—</span>
-            </td>
+      </table>
+      <table style="font-size:10px;border-collapse:collapse;width:100%;margin-top:2px;">
+        <thead>
+          <tr>
+            <th style="text-align:left;padding:2px 6px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;min-width:55px;"></th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">DEC</th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">TARIF</th>
+            <th style="text-align:center;padding:2px 5px;background:#dce6f5;color:#1e3a6e;border:1px solid #c0cce0;">CRÉDIT</th>
           </tr>
-          <tr style="background:#f0fff0;">
-            <td colspan="2" style="padding:3px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;font-size:10px;">TOTAL TARIF</td>
-            <td colspan="2" style="text-align:center;border:1px solid #c0cce0;padding:3px 4px;font-weight:700;color:#217346;">
-              BX&nbsp;<span id="tot-bx-tar">—</span>&nbsp;/ FR&nbsp;<span id="tot-fr-tar">—</span>
-            </td>
+        </thead>
+        <tbody>
+          <tr style="background:#fffde7;">
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">NEWS BX</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-bx-dec" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-bx-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-bx-cr" style="font-weight:700;color:#217346;">—</span></td>
           </tr>
-          <tr style="background:#f0fff0;">
-            <td colspan="2" style="padding:3px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;font-size:10px;">TOTAL CRÉDIT</td>
-            <td colspan="2" style="text-align:center;border:1px solid #c0cce0;padding:3px 4px;font-weight:700;color:#217346;">
-              BX&nbsp;<span id="tot-bx-cr">—</span>&nbsp;/ FR&nbsp;<span id="tot-fr-cr">—</span>
-            </td>
+          <tr style="background:#f5eef8;">
+            <td style="padding:2px 6px;border:1px solid #c0cce0;font-weight:700;color:#1e3a6e;">NEWS FR</td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-fr-dec" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-fr-tar" style="font-weight:700;color:#217346;">—</span></td>
+            <td style="text-align:center;border:1px solid #c0cce0;padding:2px 5px;"><span id="tot-news-fr-cr" style="font-weight:700;color:#217346;">—</span></td>
           </tr>
-        </tfoot>
+        </tbody>
       </table>
     </div><!-- /right col -->
   </div><!-- /two-col -->
@@ -888,13 +934,13 @@ TRIMS.forEach((t,i)=>{
     <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
     <td><input type="number" id="tr-bxcr${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTotaux()" placeholder="0"></td>
     <td><input type="text" id="tr-bxt${i}" style="width:36px;font-size:10px;background:#eef;border:1px solid #bbd;" readonly tabindex="-1"></td>
-    <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
-    <td><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
-    <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-frd${i}`,24)}</td>
-    <td><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
-    <td><input type="number" id="tr-frcr${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTotaux()" placeholder="0"></td>
-    <td><input type="text" id="tr-frt${i}" style="width:36px;font-size:10px;background:#eef;border:1px solid #bbd;" readonly tabindex="-1"></td>
+    <td style="background:#faf0fe;"><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
+    <td style="background:#faf0fe;"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
+    <td style="background:#faf0fe;"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
+    <td style="background:#faf0fe;">${_inp(`tr-frd${i}`,24)}</td>
+    <td style="background:#faf0fe;"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
+    <td style="background:#faf0fe;"><input type="number" id="tr-frcr${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTotaux()" placeholder="0"></td>
+    <td style="background:#faf0fe;"><input type="text" id="tr-frt${i}" style="width:36px;font-size:10px;background:#ede0f7;border:1px solid #c39bd3;" readonly tabindex="-1"></td>
   </tr>`;
 });
 
@@ -959,41 +1005,52 @@ function calcTrimRow(i){
 }
 
 function calcTotaux(){
-  const fmt=(v,dec)=>v!==0 ? v.toLocaleString('fr-BE',dec?{style:'currency',currency:'EUR'}:{minimumFractionDigits:2,maximumFractionDigits:2}) : '—';
-  // ─ BELUX ─
-  const bxPg=(parseFloat(document.getElementById('p-bx-pg')?.value)||0)+(parseFloat(document.getElementById('p-bx-pp')?.value)||0);
-  const bxTar=parseFloat(document.getElementById('p-bx-t')?.value)||0;
-  const bxCr=parseFloat(document.getElementById('p-bx-cr')?.value)||0;
-  let bxTrimTar=0,bxTrimCr=0;
+  const fmt=(v,dec)=>v!==0?v.toLocaleString('fr-BE',dec?{style:'currency',currency:'EUR'}:{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  // Helper: convertit "1/2 pub" → 0.5, "1/4 rédac" → 0.25, "1/1 pub" → 1
+  function fmtPage(s){if(!s)return 0;const m=s.match(/^(\d+)\/(\d+)/);return m?parseInt(m[1])/parseInt(m[2]):0;}
+
+  // ── Brochures annuelles (4 cartes) ──
+  [
+    {pfx:'bx',  pgId:'tot-bx-pg',  tarId:'tot-bx-tar',  crId:'tot-bx-cr' },
+    {pfx:'fr',  pgId:'tot-fr-pg',  tarId:'tot-fr-tar',  crId:'tot-fr-cr' },
+    {pfx:'tp',  pgId:'tot-tp-pg',  tarId:'tot-tp-tar',  crId:'tot-tp-cr' },
+    {pfx:'sej', pgId:'tot-sej-pg', tarId:'tot-sej-tar', crId:'tot-sej-cr'},
+  ].forEach(c=>{
+    const pg=(parseFloat(document.getElementById('p-'+c.pfx+'-pg')?.value)||0)
+             +(parseFloat(document.getElementById('p-'+c.pfx+'-pp')?.value)||0);
+    const tar=parseFloat(document.getElementById('p-'+c.pfx+'-t')?.value)||0;
+    const cr =parseFloat(document.getElementById('p-'+c.pfx+'-cr')?.value)||0;
+    const elPg=document.getElementById(c.pgId);
+    const elTar=document.getElementById(c.tarId);
+    const elCr =document.getElementById(c.crId);
+    if(elPg)  elPg.textContent =fmt(pg,false);
+    if(elTar) elTar.textContent=fmt(tar,true);
+    if(elCr)  elCr.textContent =fmt(cr,true);
+  });
+
+  // ── NEWS Scolaires (N°s cochés uniquement) ──
+  let bxDec=[],bxTar=0,bxCr=0,frDec=[],frTar=0,frCr=0;
   for(let i=0;i<TRIMS.length;i++){
     if(document.getElementById('tot-bx-ck'+i)?.checked){
-      bxTrimTar+=parseFloat(document.getElementById('tr-bxt'+i)?.value)||0;
-      bxTrimCr+=parseFloat(document.getElementById('tr-bxcr'+i)?.value)||0;
+      const d=(document.getElementById('tr-bxd'+i)?.value||'').trim();
+      if(d) bxDec.push(d);
+      bxTar+=parseFloat(document.getElementById('tr-bxt'+i)?.value)||0;
+      bxCr +=parseFloat(document.getElementById('tr-bxcr'+i)?.value)||0;
     }
-  }
-  const elBxPg=document.getElementById('tot-bx-pg');
-  const elBxTar=document.getElementById('tot-bx-tar');
-  const elBxCr=document.getElementById('tot-bx-cr');
-  if(elBxPg) elBxPg.textContent=fmt(bxPg,false);
-  if(elBxTar) elBxTar.textContent=fmt(bxTar+bxTrimTar,true);
-  if(elBxCr) elBxCr.textContent=fmt(bxCr+bxTrimCr,true);
-  // ─ FRANCE ─
-  const frPg=(parseFloat(document.getElementById('p-fr-pg')?.value)||0)+(parseFloat(document.getElementById('p-fr-pp')?.value)||0);
-  const frTar=parseFloat(document.getElementById('p-fr-t')?.value)||0;
-  const frCr=parseFloat(document.getElementById('p-fr-cr')?.value)||0;
-  let frTrimTar=0,frTrimCr=0;
-  for(let i=0;i<TRIMS.length;i++){
     if(document.getElementById('tot-fr-ck'+i)?.checked){
-      frTrimTar+=parseFloat(document.getElementById('tr-frt'+i)?.value)||0;
-      frTrimCr+=parseFloat(document.getElementById('tr-frcr'+i)?.value)||0;
+      const d=(document.getElementById('tr-frd'+i)?.value||'').trim();
+      if(d) frDec.push(d);
+      frTar+=parseFloat(document.getElementById('tr-frt'+i)?.value)||0;
+      frCr +=parseFloat(document.getElementById('tr-frcr'+i)?.value)||0;
     }
   }
-  const elFrPg=document.getElementById('tot-fr-pg');
-  const elFrTar=document.getElementById('tot-fr-tar');
-  const elFrCr=document.getElementById('tot-fr-cr');
-  if(elFrPg) elFrPg.textContent=fmt(frPg,false);
-  if(elFrTar) elFrTar.textContent=fmt(frTar+frTrimTar,true);
-  if(elFrCr) elFrCr.textContent=fmt(frCr+frTrimCr,true);
+  const elBxDec=document.getElementById('tot-news-bx-dec');
+  const elFrDec=document.getElementById('tot-news-fr-dec');
+  if(elBxDec) elBxDec.textContent=bxDec.length?bxDec.join(' / '):'—';
+  if(elFrDec) elFrDec.textContent=frDec.length?frDec.join(' / '):'—';
+  [['tot-news-bx-tar',bxTar,true],['tot-news-bx-cr',bxCr,true],
+   ['tot-news-fr-tar',frTar,true],['tot-news-fr-cr',frCr,true]
+  ].forEach(([id,v,dec])=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v,dec);});
 }
 
 function markDirty(){
