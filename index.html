@@ -783,7 +783,7 @@ body{background:#dce3ef;min-height:100vh;}
 ════════════════════════════════ -->
 <div id="view-recherche" class="view">
 <div class="main">
-  <div style="display:flex;align-items:center;gap:12px;margin:12px 0 8px;">
+  <div style="display:flex;align-items:center;gap:12px;margin:12px 0 4px;">
     <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
     <h2 style="color:#1e3a6e;font-size:16px;font-weight:700;">🔍 LISTE DES MEMBRES 2026</h2>
     <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
@@ -791,6 +791,22 @@ body{background:#dce3ef;min-height:100vh;}
       style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:300px;font-size:13px;">
     <span id="rch-cnt" style="font-size:12px;color:#555;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:10px;margin:0 0 8px;flex-wrap:wrap;">
+    <label style="font-size:12px;color:#555;font-weight:600;">CODE :</label>
+    <input type="text" id="rch-code" placeholder="…" oninput="filterTable()"
+      style="padding:3px 7px;border:1px solid #aaa;border-radius:3px;width:90px;font-size:12px;">
+    <label style="font-size:12px;color:#555;font-weight:600;">TRI 1 :</label>
+    <input type="text" id="rch-tri1" placeholder="…" oninput="filterTable()"
+      style="padding:3px 7px;border:1px solid #aaa;border-radius:3px;width:55px;font-size:12px;">
+    <label style="font-size:12px;color:#555;font-weight:600;">TRI 2 :</label>
+    <input type="text" id="rch-tri2" placeholder="…" oninput="filterTable()"
+      style="padding:3px 7px;border:1px solid #aaa;border-radius:3px;width:55px;font-size:12px;">
+    <label style="font-size:12px;color:#555;font-weight:600;">TRI 3 :</label>
+    <input type="text" id="rch-tri3" placeholder="…" oninput="filterTable()"
+      style="padding:3px 7px;border:1px solid #aaa;border-radius:3px;width:55px;font-size:12px;">
+    <button onclick="document.getElementById('rch-code').value='';document.getElementById('rch-tri1').value='';document.getElementById('rch-tri2').value='';document.getElementById('rch-tri3').value='';filterTable();"
+      style="padding:3px 8px;font-size:11px;border:1px solid #aaa;border-radius:3px;background:#f5f5f5;cursor:pointer;color:#555;">✕ Effacer</button>
   </div>
   <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
   <div style="overflow-x:auto;">
@@ -1445,13 +1461,21 @@ function buildTable(){
   const loading=document.getElementById('rch-loading');
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
-  const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
+  const q    =(document.getElementById('rch-f')   ||{value:''}).value.toLowerCase();
+  const qCode=(document.getElementById('rch-code')||{value:''}).value.toLowerCase();
+  const qTri1=(document.getElementById('rch-tri1')||{value:''}).value.toLowerCase();
+  const qTri2=(document.getElementById('rch-tri2')||{value:''}).value.toLowerCase();
+  const qTri3=(document.getElementById('rch-tri3')||{value:''}).value.toLowerCase();
   const filtered=members.filter(m=>{
-    if(!q) return true;
     const f=m.fields;
-    return [f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
-            String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
-      .some(v=>(v||'').toLowerCase().includes(q));
+    if(q && ![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+               String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
+              .some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(qCode && !String(f['CODE']||'').toLowerCase().includes(qCode)) return false;
+    if(qTri1 && !String(f['Clé de TRI 2']||'').toLowerCase().includes(qTri1)) return false;
+    if(qTri2 && !String(f['Clé de TRI 3']||'').toLowerCase().includes(qTri2)) return false;
+    if(qTri3 && !String(f['Clé de TRI 4']||'').toLowerCase().includes(qTri3)) return false;
+    return true;
   });
   filtered.forEach(m=>{
     const f=m.fields;
