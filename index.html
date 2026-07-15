@@ -538,39 +538,97 @@ body{background:#dce3ef;min-height:100vh;}
         <table class="pt">
           <thead>
             <tr>
-              <th colspan="4" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
+              <th colspan="6" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
             </tr>
             <tr>
-              <th style="width:24px;">✓</th>
-              <th>NL MENSUELLE — Tarif (€)</th>
-              <th style="width:24px;">✓</th>
-              <th>NL PERSONNALISÉE — Tarif (€)</th>
+              <th style="width:20px;">✓</th>
+              <th>NL MENSUELLE</th>
+              <th style="width:52px;">Tarif (€)</th>
+              <th style="width:20px;">✓</th>
+              <th>NL PERSONNALISÉE</th>
+              <th style="width:52px;">Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlmt1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar1" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlpt1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlp-tar1" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlmt2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar2" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlpt2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlp-tar2" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlmt3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar3" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlpt3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlp-tar3" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlmt4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar4" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><select id="p-nlpt4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlp-tar4" style="width:50px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
           </tbody>
         </table>
@@ -807,17 +865,17 @@ TRIMS.forEach((t,i)=>{
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
+    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
     <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
     <td>${_inp(`tr-bxd${i}`,24)}</td>
-    <td>${_inp(`tr-bxp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-bxt${i}`,36)}</td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
+    <td><input type="text" id="tr-bxt${i}" style="width:36px;font-size:10px;background:#eef;border:1px solid #bbd;" readonly tabindex="-1"></td>
     <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-frn${i}`,26,'number')}</td>
+    <td><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
     <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
     <td>${_inp(`tr-frd${i}`,24)}</td>
-    <td>${_inp(`tr-frp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-frt${i}`,36)}</td>
+    <td><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimRow(${i})"></td>
+    <td><input type="text" id="tr-frt${i}" style="width:36px;font-size:10px;background:#eef;border:1px solid #bbd;" readonly tabindex="-1"></td>
   </tr>`;
 });
 
@@ -837,6 +895,17 @@ function calcPubTot(pfx){
   const tval=document.getElementById('p-'+pfx+'-tval');
   if(tot) tot.textContent=(pg+pp).toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(tval) tval.textContent=t ? Number(t).toLocaleString('fr-BE',{style:'currency',currency:'EUR'}) : '—';
+}
+
+function calcTrimRow(i){
+  const nbxn=parseFloat(document.getElementById('tr-bxn'+i)?.value)||0;
+  const nbxp=parseFloat(document.getElementById('tr-bxp'+i)?.value)||0;
+  const bxt=document.getElementById('tr-bxt'+i);
+  if(bxt) bxt.value=(nbxn*nbxp)||'';
+  const nfrn=parseFloat(document.getElementById('tr-frn'+i)?.value)||0;
+  const nfrp=parseFloat(document.getElementById('tr-frp'+i)?.value)||0;
+  const frt=document.getElementById('tr-frt'+i);
+  if(frt) frt.value=(nfrn*nfrp)||'';
 }
 
 function markDirty(){
@@ -1066,8 +1135,10 @@ function fillForm(f){
   // Newsletters / Bannières (4 lignes chacun)
   for(let i=1;i<=4;i++){
     sv(`p-nlm${i}`,f[`NL MENSUELLE ${i}`],true);
+    sv(`p-nlmt${i}`,f[`NL MENSUELLE PERIODE ${i}`]);
     sv(`p-nlm-tar${i}`,f[`NL MENSUELLE TARIF ${i}`]!==undefined&&f[`NL MENSUELLE TARIF ${i}`]!==null ? String(f[`NL MENSUELLE TARIF ${i}`]) : null);
     sv(`p-nlp${i}`,f[`NL PERSO ${i}`],true);
+    sv(`p-nlpt${i}`,f[`NL PERSO PERIODE ${i}`]);
     sv(`p-nlp-tar${i}`,f[`NL PERSO TARIF ${i}`]!==undefined&&f[`NL PERSO TARIF ${i}`]!==null ? String(f[`NL PERSO TARIF ${i}`]) : null);
     sv(`p-ban${i}`,f[`BANNIERE ${i}`],true);
     sv(`p-banp${i}`,f[`BANNIERE PERIODE ${i}`]);
@@ -1151,8 +1222,10 @@ function collectFields(){
   };
   for(let i=1;i<=4;i++){
     F[`NL MENSUELLE ${i}`]=gv(`p-nlm${i}`);
+    F[`NL MENSUELLE PERIODE ${i}`]=gv(`p-nlmt${i}`)||null;
     F[`NL MENSUELLE TARIF ${i}`]=gv(`p-nlm-tar${i}`) ? Number(gv(`p-nlm-tar${i}`)) : null;
     F[`NL PERSO ${i}`]=gv(`p-nlp${i}`);
+    F[`NL PERSO PERIODE ${i}`]=gv(`p-nlpt${i}`)||null;
     F[`NL PERSO TARIF ${i}`]=gv(`p-nlp-tar${i}`) ? Number(gv(`p-nlp-tar${i}`)) : null;
     F[`BANNIERE ${i}`]=gv(`p-ban${i}`);
     F[`BANNIERE PERIODE ${i}`]=gv(`p-banp${i}`)||null;
@@ -1164,13 +1237,13 @@ function collectFields(){
     F[t.bx+' FORMAT']=gv(`tr-bxf${i}`);
     F[t.bx+' DEC']=gv(`tr-bxd${i}`);
     F[t.bx+' PRIX']=gv(`tr-bxp${i}`) ? Number(gv(`tr-bxp${i}`)) : null;
-    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`);
+    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`) ? Number(gv(`tr-bxt${i}`)) : null;
     F[t.fr]=gv(`tr-fr${i}`);
     F[t.fr+' NBR']=gv(`tr-frn${i}`) ? Number(gv(`tr-frn${i}`)) : null;
     F[t.fr+' FORMAT']=gv(`tr-frf${i}`);
     F[t.fr+' DEC']=gv(`tr-frd${i}`);
     F[t.fr+' PRIX']=gv(`tr-frp${i}`) ? Number(gv(`tr-frp${i}`)) : null;
-    F[t.fr+' TOTAL']=gv(`tr-frt${i}`);
+    F[t.fr+' TOTAL']=gv(`tr-frt${i}`) ? Number(gv(`tr-frt${i}`)) : null;
   });
   // Remove null/empty/false
   Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
