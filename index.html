@@ -199,7 +199,7 @@ body{background:#dce3ef;min-height:100vh;}
         <div class="fr"><div class="fl">Catégorie :</div><div class="fv">
           <select id="f-cat" style="width:100%;">
             <option value="">—</option>
-            <option>MUSEE</option><option>PARC</option><option>NATURE</option>
+            <option>ATTRACTION</option><option>MUSEE</option><option>PARC</option><option>NATURE</option>
             <option>SPORT</option><option>CULTURE</option><option>LOISIRS</option>
             <option>PATRIMOINE</option><option>TOURISME</option><option>AUTRE</option>
           </select></div></div>
@@ -315,7 +315,10 @@ body{background:#dce3ef;min-height:100vh;}
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant BE :</div>
-          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montbe" style="width:70px;" oninput="markDirty()"> €</div>
+          <div class="fv" style="flex:0 0 110px;">
+            <select id="f-montbe" onchange="markDirty()" style="width:78px;">
+              <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
+            </select> €</div>
           <div class="fl" style="min-width:90px;">Échéance BE :</div>
           <div class="fv"><input type="date" id="f-echbe" onchange="markDirty()"></div>
         </div>
@@ -327,7 +330,10 @@ body{background:#dce3ef;min-height:100vh;}
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant LU :</div>
-          <div class="fv" style="flex:0 0 100px;"><input type="number" id="f-montlu" style="width:70px;"> €</div>
+          <div class="fv" style="flex:0 0 110px;">
+            <select id="f-montlu" onchange="markDirty()" style="width:78px;">
+              <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
+            </select> €</div>
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
           <div class="fv"><input type="date" id="f-echlu"></div>
         </div>
@@ -375,13 +381,13 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-bx-t" class="sel-tarif" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td colspan="2"></td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-bx-pp" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-bx-t" class="sel-tarif" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -408,13 +414,13 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-fr-t" class="sel-tarif" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td colspan="2"></td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-fr-pp" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-fr-t" class="sel-tarif" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -441,13 +447,13 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-tp-t" class="sel-tarif" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td colspan="2"></td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-tp-pp" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-tp-t" class="sel-tarif" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -474,13 +480,13 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-sej-t" class="sel-tarif" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td colspan="2"></td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-sej-pp" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl">TARIF :</td>
+              <td><select id="p-sej-t" class="sel-tarif" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -526,54 +532,109 @@ body{background:#dce3ef;min-height:100vh;}
       </table>
 
       <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
-      <table class="pt">
-        <thead>
-          <tr>
-            <th style="text-align:left;padding-left:8px;">SERVICE</th>
-            <th style="width:40px;">✓</th>
-            <th style="width:120px;">Période</th>
-            <th style="width:75px;">Tarif (€)</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td class="yl">Newsletter MENSUELLE</td>
-            <td><input type="checkbox" id="p-nlm" onchange="markDirty()"></td>
-            <td><select id="p-nlmt" class="sel-tarif" style="width:115px;" onchange="markDirty()">
-              <option value="">—</option>
-              <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
-              <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
-              <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
-              <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
-            </select></td>
-            <td><input type="number" id="p-nlm-tar" style="width:68px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-          </tr>
-          <tr>
-            <td class="yl">Newsletter PERSONNALISÉE</td>
-            <td><input type="checkbox" id="p-nlp" onchange="markDirty()"></td>
-            <td><select id="p-nlpt" class="sel-tarif" style="width:115px;" onchange="markDirty()">
-              <option value="">—</option>
-              <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
-              <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
-              <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
-              <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
-            </select></td>
-            <td><input type="number" id="p-nlp-tar" style="width:68px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-          </tr>
-          <tr>
-            <td class="yl">Bannière sur SITE WEB</td>
-            <td><input type="checkbox" id="p-ban" onchange="markDirty()"></td>
-            <td><select id="p-bant" class="sel-tarif" style="width:115px;" onchange="markDirty()">
-              <option value="">—</option>
-              <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
-              <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
-              <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
-              <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
-            </select></td>
-            <td><input type="number" id="p-ban-tar" style="width:68px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-          </tr>
-        </tbody>
-      </table>
+      <div style="display:grid;grid-template-columns:3fr 2fr;gap:5px;margin-top:2px;">
+
+        <!-- NEWSLETTERS (gauche) -->
+        <table class="pt">
+          <thead>
+            <tr>
+              <th colspan="4" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
+            </tr>
+            <tr>
+              <th style="width:24px;">✓</th>
+              <th>NL MENSUELLE — Tarif (€)</th>
+              <th style="width:24px;">✓</th>
+              <th>NL PERSONNALISÉE — Tarif (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <!-- BANNIÈRES SUR SITE (droite) -->
+        <table class="pt">
+          <thead>
+            <tr>
+              <th colspan="3" style="background:#2e5096;text-align:center;letter-spacing:.5px;">BANNIÈRES SUR SITE</th>
+            </tr>
+            <tr>
+              <th style="width:24px;">✓</th>
+              <th>Période</th>
+              <th style="width:65px;">Tarif (€)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><input type="checkbox" id="p-ban1" onchange="markDirty()"></td>
+              <td><select id="p-banp1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-ban-tar1" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-ban2" onchange="markDirty()"></td>
+              <td><select id="p-banp2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-ban-tar2" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-ban3" onchange="markDirty()"></td>
+              <td><select id="p-banp3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-ban-tar3" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+            <tr>
+              <td><input type="checkbox" id="p-ban4" onchange="markDirty()"></td>
+              <td><select id="p-banp4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-ban-tar4" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
       <div class="sec" style="margin-top:7px;">📊 Totaux Sorties Scolaires</div>
       <div class="fg">
@@ -938,10 +999,10 @@ function fillForm(f){
   sv('f-tri3',  f['Clé de TRI 4']);
 
   sv('f-cotbe', f['COTISATION BE']);
-  sv('f-montbe',f['MONTANT BE']);
+  sv('f-montbe',f['MONTANT BE']!==undefined&&f['MONTANT BE']!==null ? String(f['MONTANT BE']) : null);
   sv('f-echbe', fmtDate(f['ÉCHÉANCE BE']));
   sv('f-cotlu', f['COTISATION LU']);
-  sv('f-montlu',f['MONTANT LU']);
+  sv('f-montlu',f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : null);
   sv('f-echlu', fmtDate(f['ÉCHÉANCE LU']));
 
   sv('f-rem',  f['REMARQUES']);
@@ -1002,16 +1063,16 @@ function fillForm(f){
     sv(`tr-frt${i}`,f[t.fr+' TOTAL']);
   });
 
-  // Newsletters / Bannière
-  sv('p-nlm',f['NL MENSUELLE'],true);
-  sv('p-nlmt',f['NL MENSUELLE PERIODE']||f['NL MENSUELLE TARIF']);
-  sv('p-nlm-tar',f['NL MENSUELLE MONTANT']!==undefined ? String(f['NL MENSUELLE MONTANT']) : null);
-  sv('p-nlp',f['NL PERSO'],true);
-  sv('p-nlpt',f['NL PERSO PERIODE']||f['NL PERSO TARIF']);
-  sv('p-nlp-tar',f['NL PERSO MONTANT']!==undefined ? String(f['NL PERSO MONTANT']) : null);
-  sv('p-ban',f['BANNIERE SITE'],true);
-  sv('p-bant',f['BANNIERE PERIODE']||f['BANNIERE TARIF PERIODE']);
-  sv('p-ban-tar',f['BANNIERE TARIF']!==undefined ? String(f['BANNIERE TARIF']) : null);
+  // Newsletters / Bannières (4 lignes chacun)
+  for(let i=1;i<=4;i++){
+    sv(`p-nlm${i}`,f[`NL MENSUELLE ${i}`],true);
+    sv(`p-nlm-tar${i}`,f[`NL MENSUELLE TARIF ${i}`]!==undefined&&f[`NL MENSUELLE TARIF ${i}`]!==null ? String(f[`NL MENSUELLE TARIF ${i}`]) : null);
+    sv(`p-nlp${i}`,f[`NL PERSO ${i}`],true);
+    sv(`p-nlp-tar${i}`,f[`NL PERSO TARIF ${i}`]!==undefined&&f[`NL PERSO TARIF ${i}`]!==null ? String(f[`NL PERSO TARIF ${i}`]) : null);
+    sv(`p-ban${i}`,f[`BANNIERE ${i}`],true);
+    sv(`p-banp${i}`,f[`BANNIERE PERIODE ${i}`]);
+    sv(`p-ban-tar${i}`,f[`BANNIERE TARIF ${i}`]!==undefined&&f[`BANNIERE TARIF ${i}`]!==null ? String(f[`BANNIERE TARIF ${i}`]) : null);
+  }
 
   // Update totaux displays
   ['bx','fr','tp','sej'].forEach(pfx=>calcPubTot(pfx));
@@ -1059,8 +1120,8 @@ function collectFields(){
     'CONTACT 2':gv('f-c2'),'TITRE 2':gv('f-t2'),'GSM 2':gv('f-g2'),'EMAIL 2':gv('f-e2'),
     'CONTACT 3':gv('f-c3'),'TITRE 3':gv('f-t3'),'GSM 3':gv('f-g3'),'EMAIL 3':gv('f-e3'),
     'CONTACT 4':gv('f-c4'),'TITRE 4':gv('f-t4'),'GSM 4':gv('f-g4'),'EMAIL 4':gv('f-e4'),
-    'COTISATION BE':gv('f-cotbe'),'MONTANT BE':gv('f-montbe'),'ÉCHÉANCE BE':gv('f-echbe')||null,
-    'COTISATION LU':gv('f-cotlu'),'MONTANT LU':gv('f-montlu'),'ÉCHÉANCE LU':gv('f-echlu')||null,
+    'COTISATION BE':gv('f-cotbe'),'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
+    'COTISATION LU':gv('f-cotlu'),'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
     'REMARQUES':gv('f-rem'),
     'Date mise à jour données':gv('f-majd')||null,
     'Effectué par':gv('f-majp'),
@@ -1086,14 +1147,17 @@ function collectFields(){
     'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
     'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
     'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
-    // Newsletters / Bannière
-    'NL MENSUELLE':gv('p-nlm'),'NL MENSUELLE PERIODE':gv('p-nlmt')||null,
-    'NL MENSUELLE MONTANT':gv('p-nlm-tar') ? Number(gv('p-nlm-tar')) : null,
-    'NL PERSO':gv('p-nlp'),'NL PERSO PERIODE':gv('p-nlpt')||null,
-    'NL PERSO MONTANT':gv('p-nlp-tar') ? Number(gv('p-nlp-tar')) : null,
-    'BANNIERE SITE':gv('p-ban'),'BANNIERE PERIODE':gv('p-bant')||null,
-    'BANNIERE TARIF':gv('p-ban-tar') ? Number(gv('p-ban-tar')) : null,
+    // Newsletters / Bannières (4 lignes chacun) — ajoutées dynamiquement ci-dessous
   };
+  for(let i=1;i<=4;i++){
+    F[`NL MENSUELLE ${i}`]=gv(`p-nlm${i}`);
+    F[`NL MENSUELLE TARIF ${i}`]=gv(`p-nlm-tar${i}`) ? Number(gv(`p-nlm-tar${i}`)) : null;
+    F[`NL PERSO ${i}`]=gv(`p-nlp${i}`);
+    F[`NL PERSO TARIF ${i}`]=gv(`p-nlp-tar${i}`) ? Number(gv(`p-nlp-tar${i}`)) : null;
+    F[`BANNIERE ${i}`]=gv(`p-ban${i}`);
+    F[`BANNIERE PERIODE ${i}`]=gv(`p-banp${i}`)||null;
+    F[`BANNIERE TARIF ${i}`]=gv(`p-ban-tar${i}`) ? Number(gv(`p-ban-tar${i}`)) : null;
+  }
   TRIMS.forEach((t,i)=>{
     F[t.bx]=gv(`tr-bx${i}`);
     F[t.bx+' NBR']=gv(`tr-bxn${i}`) ? Number(gv(`tr-bxn${i}`)) : null;
@@ -1142,7 +1206,7 @@ async function saveMember(){
   }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
 }
 
-// ════════════════════════════════�
+// ════════════════════════════════�
 // ══════════════════════════════════════
 //  BUILD RECHERCHE TABLE
 // ══════════════════════════════════════
@@ -1190,10 +1254,10 @@ function buildTable(){
     tr.appendChild(td(f['CATÉGORIE']||''));
     tr.appendChild(td(f['COMMUNE']||''));
     tr.appendChild(td(f['PROVINCE']||''));
-    tr.appendChild(td(f['CODE']||''));
-    tr.appendChild(td(f['Clé de TRI 2']||'',true));
-    tr.appendChild(td(f['Clé de TRI 3']||'',true));
-    tr.appendChild(td(f['Clé de TRI 4']||'',true));
+    tr.appendChild(td(f['CODE']!==undefined&&f['CODE']!==null?String(f['CODE']):''));
+    tr.appendChild(td(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?String(f['Clé de TRI 2']):'',true));
+    tr.appendChild(td(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?String(f['Clé de TRI 3']):'',true));
+    tr.appendChild(td(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?String(f['Clé de TRI 4']):'',true));
     tr.appendChild(td(f['AGENT']||''));
     tr.appendChild(td(f['LANGUE']||''));
     tr.appendChild(td(f['COTISATION BE']||''));
@@ -1248,25 +1312,6 @@ function setSt(msg){
   const el=document.getElementById('status');
   if(el) el.textContent=msg;
 }
-
-// ══════════════════════════════════════
-//  INIT
-// ══════════════════════════════════════
-loadAll();
-</script>
-</body>
-</html>
-f(!confirm('Des modifications non sauvegardées seront perdues. Continuer sans enregistrer ?')) return;
-    clearDirty();
-  }
-  document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
-  document.getElementById('view-'+name).classList.add('active');
-}
-
-// ══════════════════════════════════════
-//  STATUS
-// ══════════════════════════════════════
-function setSt(msg){document.getElementById('status').textContent=msg;}
 
 // ══════════════════════════════════════
 //  INIT
