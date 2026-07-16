@@ -386,11 +386,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-bx-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+              <td><input type="number" id="p-bx-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -401,12 +398,12 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-bx-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td><input type="text" id="p-bx-dec" style="width:55px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
             </tr>
             <tr style="background:#f0fff0;">
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
-              <td colspan="3"><input type="text" id="p-bx-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
+              <td colspan="3"><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -427,11 +424,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-fr-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+              <td><input type="number" id="p-fr-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -442,12 +436,12 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-fr-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td><input type="text" id="p-fr-dec" style="width:55px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
             </tr>
             <tr style="background:#f0fff0;">
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
-              <td colspan="3"><input type="text" id="p-fr-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
+              <td colspan="3"><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -468,11 +462,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-tp-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+              <td><input type="number" id="p-tp-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -483,12 +474,12 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-tp-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td><input type="text" id="p-tp-dec" style="width:55px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
             </tr>
             <tr style="background:#f0fff0;">
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
-              <td colspan="3"><input type="text" id="p-tp-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
+              <td colspan="3"><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -509,11 +500,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-sej-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+              <td><input type="number" id="p-sej-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -524,12 +512,12 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-sej-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td><input type="text" id="p-sej-dec" style="width:55px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
             </tr>
             <tr style="background:#f0fff0;">
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
-              <td colspan="3"><input type="text" id="p-sej-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
+              <td colspan="3"><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -547,7 +535,7 @@ body{background:#dce3ef;min-height:100vh;}
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="7" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="7" class="sub2" style="background:#bdd7ee;color:#1e3a6e;">NEWS SCOLAIRES France</th>
+            <th colspan="7" class="sub2" style="background:#e8d5f0;color:#5b2c6f;">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
@@ -760,7 +748,7 @@ body{background:#dce3ef;min-height:100vh;}
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
           </tr>
-          <tr style="background:#1a5276;color:#fff;font-size:10px;">
+          <tr style="background:#8e44ad;color:#fff;font-size:10px;">
             <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
@@ -811,12 +799,7 @@ body{background:#dce3ef;min-height:100vh;}
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
-          <tr style="background:#1e3a6e;color:#fff;font-weight:700;">
-            <td style="padding:4px 6px;">GRAND TOTAL</td>
-            <td style="text-align:right;padding:4px;"><span id="tot-grand-tarif">—</span></td>
-            <td style="text-align:right;padding:4px;"><span id="tot-grand-cred">—</span></td>
-            <td style="text-align:right;padding:4px;font-size:13px;"><span id="tot-grand-net">—</span></td>
-          </tr>
+
         </tbody>
       </table>
     </div><!-- /right col -->
@@ -980,19 +963,19 @@ TRIMS.forEach((t,i)=>{
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
+    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
     <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
     <td>${_inp(`tr-bxd${i}`,24)}</td>
-    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()"></td>
-    <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder="0"></td>
-    <td>${_inp(`tr-bxt${i}`,36,'number')}</td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
     <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td style="background:#f3e5f5">${_inp(`tr-frn${i}`,26,'number')}</td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
     <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
     <td style="background:#f3e5f5">${_inp(`tr-frd${i}`,24)}</td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()"></td>
-    <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder="0"></td>
-    <td style="background:#f3e5f5">${_inp(`tr-frt${i}`,36,'number')}</td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
   </tr>`;
 });
 
@@ -1019,6 +1002,12 @@ function copyDossierPath(){
 // ══════════════════════════════════════
 //  DIRTY TRACKING
 // ══════════════════════════════════════
+function calcTrimTot(pfx,i){
+  const n=parseFloat(document.getElementById('tr-'+pfx+'n'+i)?.value)||0;
+  const p=parseFloat(document.getElementById('tr-'+pfx+'p'+i)?.value)||0;
+  const el=document.getElementById('tr-'+pfx+'t'+i);
+  if(el) el.value=n&&p?(n*p).toFixed(2):'';
+}
 function calcPubTot(pfx){
   const pg=parseFloat(document.getElementById('p-'+pfx+'-pg').value)||0;
   const pp=parseFloat(document.getElementById('p-'+pfx+'-pp').value)||0;
@@ -1068,11 +1057,6 @@ function calcGrandTotal(){
     const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
     grandNewsT+=bxTar+frTar; grandNewsC+=bxCred+frCred;
   });
-  grandTarif+=grandNewsT; grandCred+=grandNewsC;
-  const grandNetFinal=grandTarif-grandCred;
-  const gt=document.getElementById('tot-grand-tarif'); if(gt) gt.textContent=grandTarif?fmt(grandTarif):'—';
-  const gc=document.getElementById('tot-grand-cred');  if(gc) gc.textContent=grandCred?fmt(grandCred):'—';
-  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=grandDEC?String(grandDEC.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})):'—';
 }
 
 function markDirty(){
