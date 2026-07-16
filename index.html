@@ -404,6 +404,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-bx-com" oninput="markDirty()"></td>
             </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-bx-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+            </tr>
           </table>
         </div>
 
@@ -436,6 +440,10 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-fr-com" oninput="markDirty()"></td>
+            </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-fr-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
@@ -470,6 +478,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-tp-com" oninput="markDirty()"></td>
             </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-tp-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+            </tr>
           </table>
         </div>
 
@@ -502,6 +514,10 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-sej-com" oninput="markDirty()"></td>
+            </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-sej-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
@@ -656,6 +672,49 @@ body{background:#dce3ef;min-height:100vh;}
           <div class="fv"><input type="text" id="f-ns-bxa" style="width:70px;"></div>
         </div>
       </div>
+      <div class="sec" style="margin-top:7px;background:#1e3a6e;color:#fff;">💰 Totaux Insertions Publications</div>
+      <table style="width:100%;font-size:11px;border-collapse:collapse;margin-top:2px;">
+        <thead>
+          <tr style="background:#2e5096;color:#fff;text-align:center;">
+            <th style="padding:3px 6px;text-align:left;">Publication</th>
+            <th style="padding:3px;">Tarif (€)</th>
+            <th style="padding:3px;">Crédit (€)</th>
+            <th style="padding:3px;">Net (€)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#ffd966;color:#1e3a6e;">
+            <td style="padding:2px 6px;font-weight:700;">📗 Sorties BELUX</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-cred">—</span></td>
+            <td style="text-align:right;padding:2px 4px;font-weight:700;"><span id="tot-bx-net">—</span></td>
+          </tr>
+          <tr style="background:#d6e4f7;">
+            <td style="padding:2px 6px;font-weight:700;">📘 Sorties France</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-cred">—</span></td>
+            <td style="text-align:right;padding:2px 4px;font-weight:700;"><span id="tot-fr-net">—</span></td>
+          </tr>
+          <tr style="background:#fce5cd;">
+            <td style="padding:2px 6px;font-weight:700;">📙 TIPS Schooltrips</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-cred">—</span></td>
+            <td style="text-align:right;padding:2px 4px;font-weight:700;"><span id="tot-tp-net">—</span></td>
+          </tr>
+          <tr style="background:#e8d5f0;">
+            <td style="padding:2px 6px;font-weight:700;">🏕️ Séjours Scolaires</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
+            <td style="text-align:right;padding:2px 4px;font-weight:700;"><span id="tot-sej-net">—</span></td>
+          </tr>
+          <tr style="background:#1e3a6e;color:#fff;font-weight:700;">
+            <td style="padding:4px 6px;">GRAND TOTAL</td>
+            <td style="text-align:right;padding:4px;"><span id="tot-grand-tarif">—</span></td>
+            <td style="text-align:right;padding:4px;"><span id="tot-grand-cred">—</span></td>
+            <td style="text-align:right;padding:4px;font-size:13px;"><span id="tot-grand-net">—</span></td>
+          </tr>
+        </tbody>
+      </table>
     </div><!-- /right col -->
   </div><!-- /two-col -->
   <div style="height:25px;"></div>
@@ -862,6 +921,34 @@ function calcPubTot(pfx){
   const tval=document.getElementById('p-'+pfx+'-tval');
   if(tot) tot.textContent=(pg+pp).toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(tval) tval.textContent=t ? Number(t).toLocaleString('fr-BE',{style:'currency',currency:'EUR'}) : '—';
+  calcGrandTotal();
+}
+
+function calcGrandTotal(){
+  const fmt=(v)=>v===null?'—':v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+  const pubs=[
+    {pfx:'bx',  tid:'tot-bx'},
+    {pfx:'fr',  tid:'tot-fr'},
+    {pfx:'tp',  tid:'tot-tp'},
+    {pfx:'sej', tid:'tot-sej'},
+  ];
+  let grandTarif=0, grandCred=0;
+  pubs.forEach(({pfx,tid})=>{
+    const tEl=document.getElementById('p-'+pfx+'-t');
+    const cEl=document.getElementById('p-'+pfx+'-cred');
+    const tarif=tEl&&tEl.value ? Number(tEl.value) : 0;
+    const cred =cEl&&cEl.value ? Number(cEl.value) : 0;
+    const net  =tarif-cred;
+    const s=v=>{ const el=document.getElementById(v); if(el) el.textContent=fmt(v===tid+'-net'?net:v===tid+'-tarif'?tarif:cred); };
+    const elT=document.getElementById(tid+'-tarif'); if(elT) elT.textContent=tarif?fmt(tarif):'—';
+    const elC=document.getElementById(tid+'-cred');  if(elC) elC.textContent=cred?fmt(cred):'—';
+    const elN=document.getElementById(tid+'-net');   if(elN) elN.textContent=(tarif||cred)?fmt(net):'—';
+    grandTarif+=tarif; grandCred+=cred;
+  });
+  const grandNet=grandTarif-grandCred;
+  const gt=document.getElementById('tot-grand-tarif'); if(gt) gt.textContent=grandTarif?fmt(grandTarif):'—';
+  const gc=document.getElementById('tot-grand-cred');  if(gc) gc.textContent=grandCred?fmt(grandCred):'—';
+  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=(grandTarif||grandCred)?fmt(grandNet):'—';
 }
 
 function markDirty(){
@@ -1071,6 +1158,12 @@ function fillForm(f){
   sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
   sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
   sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
+  // Crédits
+  sv('p-bx-cred',  f['PUB BELUX CREDIT']!==undefined&&f['PUB BELUX CREDIT']!==null ? String(f['PUB BELUX CREDIT']) : null);
+  sv('p-fr-cred',  f['PUB FRANCE CREDIT']!==undefined&&f['PUB FRANCE CREDIT']!==null ? String(f['PUB FRANCE CREDIT']) : null);
+  sv('p-tp-cred',  f['PUB TIPS CREDIT']!==undefined&&f['PUB TIPS CREDIT']!==null ? String(f['PUB TIPS CREDIT']) : null);
+  sv('p-sej-cred', f['PUB SEJOURS CREDIT']!==undefined&&f['PUB SEJOURS CREDIT']!==null ? String(f['PUB SEJOURS CREDIT']) : null);
+  calcGrandTotal();
 
   // Trimestrielles
   TRIMS.forEach((t,i)=>{
@@ -1172,6 +1265,10 @@ function collectFields(){
     'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
     'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
     'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
+    'PUB BELUX CREDIT':  gv('p-bx-cred')  ? Number(gv('p-bx-cred'))  : null,
+    'PUB FRANCE CREDIT': gv('p-fr-cred')  ? Number(gv('p-fr-cred'))  : null,
+    'PUB TIPS CREDIT':   gv('p-tp-cred')  ? Number(gv('p-tp-cred'))  : null,
+    'PUB SEJOURS CREDIT':gv('p-sej-cred') ? Number(gv('p-sej-cred')) : null,
     // Newsletters / Bannières (4 lignes chacun) — ajoutées dynamiquement ci-dessous
   };
   for(let i=1;i<=4;i++){
@@ -1338,9 +1435,8 @@ function newMember(){
   });
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
-  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  document.getElementById('f-num').value='';
-  const le=document.getElementById('f-lang');
+  // Restaurer valeurs par défaut après vidage
+  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
   if(le) le.value='FR';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   const t=document.getElementById('view-fiche');
