@@ -162,6 +162,8 @@ body{background:#dce3ef;min-height:100vh;}
 <div class="actions-bar">
   <button class="btn btn-save" onclick="saveMember()">💾 Enregistrer</button>
   <button class="btn btn-cancel" onclick="loadMember()">↩ Annuler</button>
+  <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
+  <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
   <select id="f-agent" onchange="markDirty()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
@@ -981,6 +983,22 @@ buildTotEdRows();
 //  STATE
 // ══════════════════════════════════════
 let members=[], curId=null, isDirty=false;
+
+// ── Chemin de base des dossiers membres (Windows local / Google Drive) ──
+// Mettre à jour cette constante quand le dossier est déplacé sur Google Drive
+const DOSSIER_BASE = 'C:\\Users\\Marc\\Desktop\\DOSSIER PARTENAIRES 2026';
+
+function copyDossierPath(){
+  const m = members.find(x => x.id === curId);
+  if(!m){ alert('Aucun membre sélectionné.'); return; }
+  const nom = m.fields['NOM ATTRACTION'] || m.fields['ENSEIGNE'] || '';
+  if(!nom){ alert('Nom du membre introuvable.'); return; }
+  const path = DOSSIER_BASE + '\\' + nom;
+  navigator.clipboard.writeText(path).then(()=>{
+    const msg = document.getElementById('dossier-msg');
+    if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
+  }).catch(()=>{ prompt('Copiez ce chemin :', path); });
+}
 
 // ══════════════════════════════════════
 //  DIRTY TRACKING
