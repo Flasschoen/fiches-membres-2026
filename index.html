@@ -388,6 +388,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
               <td colspan="2"></td>
             </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-bx-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+            </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-bx-pp" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
@@ -400,20 +404,20 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
               <td><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
+            <tr style="background:#f0fff0;">
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td colspan="3"><input type="text" id="p-bx-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+            </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-bx-com" oninput="markDirty()"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
-              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-bx-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
 
         <!-- FRANCE card (BLEU) -->
         <div class="pub-card">
-          <div class="pub-hdr" style="background:#1a5276;color:#fff;">📘 SORTIES SCOLAIRES France</div>
+          <div class="pub-hdr" style="background:#bdd7ee;color:#1e3a6e;">📘 SORTIES SCOLAIRES France</div>
           <div class="pub-years">
             <label><input type="checkbox" id="p-fr27" onchange="markDirty()"> 2027</label>
             <label><input type="checkbox" id="p-fr28" onchange="markDirty()"> 2028</label>
@@ -424,6 +428,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
               <td colspan="2"></td>
+            </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-fr-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -437,13 +445,13 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
               <td><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
+            <tr style="background:#f0fff0;">
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td colspan="3"><input type="text" id="p-fr-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+            </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-fr-com" oninput="markDirty()"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
-              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-fr-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
@@ -462,6 +470,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
               <td colspan="2"></td>
             </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-tp-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+            </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-tp-pp" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
@@ -474,13 +486,13 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
               <td><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
+            <tr style="background:#f0fff0;">
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td colspan="3"><input type="text" id="p-tp-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+            </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-tp-com" oninput="markDirty()"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
-              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-tp-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
@@ -499,6 +511,10 @@ body{background:#dce3ef;min-height:100vh;}
               <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
               <td colspan="2"></td>
             </tr>
+            <tr style="background:#fff3cd;">
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td colspan="3"><input type="number" id="p-sej-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
+            </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
               <td><select id="p-sej-pp" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
@@ -511,13 +527,13 @@ body{background:#dce3ef;min-height:100vh;}
               <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
               <td><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
             </tr>
+            <tr style="background:#f0fff0;">
+              <td class="pub-lbl" style="color:#217346;font-size:10px;">DEC :</td>
+              <td colspan="3"><input type="text" id="p-sej-dec" style="width:65px;border:1px solid #c3d9c3;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()"></td>
+            </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
               <td colspan="3"><input type="text" id="p-sej-com" oninput="markDirty()"></td>
-            </tr>
-            <tr style="background:#fff3cd;">
-              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
-              <td colspan="3"><input type="number" id="p-sej-cred" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder="0"> €</td>
             </tr>
           </table>
         </div>
@@ -530,8 +546,8 @@ body{background:#dce3ef;min-height:100vh;}
           <tr>
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
-            <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="6" class="sub2">NEWS SCOLAIRES France</th>
+            <th colspan="7" class="sub2">NEWS SCOLAIRES Belux</th>
+            <th colspan="7" class="sub2" style="background:#bdd7ee;color:#1e3a6e;">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
@@ -540,12 +556,14 @@ body{background:#dce3ef;min-height:100vh;}
             <th class="sub2" style="width:80px;">Format</th>
             <th class="sub2" style="width:28px;">DEC</th>
             <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
             <th class="sub2" style="width:22px;">✓</th>
             <th class="sub2" style="width:30px;">Nbr</th>
             <th class="sub2" style="width:80px;">Format</th>
             <th class="sub2" style="width:28px;">DEC</th>
             <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
           </tr>
         </thead>
@@ -564,34 +582,34 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <th style="width:24px;">✓</th>
               <th>NL MENSUELLE — Tarif (€)</th>
-              <th style="width:24px;">✓</th>
-              <th>NL PERSONNALISÉE — Tarif (€)</th>
+              <th style="width:24px;background:#d6e4f7;">✓</th>
+              <th style="background:#d6e4f7;color:#1e3a6e;">NL PERSONNALISÉE — Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
           </tbody>
         </table>
@@ -656,22 +674,6 @@ body{background:#dce3ef;min-height:100vh;}
           </tbody>
         </table>
       </div>
-
-      <div class="sec" style="margin-top:7px;">📊 Totaux Sorties Scolaires</div>
-      <div class="fg">
-        <div class="fr">
-          <div class="fl">Sorties BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">Sorties BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxa" style="width:70px;"></div>
-        </div>
-        <div class="fr">
-          <div class="fl">News BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">News BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxa" style="width:70px;"></div>
-        </div>
-      </div>
       <div class="sec" style="margin-top:7px;background:#1e3a6e;color:#fff;">💰 Totaux Insertions Publications</div>
       <table style="width:100%;font-size:11px;border-collapse:collapse;margin-top:2px;">
         <thead>
@@ -706,6 +708,108 @@ body{background:#dce3ef;min-height:100vh;}
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
             <td style="text-align:right;padding:2px 4px;font-weight:700;"><span id="tot-sej-net">—</span></td>
+          </tr>
+          <tr style="background:#2e5096;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+          </tr>
+          <tr style="background:#555;color:#fff;font-size:9px;">
+            <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:center;">DEC</th>
+            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-dec-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
+          </tr>
+          <tr style="background:#1a5276;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+          </tr>
+          <tr style="background:#555;color:#fff;font-size:9px;">
+            <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:center;">DEC</th>
+            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-dec-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
           <tr style="background:#1e3a6e;color:#fff;font-weight:700;">
             <td style="padding:4px 6px;">GRAND TOTAL</td>
@@ -860,13 +964,13 @@ const URL=`https://api.airtable.com/v0/${B}/${T}`;
 //  PÉRIODES TRIMESTRIELLES
 // ══════════════════════════════════════
 const TRIMS=[
-  {n:'N°3',p:'SEPT-OCT-NOV 2026',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
-  {n:'N°4',p:'DÉC-JAN-FÉV 2027', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
-  {n:'N°5',p:'MARS-AVR-MAI 2027', bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
-  {n:'N°6',p:'JUIN-JUIL-AOÛT 2027',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
-  {n:'N°7',p:'SEPT-OCT-NOV 2027', bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
-  {n:'N°8',p:'DÉC-JAN-FÉV 2028', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
-  {n:'N°9',p:'MARS-AVR-MAI 2028', bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
+  {n:'N°3',p:'SEPT 26',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
+  {n:'N°4',p:'DÉC 26', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
+  {n:'N°5',p:'MARS 27',bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
+  {n:'N°6',p:'JUIN 27',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
+  {n:'N°7',p:'SEPT 27',bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
+  {n:'N°8',p:'DÉC 27', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
+  {n:'N°9',p:'MARS 28',bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
 const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
@@ -875,18 +979,20 @@ TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
-    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty()"></td>
+    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
     <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
     <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
     <td>${_inp(`tr-bxd${i}`,24)}</td>
-    <td>${_inp(`tr-bxp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-bxt${i}`,36)}</td>
-    <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-frn${i}`,26,'number')}</td>
-    <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-frd${i}`,24)}</td>
-    <td>${_inp(`tr-frp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-frt${i}`,36)}</td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder="0"></td>
+    <td>${_inp(`tr-bxt${i}`,36,'number')}</td>
+    <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="background:#f3e5f5">${_inp(`tr-frn${i}`,26,'number')}</td>
+    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5">${_inp(`tr-frd${i}`,24)}</td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()"></td>
+    <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder="0"></td>
+    <td style="background:#f3e5f5">${_inp(`tr-frt${i}`,36,'number')}</td>
   </tr>`;
 });
 
@@ -945,10 +1051,28 @@ function calcGrandTotal(){
     const elN=document.getElementById(tid+'-net');   if(elN) elN.textContent=(tarif||cred)?fmt(net):'—';
     grandTarif+=tarif; grandCred+=cred;
   });
-  const grandNet=grandTarif-grandCred;
+  // ── NEWS par N° ──
+  let grandNewsT=0,grandNewsC=0;
+  TRIMS.forEach((_,i)=>{
+    const bxDec=document.getElementById('tr-bxd'+i)?.value||'—';
+    const bxTar=Number(document.getElementById('tr-bxp'+i)?.value)||0;
+    const bxCred=Number(document.getElementById('tr-bxc'+i)?.value)||0;
+    const e1=document.getElementById('tot-nbx-dec-'+i); if(e1) e1.textContent=bxDec!=='—'&&bxDec?bxDec:'—';
+    const e2=document.getElementById('tot-nbx-tar-'+i); if(e2) e2.textContent=bxTar?fmt(bxTar):'—';
+    const e3=document.getElementById('tot-nbx-cred-'+i); if(e3) e3.textContent=bxCred?fmt(bxCred):'—';
+    const frDec=document.getElementById('tr-frd'+i)?.value||'—';
+    const frTar=Number(document.getElementById('tr-frp'+i)?.value)||0;
+    const frCred=Number(document.getElementById('tr-frc'+i)?.value)||0;
+    const e4=document.getElementById('tot-nfr-dec-'+i); if(e4) e4.textContent=frDec!=='—'&&frDec?frDec:'—';
+    const e5=document.getElementById('tot-nfr-tar-'+i); if(e5) e5.textContent=frTar?fmt(frTar):'—';
+    const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
+    grandNewsT+=bxTar+frTar; grandNewsC+=bxCred+frCred;
+  });
+  grandTarif+=grandNewsT; grandCred+=grandNewsC;
+  const grandNetFinal=grandTarif-grandCred;
   const gt=document.getElementById('tot-grand-tarif'); if(gt) gt.textContent=grandTarif?fmt(grandTarif):'—';
   const gc=document.getElementById('tot-grand-cred');  if(gc) gc.textContent=grandCred?fmt(grandCred):'—';
-  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=(grandTarif||grandCred)?fmt(grandNet):'—';
+  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=(grandTarif||grandCred)?fmt(grandNetFinal):'—';
 }
 
 function markDirty(){
@@ -1122,10 +1246,7 @@ function fillForm(f){
   sv('f-majp', f['Effectué par']);
 
   // Totaux sorties
-  sv('f-ss-bxt',f['SORTIES SCOLAIRES BELUX (trim.)']);
-  sv('f-ss-bxa',f['SORTIES SCOLAIRES BELUX (annuel)']);
-  sv('f-ns-bxt',f['NEWS SCOLAIRES BELUX (trim.)']);
-  sv('f-ns-bxa',f['NEWS SCOLAIRES BELUX (annuel)']);
+  // Champs Totaux Sorties Scolaires supprimés de l'interface
 
   // Publications annuelles — checkboxes
   sv('p-bx26',f['SORTIES SCOLAIRES BELUX 2026']||f['PUB BELUX 2026'],true);
@@ -1146,18 +1267,22 @@ function fillForm(f){
   sv('p-bx-pp',f['PUB BELUX PAGE PAYANTE']);
   sv('p-bx-t', f['PUB BELUX TARIF']!==undefined ? String(f['PUB BELUX TARIF']) : null);
   sv('p-bx-com',f['PUB BELUX COMMENTAIRES']);
+  sv('p-bx-dec', f['PUB BELUX DEC']);
   sv('p-fr-pg',f['PUB FRANCE PAGE GRATUITE']||f['PUB FRANCE PAGE']);
   sv('p-fr-pp',f['PUB FRANCE PAGE PAYANTE']);
   sv('p-fr-t', f['PUB FRANCE TARIF']!==undefined ? String(f['PUB FRANCE TARIF']) : null);
   sv('p-fr-com',f['PUB FRANCE COMMENTAIRES']);
+  sv('p-fr-dec', f['PUB FRANCE DEC']);
   sv('p-tp-pg',f['PUB TIPS PAGE GRATUITE']||f['PUB TIPS PAGE']);
   sv('p-tp-pp',f['PUB TIPS PAGE PAYANTE']);
   sv('p-tp-t', f['PUB TIPS TARIF']!==undefined ? String(f['PUB TIPS TARIF']) : null);
   sv('p-tp-com',f['PUB TIPS COMMENTAIRES']);
+  sv('p-tp-dec', f['PUB TIPS DEC']);
   sv('p-sej-pg',f['PUB SEJOURS PAGE GRATUITE']||f['PUB SEJOURS PAGE']);
   sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
   sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
   sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
+  sv('p-sej-dec', f['PUB SEJOURS DEC']);
   // Crédits
   sv('p-bx-cred',  f['PUB BELUX CREDIT']!==undefined&&f['PUB BELUX CREDIT']!==null ? String(f['PUB BELUX CREDIT']) : null);
   sv('p-fr-cred',  f['PUB FRANCE CREDIT']!==undefined&&f['PUB FRANCE CREDIT']!==null ? String(f['PUB FRANCE CREDIT']) : null);
@@ -1172,12 +1297,14 @@ function fillForm(f){
     sv(`tr-bxf${i}`,f[t.bx+' FORMAT']);
     sv(`tr-bxd${i}`,f[t.bx+' DEC']);
     sv(`tr-bxp${i}`,f[t.bx+' PRIX']);
+    sv(`tr-bxc${i}`,f[t.bx+' CREDIT']!==undefined&&f[t.bx+' CREDIT']!==null?String(f[t.bx+' CREDIT']):null);
     sv(`tr-bxt${i}`,f[t.bx+' TOTAL']);
     sv(`tr-fr${i}`,f[t.fr],true);
     sv(`tr-frn${i}`,f[t.fr+' NBR']);
     sv(`tr-frf${i}`,f[t.fr+' FORMAT']);
     sv(`tr-frd${i}`,f[t.fr+' DEC']);
     sv(`tr-frp${i}`,f[t.fr+' PRIX']);
+    sv(`tr-frc${i}`,f[t.fr+' CREDIT']!==undefined&&f[t.fr+' CREDIT']!==null?String(f[t.fr+' CREDIT']):null);
     sv(`tr-frt${i}`,f[t.fr+' TOTAL']);
   });
 
@@ -1286,13 +1413,15 @@ function collectFields(){
     F[t.bx+' FORMAT']=gv(`tr-bxf${i}`);
     F[t.bx+' DEC']=gv(`tr-bxd${i}`);
     F[t.bx+' PRIX']=gv(`tr-bxp${i}`) ? Number(gv(`tr-bxp${i}`)) : null;
-    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`);
+    F[t.bx+' CREDIT']=gv(`tr-bxc${i}`) ? Number(gv(`tr-bxc${i}`)) : null;
+    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`) ? Number(gv(`tr-bxt${i}`)) : null;
     F[t.fr]=gv(`tr-fr${i}`);
     F[t.fr+' NBR']=gv(`tr-frn${i}`) ? Number(gv(`tr-frn${i}`)) : null;
     F[t.fr+' FORMAT']=gv(`tr-frf${i}`);
     F[t.fr+' DEC']=gv(`tr-frd${i}`);
     F[t.fr+' PRIX']=gv(`tr-frp${i}`) ? Number(gv(`tr-frp${i}`)) : null;
-    F[t.fr+' TOTAL']=gv(`tr-frt${i}`);
+    F[t.fr+' CREDIT']=gv(`tr-frc${i}`) ? Number(gv(`tr-frc${i}`)) : null;
+    F[t.fr+' TOTAL']=gv(`tr-frt${i}`) ? Number(gv(`tr-frt${i}`)) : null;
   });
   // Remove null/empty/false
   Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
