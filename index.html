@@ -681,7 +681,7 @@ body{background:#dce3ef;min-height:100vh;}
             <th style="padding:3px 6px;text-align:left;">Publication</th>
             <th style="padding:3px;">Tarif (€)</th>
             <th style="padding:3px;">Crédit (€)</th>
-            <th style="padding:3px;">Net (€)</th>
+            <th style="padding:3px;">Total page DEC</th>
           </tr>
         </thead>
         <tbody>
@@ -1038,18 +1038,18 @@ function calcGrandTotal(){
     {pfx:'tp',  tid:'tot-tp'},
     {pfx:'sej', tid:'tot-sej'},
   ];
-  let grandTarif=0, grandCred=0;
+  let grandTarif=0, grandCred=0, grandDEC=0;
   pubs.forEach(({pfx,tid})=>{
     const tEl=document.getElementById('p-'+pfx+'-t');
     const cEl=document.getElementById('p-'+pfx+'-cred');
+    const dEl=document.getElementById('p-'+pfx+'-dec');
     const tarif=tEl&&tEl.value ? Number(tEl.value) : 0;
     const cred =cEl&&cEl.value ? Number(cEl.value) : 0;
-    const net  =tarif-cred;
-    const s=v=>{ const el=document.getElementById(v); if(el) el.textContent=fmt(v===tid+'-net'?net:v===tid+'-tarif'?tarif:cred); };
+    const dec  =dEl&&dEl.value ? dEl.value : '—';
     const elT=document.getElementById(tid+'-tarif'); if(elT) elT.textContent=tarif?fmt(tarif):'—';
     const elC=document.getElementById(tid+'-cred');  if(elC) elC.textContent=cred?fmt(cred):'—';
-    const elN=document.getElementById(tid+'-net');   if(elN) elN.textContent=(tarif||cred)?fmt(net):'—';
-    grandTarif+=tarif; grandCred+=cred;
+    const elN=document.getElementById(tid+'-net');   if(elN) elN.textContent=dec;
+    grandTarif+=tarif; grandCred+=cred; grandDEC+=parseFloat(dec)||0;
   });
   // ── NEWS par N° ──
   let grandNewsT=0,grandNewsC=0;
@@ -1072,7 +1072,7 @@ function calcGrandTotal(){
   const grandNetFinal=grandTarif-grandCred;
   const gt=document.getElementById('tot-grand-tarif'); if(gt) gt.textContent=grandTarif?fmt(grandTarif):'—';
   const gc=document.getElementById('tot-grand-cred');  if(gc) gc.textContent=grandCred?fmt(grandCred):'—';
-  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=(grandTarif||grandCred)?fmt(grandNetFinal):'—';
+  const gn=document.getElementById('tot-grand-net');   if(gn) gn.textContent=grandDEC?String(grandDEC.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})):'—';
 }
 
 function markDirty(){
