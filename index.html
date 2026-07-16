@@ -185,7 +185,7 @@ body{background:#dce3ef;min-height:100vh;}
       <input type="date" id="f-modif" style="border:1px solid #bbb;padding:2px 4px;font-size:11px;margin-left:4px;"></span>
     <span style="margin-left:auto;font-size:13px;">
       <b style="color:#1e3a6e;">N° :</b>
-      <span id="f-num" style="font-size:17px;font-weight:700;color:#c55a11;margin-left:5px;"></span>
+      <input type="number" id="f-num" oninput="markDirty()" min="1" style="font-size:16px;font-weight:700;color:#c55a11;margin-left:5px;width:65px;border:1px solid #bbb;border-radius:3px;padding:2px 5px;text-align:center;">
     </span>
   </div>
 
@@ -1196,8 +1196,8 @@ function sv(id,val,cb=false){
 }
 
 function fillForm(f){
-  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['ENSEIGNE']||'— MEMBRE —';
-  document.getElementById('f-num').textContent=f['Nº de membre']||f['﻿N°']||'';
+  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'— MEMBRE —';
+  document.getElementById('f-num').value=f['Nº de membre']||f['﻿N°']||'';
 
   sv('f-entree', fmtDate(f['DATE ENTRÉE']));
   sv('f-modif',  fmtDate(f['Date de modification']));
@@ -1342,6 +1342,7 @@ function gv(id){
 
 function collectFields(){
   const F={
+    'Nº de membre':gv('f-num') ? Number(gv('f-num')) : null,
     'NOM ATTRACTION':gv('f-attr'),
     'CATÉGORIE':gv('f-cat'),
     'Enseigne commerciale':gv('f-ens'),
@@ -1447,7 +1448,11 @@ async function saveMember(){
     info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
     await loadAll();
-    if(curId) document.getElementById('msel').value=curId;
+    if(curId){
+      document.getElementById('msel').value=curId;
+      const saved=members.find(m=>m.id===curId);
+      if(saved) fillForm(saved.fields);
+    }
   }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
 }
 
@@ -1553,7 +1558,7 @@ function newMember(){
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
   document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  document.getElementById('f-num').textContent='';
+  document.getElementById('f-num').value='';
   const le=document.getElementById('f-lang');
   if(le) le.value='FR';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
