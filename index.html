@@ -1558,7 +1558,15 @@ function newMember(){
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
   document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  document.getElementById('f-num').value='';
+  // N° de membre suivant (max existant + 1)
+  const maxNum=members.length>0
+    ? Math.max(...members.map(m=>parseInt(m.fields['Nº de membre']||m.fields['﻿N°']||0)||0))
+    : 0;
+  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+  // Date de création = aujourd'hui
+  const todayStr=new Date().toISOString().split('T')[0];
+  const fe=document.getElementById('f-entree');
+  if(fe) fe.value=todayStr;
   const le=document.getElementById('f-lang');
   if(le) le.value='FR';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
