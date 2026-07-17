@@ -135,6 +135,13 @@ body{background:#dce3ef;min-height:100vh;}
   .conf-doc{box-shadow:none;margin:0;padding:20px;}
 }
 /* Remove number spinners */
+@keyframes flash-new {
+  0%,100%{background:inherit;}
+  20%,60%{background:#b8f5b8;}
+  40%,80%{background:#66e066;}
+}
+tr.flash-new{animation:flash-new 2s ease 3;}
+
 input[type=number]::-webkit-inner-spin-button,
 input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
 input[type=number]{-moz-appearance:textfield;appearance:textfield;}
@@ -1420,6 +1427,7 @@ async function saveMember(){
   info.textContent='⏳ Enregistrement...';
   const fields=collectFields();
   fields['Date de modification']=today;
+  const wasExisting=!!curId;
   try{
     let res;
     if(curId){
@@ -1432,11 +1440,20 @@ async function saveMember(){
     clearDirty();
     info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
+    const wasNew=!wasExisting;
     await loadAll();
     if(curId){
       document.getElementById('msel').value=curId;
       const saved=members.find(m=>m.id===curId);
       if(saved) fillForm(saved.fields);
+      if(wasNew){
+        // Aller dans RECHERCHE et surligner le nouveau membre
+        showView('recherche');
+        setTimeout(()=>{
+          const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
+          if(row){row.scrollIntoView({behavior:'smooth',block:'center'});row.classList.add('flash-new');setTimeout(()=>row.classList.remove('flash-new'),7000);}
+        },400);
+      }
     }
   }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
 }
@@ -1470,6 +1487,7 @@ function buildTable(){
   filtered.forEach(m=>{
     const f=m.fields;
     const tr=document.createElement('tr');
+    tr.dataset.id=m.id;
     tr.style.cursor='pointer';
     tr.onclick=()=>{
       if(isDirty){
@@ -1572,18 +1590,20 @@ function newMember(){
   if(le) le.value='FR';
   document.querySelectorAll('#view-fiche input').forEach(el=>{
     if(el.type==='checkbox') el.checked=false;
-    else el.value='';
+    else if(!el.readOnly) el.value='';
   });
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
-  // Restaurer valeurs par défaut après vidage
-  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
-  if(fe) fe.value=todayStr;
-  const fm=document.getElementById('f-modif'); if(fm) fm.value=todayStr;
-  if(le) le.value='FR';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   const t=document.getElementById('view-fiche');
   if(t) t.classList.add('active');
+  // Restaurer valeurs par défaut (setTimeout garantit l'ordre DOM)
+  setTimeout(()=>{
+    document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+    if(fe) fe.value=todayStr;
+    const fm=document.getElementById('f-modif'); if(fm) fm.value=todayStr;
+    if(le) le.value='FR';
+  },30);
 }
 
 function setSt(msg){
