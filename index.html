@@ -1378,6 +1378,8 @@ function gv(id){
 
 function collectFields(){
   const F={
+    'Nº de membre': gv('f-num') ? Number(gv('f-num')) : null,
+    'DATE ENTRÉE':  gv('f-entree') || null,
     'NOM ATTRACTION':gv('f-attr'),
     'CATÉGORIE':gv('f-cat'),
     'Enseigne commerciale':gv('f-ens'),
@@ -1459,6 +1461,27 @@ function collectFields(){
 // ══════════════════════════════════════
 //  SAVE MEMBER
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+//  NOUVEAU MEMBRE
+// ══════════════════════════════════════
+function newMember(){
+  if(isDirty&&!confirm('Des modifications non sauvegardées seront perdues. Continuer ?')) return;
+  curId=null;
+  clearDirty();
+  fillForm({});
+  // N° = max existant + 1
+  const maxNum=members.reduce((mx,m)=>Math.max(mx,Number(m.fields['Nº de membre']||0)),0);
+  document.getElementById('f-num').value=maxNum+1;
+  // Dates = aujourd'hui
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-entree').value=today;
+  document.getElementById('f-modif').value=today;
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  showView('fiche');
+  markDirty();
+  setTimeout(()=>document.getElementById('f-attr').focus(),100);
+}
+
 async function saveMember(){
   const agent=gv('f-agent');
   if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
