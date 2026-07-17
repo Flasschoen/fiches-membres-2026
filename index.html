@@ -1068,13 +1068,16 @@ function updateNewsTotal(pfx){
     return;
   }
   const i=sel.value;
-  // tr-bxt/frt = TOTAL calculé (NBR × TARIF), tr-bxp/frp = tarif unitaire, tr-bxc/frc = crédit
-  const tot =Number(document.getElementById('tr-'+p+'t'+i)?.value)||0;
+  const nbr =Number(document.getElementById('tr-'+p+'n'+i)?.value)||0;
   const tar =Number(document.getElementById('tr-'+p+'p'+i)?.value)||0;
   const cred=Number(document.getElementById('tr-'+p+'c'+i)?.value)||0;
-  if(totEl) totEl.textContent=fmtE(tot);   // TOTAL = NBR × TARIF
-  if(tarEl) tarEl.textContent=fmtE(tar);   // Tarif unitaire
-  if(crEl)  crEl.textContent =fmtE(cred);  // Crédit
+  // TOTAL = champ readonly tr-bxt/frt ; si vide on recalcule NBR × TARIF
+  const totInput=document.getElementById('tr-'+p+'t'+i);
+  let tot=Number(totInput?.value)||0;
+  if(!tot && nbr && tar){ tot=nbr*tar; if(totInput) totInput.value=tot.toFixed(2); }
+  if(totEl) totEl.textContent=fmtE(tot);  // TOTAL = NBR × TARIF
+  if(tarEl) tarEl.textContent=fmtE(tar);  // Tarif unitaire
+  if(crEl)  crEl.textContent =fmtE(cred); // Crédit
 }
 
 function markDirty(){
