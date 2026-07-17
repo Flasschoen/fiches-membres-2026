@@ -328,7 +328,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <div class="fr">
           <div class="fl">Cotisation BE :</div>
           <div class="fv" style="flex:0 0 90px;">
-            <input type="checkbox" id="f-cotbe" onchange="markDirty()" style="width:18px;height:18px;vertical-align:middle;cursor:pointer;">
+            <select id="f-cotbe" onchange="markDirty()" style="width:70px;">
+              <option value="">—</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option>
+            </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant BE :</div>
           <div class="fv" style="flex:0 0 110px;">
@@ -341,7 +343,9 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <div class="fr">
           <div class="fl">Cotisation LU :</div>
           <div class="fv" style="flex:0 0 90px;">
-            <input type="checkbox" id="f-cotlu" onchange="markDirty()" style="width:18px;height:18px;vertical-align:middle;cursor:pointer;">
+            <select id="f-cotlu" onchange="markDirty()" style="width:70px;">
+              <option value="">—</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option>
+            </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant LU :</div>
           <div class="fv" style="flex:0 0 110px;">
@@ -1221,10 +1225,10 @@ function fillForm(f){
   sv('f-tri2',  f['Clé de TRI 3']);
   sv('f-tri3',  f['Clé de TRI 4']);
 
-  sv('f-cotbe', f['COTISATION BE'], true);
+  sv('f-cotbe', f['COTISATION BE']);
   sv('f-montbe',f['MONTANT BE']!==undefined&&f['MONTANT BE']!==null ? String(f['MONTANT BE']) : null);
   sv('f-echbe', fmtDate(f['ÉCHÉANCE BE']));
-  sv('f-cotlu', f['COTISATION LU'], true);
+  sv('f-cotlu', f['COTISATION LU']);
   sv('f-montlu',f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : null);
   sv('f-echlu', fmtDate(f['ÉCHÉANCE LU']));
 
@@ -1348,8 +1352,8 @@ function collectFields(){
     'CONTACT 2':gv('f-c2'),'TITRE 2':gv('f-t2'),'GSM 2':gv('f-g2'),'EMAIL 2':gv('f-e2'),
     'CONTACT 3':gv('f-c3'),'TITRE 3':gv('f-t3'),'GSM 3':gv('f-g3'),'EMAIL 3':gv('f-e3'),
     'CONTACT 4':gv('f-c4'),'TITRE 4':gv('f-t4'),'GSM 4':gv('f-g4'),'EMAIL 4':gv('f-e4'),
-    'COTISATION BE':document.getElementById('f-cotbe')?.checked||false,'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
-    'COTISATION LU':document.getElementById('f-cotlu')?.checked||false,'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
+    'COTISATION BE':gv('f-cotbe')||null,'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
+    'COTISATION LU':gv('f-cotlu')||null,'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
     'REMARQUES':gv('f-rem'),
     'Date mise à jour données':gv('f-majd')||null,
     'Effectué par':gv('f-majp'),
