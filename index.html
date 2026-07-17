@@ -813,6 +813,22 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <span id="rch-cnt" style="font-size:12px;color:#555;white-space:nowrap;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   </div>
+  <!-- ── RECHERCHER / REMPLACER ── -->
+  <div style="display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:6px 10px;background:#fff8e7;border:1px solid #e0c060;border-radius:4px;flex-wrap:wrap;">
+    <span style="font-size:11px;font-weight:700;color:#7d6608;white-space:nowrap;">🔄 REMPLACER :</span>
+    <select id="rpl-field" style="font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
+      <option value="Clé de TRI 2">TRI 1</option>
+      <option value="Clé de TRI 3">TRI 2</option>
+      <option value="Clé de TRI 4">TRI 3</option>
+    </select>
+    <span style="font-size:12px;color:#555;">=</span>
+    <input type="number" id="rpl-from" placeholder="Valeur actuelle" style="width:90px;font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
+    <span style="font-size:12px;color:#555;">→ remplacer par</span>
+    <input type="number" id="rpl-to" placeholder="Nouvelle valeur" style="width:90px;font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
+    <button onclick="rplPreview()" style="font-size:11px;padding:4px 10px;background:#2e75b6;color:#fff;border:none;border-radius:3px;cursor:pointer;">Prévisualiser</button>
+    <button id="rpl-btn" onclick="rplApply()" style="font-size:11px;padding:4px 10px;background:#c0392b;color:#fff;border:none;border-radius:3px;cursor:pointer;display:none;">Remplacer</button>
+    <span id="rpl-info" style="font-size:12px;font-weight:600;"></span>
+  </div>
   <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
   <div style="overflow-x:auto;">
     <table class="rt" id="rch-tbl" style="display:none;">
@@ -1487,6 +1503,78 @@ async function saveMember(){
 // ══════════════════════════════════════
 //  BUILD RECHERCHE TABLE
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+//  RECHERCHER / REMPLACER (Clés de TRI)
+// ══════════════════════════════════════
+let rplMatches=[];
+
+function rplPreview(){
+  const field=document.getElementById('rpl-field').value;
+  const fromV=document.getElementById('rpl-from').value;
+  const toV=document.getElementById('rpl-to').value;
+  const info=document.getElementById('rpl-info');
+  const btn=document.getElementById('rpl-btn');
+  info.textContent=''; btn.style.display='none';
+  if(fromV===''){
+    info.textContent='⚠️ Entrez une valeur à rechercher';
+    info.style.color='#c0392b'; return;
+  }
+  const fromN=Number(fromV);
+  const label=document.getElementById('rpl-field').options[document.getElementById('rpl-field').selectedIndex].text;
+  rplMatches=members.filter(m=>{
+    const v=m.fields[field];
+    return v!==undefined&&v!==null&&Number(v)===fromN;
+  });
+  if(!rplMatches.length){
+    info.textContent=`Aucun membre avec ${label} = ${fromN}`;
+    info.style.color='#888';
+  } else {
+    info.textContent=`${rplMatches.length} membre(s) avec ${label} = ${fromN}`;
+    info.style.color='#2e7d32';
+    if(toV!==''){
+      btn.textContent=`Remplacer les ${rplMatches.length} membres`;
+      btn.style.display='';
+    } else {
+      info.textContent+=' — entrez la nouvelle valeur';
+    }
+  }
+}
+
+async function rplApply(){
+  const field=document.getElementById('rpl-field').value;
+  const toV=document.getElementById('rpl-to').value;
+  const info=document.getElementById('rpl-info');
+  const btn=document.getElementById('rpl-btn');
+  const label=document.getElementById('rpl-field').options[document.getElementById('rpl-field').selectedIndex].text;
+  if(!rplMatches.length||toV==='') return;
+  const toN=Number(toV);
+  if(!confirm(`Remplacer ${label} par ${toN} pour ${rplMatches.length} membre(s) ?\nCette opération est irréversible.`)) return;
+  btn.disabled=true;
+  info.textContent='⏳ Mise à jour en cours...'; info.style.color='#555';
+  let ok=0,errs=0;
+  for(let i=0;i<rplMatches.length;i+=10){
+    const batch=rplMatches.slice(i,i+10);
+    const body=JSON.stringify({records:batch.map(r=>({id:r.id,fields:{[field]:toN}})),typecast:true});
+    try{
+      const res=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},body});
+      const data=await res.json();
+      if(data.records){
+        ok+=data.records.length;
+        data.records.forEach(rec=>{
+          const idx=members.findIndex(m=>m.id===rec.id);
+          if(idx!==-1) members[idx].fields[field]=toN;
+        });
+      } else { errs+=batch.length; console.error(data); }
+    } catch(e){ errs+=batch.length; }
+    await new Promise(r=>setTimeout(r,250));
+  }
+  info.textContent=`✅ ${ok} mis à jour${errs?` | ❌ ${errs} erreurs`:''}`;
+  info.style.color=ok>0?'#2e7d32':'#c0392b';
+  btn.disabled=false; btn.style.display='none';
+  rplMatches=[];
+  buildTable();
+}
+
 function buildTable(){
   const tbody=document.getElementById('rch-tbody');
   const tbl=document.getElementById('rch-tbl');
