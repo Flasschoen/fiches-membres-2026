@@ -875,23 +875,51 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 
     <table class="conf-table">
       <colgroup><col style="width:140px"><col style="width:200px"><col style="width:130px"><col></colgroup>
-      <tr><td class="lbl">Concerne :</td><td style="text-align:left;padding-left:4px;"><b>PROFS-CONTACTS 2026</b></td>
-          <td class="lbl" style="padding-left:8px;">Enseigne</td><td><b id="cc-ens">—</b></td></tr>
-      <tr><td class="lbl">Lieu :</td><td style="text-align:left;padding-left:4px;"><b>Musée Royal Afrique Centrale</b></td>
-          <td class="lbl" style="padding-left:8px;">Responsable</td><td id="cc-resp">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl" style="padding-left:8px;">Rue + N°</td><td id="cc-rue">—</td></tr>
-      <tr><td class="lbl">Date :</td><td style="text-align:left;padding-left:4px;"><b>Dimanche 27 septembre 2026</b></td>
-          <td class="lbl" style="padding-left:8px;">CP + Localité</td><td id="cc-cpl">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl" style="padding-left:8px;">Réf. Educpass :</td><td>26-<span id="cc-ref">—</span></td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl" style="padding-left:8px;">TEL n° :</td><td id="cc-tel">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl" style="padding-left:8px;">GSM n° :</td><td id="cc-gsm">—</td></tr>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Concerne :</td>
+        <td style="padding-left:20px;"><b>PROFS-CONTACTS 2026</b></td>
+        <td class="lbl" style="padding-left:8px;">Enseigne</td>
+        <td><b id="cc-ens">—</b></td>
+      </tr>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Lieu :</td>
+        <td style="padding-left:20px;"><b>Musée Royal Afrique Centrale</b></td>
+        <td class="lbl" style="padding-left:8px;">Responsable</td>
+        <td id="cc-resp">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">Rue + N°</td>
+        <td id="cc-rue">—</td>
+      </tr>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Date :</td>
+        <td style="padding-left:20px;"><b>Dimanche 27 septembre 2026</b></td>
+        <td class="lbl" style="padding-left:8px;">CP + Localité</td>
+        <td id="cc-cpl">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">Réf. Educpass :</td>
+        <td>26-<span id="cc-ref">—</span></td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">TEL n° :</td>
+        <td id="cc-tel">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">GSM n° :</td>
+        <td id="cc-gsm">—</td>
+      </tr>
+      <tr>
+        <td colspan="2"></td>
+        <td colspan="2" style="text-align:right;font-size:11px;color:#555;padding-top:6px;">
+          Stoumont, le <span id="conf-date"></span>
+        </td>
+      </tr>
     </table>
-
-    <div style="text-align:right;font-size:11px;color:#555;margin-bottom:14px;">Stoumont, le ___________________</div>
 
     <p style="margin-bottom:12px;font-size:13px;">Suite à votre inscription, veuillez vérifier les données ci-après.</p>
 
@@ -901,42 +929,100 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       </thead>
       <tbody>
         <tr>
-          <td style="text-align:center;">1</td>
-          <td id="cc-part">—</td>
-          <td style="text-align:center;"></td>
-          <td style="text-align:center;background:#e2efda;font-weight:700;">MEMBRE</td>
-          <td style="text-align:right;font-weight:700;">195 €</td>
+          <td style="text-align:center;">
+            <input type="text" id="cc-tabnum" value="Libre" style="width:60px;text-align:center;border:1px solid #ccc;border-radius:3px;padding:2px 4px;font-size:12px;">
+          </td>
+          <td>
+            <input type="text" id="cc-part" style="width:98%;border:1px solid #ccc;border-radius:3px;padding:2px 4px;font-size:12px;">
+          </td>
+          <td style="text-align:center;">
+            <select id="cc-repas1" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
+          <td style="text-align:center;">
+            <select id="cc-statut" style="font-size:12px;background:#e2efda;font-weight:700;padding:2px;">
+              <option>MEMBRE</option><option>NON-MEMBRE</option>
+            </select>
+          </td>
+          <td style="text-align:right;">
+            <select id="cc-mont1" onchange="calcConfTotal()" style="width:78px;font-size:12px;font-weight:700;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195" selected>195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
         <tr>
-          <td></td><td>Repas supplémentaire(s)</td>
-          <td style="text-align:center;">0</td><td></td><td></td>
+          <td></td>
+          <td>Repas supplémentaire(s)</td>
+          <td style="text-align:center;">
+            <select id="cc-repas2" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
+          <td></td>
+          <td style="text-align:right;">
+            <select id="cc-mont2" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
-        <tr><td colspan="2">Participation au drink</td><td></td><td></td><td></td></tr>
-        <tr><td colspan="2">Table commune</td><td style="text-align:center;">0</td><td></td><td></td></tr>
+        <tr>
+          <td colspan="2">Participation au drink</td>
+          <td></td><td></td>
+          <td style="text-align:right;">
+            <select id="cc-mont3" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <td colspan="2">Table commune</td>
+          <td style="text-align:center;">
+            <select id="cc-repas4" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
+          <td></td>
+          <td style="text-align:right;">
+            <select id="cc-mont4" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
+        </tr>
         <tr class="total-row">
           <td colspan="2">Code : <span id="cc-code">—</span></td>
           <td colspan="2" style="text-align:right;">TOTAL à payer =</td>
-          <td style="text-align:right;color:#c00;">195 €</td>
+          <td style="text-align:right;color:#c00;font-weight:700;" id="cc-total">195 €</td>
         </tr>
       </tbody>
     </table>
 
-    <p style="margin:12px 0 6px;"><b>Envoyer à :</b></p>
-    <div style="background:#fff3cd;border:1px solid #ffc107;padding:9px 12px;margin-bottom:14px;font-size:12px;">
-      <b>RENDEZ-VOUS à partir de 08h15</b> dans la Salle d'expositions. Parking gratuit sur le site.
-    </div>
+    <p style="margin:12px 0 4px;font-size:13px;"><b>Envoyer à :</b></p>
+    <input type="text" id="cc-envoyer" style="width:100%;box-sizing:border-box;border:1px solid #ccc;border-radius:3px;padding:5px 8px;font-size:12px;margin-bottom:14px;" placeholder="Adresse d'envoi...">
 
     <h3 style="color:#1e3a6e;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Programme de la journée :</h3>
     <table class="prog-table">
-      <tr><td class="time">08h45 :</td><td>Accueil exposant</td></tr>
-      <tr><td class="time">08h55 :</td><td>Café de bienvenue (café ou jus d'orange + viennoiseries)</td></tr>
-      <tr><td class="time">09h30 :</td><td>Ouverture du workshop</td></tr>
-      <tr><td class="time">13h00 :</td><td>Fin du workshop</td></tr>
-      <tr><td class="time">13h15 :</td><td>Apéritif</td></tr>
-      <tr><td class="time">13h30 :</td><td>Repas des exposants : 1 verre + ½ litre d'eau + 1 café.</td></tr>
-      <tr><td class="time">15h45 :</td><td>Visite guidée du Musée et de l'expo temporaire.</td></tr>
-      <tr><td class="time">17h00 :</td><td>Drink de clôture</td></tr>
-      <tr><td class="time">17h30 :</td><td>Fin d'activité.</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">08h45 :</td><td contenteditable="true" style="outline:none;">Accueil exposant</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">08h55 :</td><td contenteditable="true" style="outline:none;">Café de bienvenue (café ou jus d'orange + viennoiseries)</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">09h30 :</td><td contenteditable="true" style="outline:none;">Ouverture du workshop</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h00 :</td><td contenteditable="true" style="outline:none;">Fin du workshop</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h15 :</td><td contenteditable="true" style="outline:none;">Apéritif</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h30 :</td><td contenteditable="true" style="outline:none;">Repas des exposants : 1 verre + ½ litre d'eau + 1 café.</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">15h45 :</td><td contenteditable="true" style="outline:none;">Visite guidée du Musée et de l'expo temporaire.</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">17h00 :</td><td contenteditable="true" style="outline:none;">Drink de clôture</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">17h30 :</td><td contenteditable="true" style="outline:none;">Fin d'activité.</td></tr>
     </table>
   </div>
 </div><!-- /view-confirmation -->
@@ -1363,8 +1449,26 @@ function fillConf(f){
   st('cc-tel',  f['TÉLÉPHONE']);
   st('cc-gsm',  f['GSM']);
   st('cc-ref',  f['Nº de membre']||'');
-  st('cc-part', f['CONTACT']||f['ENSEIGNE']);
   st('cc-code', f['CODE']);
+  // NOM DU PARTICIPANT = Enseigne (input)
+  const partEl=document.getElementById('cc-part');
+  if(partEl) partEl.value=f['ENSEIGNE']||f['NOM ATTRACTION']||'';
+  // Date du jour
+  const dateEl=document.getElementById('conf-date');
+  if(dateEl) dateEl.textContent=new Date().toLocaleDateString('fr-BE',{day:'numeric',month:'long',year:'numeric'});
+  // Reset montants + total
+  ['cc-mont1','cc-mont2','cc-mont3','cc-mont4'].forEach(id=>{
+    const s=document.getElementById(id); if(s) s.value='0';
+  });
+  const m1=document.getElementById('cc-mont1'); if(m1) m1.value='195';
+  calcConfTotal();
+}
+
+function calcConfTotal(){
+  const total=['cc-mont1','cc-mont2','cc-mont3','cc-mont4']
+    .reduce((s,id)=>s+Number(document.getElementById(id)?.value||0),0);
+  const el=document.getElementById('cc-total');
+  if(el) el.textContent=total+' €';
 }
 
 // ══════════════════════════════════════
