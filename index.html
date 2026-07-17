@@ -1301,6 +1301,7 @@ async function loadMember(){
     curId=id;
     fillForm(d.fields);
     clearDirty();
+    toggleDeleteBtn();
     showView('fiche');
     setSt('✅ Membre chargé');
   }catch(e){setSt('⚠️ Erreur');console.error(e);}
@@ -1619,6 +1620,8 @@ function newMember(){
   document.getElementById('f-entree').value=today;
   document.getElementById('f-modif').value=today;
   document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  const btnD=document.getElementById('btn-delete');
+  if(btnD) btnD.style.display='none';
   showView('fiche');
   markDirty();
   setTimeout(()=>document.getElementById('f-attr').focus(),100);
