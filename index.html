@@ -754,7 +754,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
           </tr>
           <tr style="background:#fffde7;">
-            <td style="padding:3px 6px;font-size:11px;font-style:italic;color:#555;">Tous N° cumulés</td>
+            <td style="padding:3px 6px;white-space:nowrap;font-size:11px;">N° :
+              <select id="tot-nbx-sel" onchange="updateNewsTotal('bx')" style="font-size:11px;padding:1px 3px;border:1px solid #bbb;border-radius:2px;margin-left:3px;">
+                <option value="">—</option>
+                <option value="0">N°3</option><option value="1">N°4</option><option value="2">N°5</option>
+                <option value="3">N°6</option><option value="4">N°7</option><option value="5">N°8</option>
+                <option value="6">N°9</option>
+              </select>
+            </td>
             <td style="font-weight:700;font-size:12px;padding:3px 4px;"><span id="tot-nbx-tot-show">—</span></td>
             <td style="text-align:right;padding:3px 4px;font-size:11px;"><span id="tot-nbx-tar-show">—</span></td>
             <td style="text-align:right;padding:3px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-cred-show">—</span></td>
@@ -763,7 +770,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#e3f2fd;">
-            <td style="padding:3px 6px;font-size:11px;font-style:italic;color:#555;">Tous N° cumulés</td>
+            <td style="padding:3px 6px;white-space:nowrap;font-size:11px;">N° :
+              <select id="tot-nfr-sel" onchange="updateNewsTotal('fr')" style="font-size:11px;padding:1px 3px;border:1px solid #bbb;border-radius:2px;margin-left:3px;background:#f0f4ff;">
+                <option value="">—</option>
+                <option value="0">N°3</option><option value="1">N°4</option><option value="2">N°5</option>
+                <option value="3">N°6</option><option value="4">N°7</option><option value="5">N°8</option>
+                <option value="6">N°9</option>
+              </select>
+            </td>
             <td style="font-weight:700;font-size:12px;padding:3px 4px;"><span id="tot-nfr-tot-show">—</span></td>
             <td style="text-align:right;padding:3px 4px;font-size:11px;"><span id="tot-nfr-tar-show">—</span></td>
             <td style="text-align:right;padding:3px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-cred-show">—</span></td>
@@ -941,15 +955,15 @@ TRIMS.forEach((t,i)=>{
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
     <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
     <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
     <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
     <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
     <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
   </tr>`;
@@ -1043,18 +1057,24 @@ function updateNewsTotal(pfx){
   const fmtE=v=>v?v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €':'—';
   const isB=(pfx==='bx');
   const p=isB?'bx':'fr';
+  const sel  =document.getElementById(isB?'tot-nbx-sel':'tot-nfr-sel');
   const totEl=document.getElementById(isB?'tot-nbx-tot-show':'tot-nfr-tot-show');
   const tarEl=document.getElementById(isB?'tot-nbx-tar-show':'tot-nfr-tar-show');
   const crEl =document.getElementById(isB?'tot-nbx-cred-show':'tot-nfr-cred-show');
-  // Cumul automatique de tous les N°
-  let sumTot=0, sumCred=0;
-  TRIMS.forEach((_,i)=>{
-    sumTot  += Number(document.getElementById('tr-'+p+'t'+i)?.value)||0;
-    sumCred += Number(document.getElementById('tr-'+p+'c'+i)?.value)||0;
-  });
-  if(totEl) totEl.textContent = fmtE(sumTot);
-  if(tarEl) tarEl.textContent = fmtE(sumTot); // même valeur = total NBR×TARIF
-  if(crEl)  crEl.textContent  = fmtE(sumCred);
+  if(!sel||sel.value===''){
+    if(totEl)totEl.textContent='—';
+    if(tarEl)tarEl.textContent='—';
+    if(crEl) crEl.textContent='—';
+    return;
+  }
+  const i=sel.value;
+  // tr-bxt/frt = TOTAL calculé (NBR × TARIF), tr-bxp/frp = tarif unitaire, tr-bxc/frc = crédit
+  const tot =Number(document.getElementById('tr-'+p+'t'+i)?.value)||0;
+  const tar =Number(document.getElementById('tr-'+p+'p'+i)?.value)||0;
+  const cred=Number(document.getElementById('tr-'+p+'c'+i)?.value)||0;
+  if(totEl) totEl.textContent=fmtE(tot);   // TOTAL = NBR × TARIF
+  if(tarEl) tarEl.textContent=fmtE(tar);   // Tarif unitaire
+  if(crEl)  crEl.textContent =fmtE(cred);  // Crédit
 }
 
 function markDirty(){
