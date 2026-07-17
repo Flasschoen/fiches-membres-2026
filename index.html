@@ -954,18 +954,18 @@ TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
-    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
-    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
-    <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
-    <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
-    <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
-    <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
+    <td style="text-align:center"><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="text-align:center"><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
+    <td style="text-align:center"><select id="tr-bxf${i}" style="width:78px;font-size:10px;text-align:center;" onchange="markDirty();calcTrimTot('bx',${i})">${_fmtOpts}</select></td>
+    <td style="text-align:center"><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
+    <td style="text-align:center"><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;text-align:center;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="text-align:center"><input type="number" id="tr-bxt${i}" style="width:50px;font-size:10px;background:#e8f5e9;text-align:center;" readonly></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
+    <td style="background:#f3e5f5;text-align:center"><select id="tr-frf${i}" style="width:78px;font-size:10px;text-align:center;" onchange="markDirty();calcTrimTot('fr',${i})">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
+    <td style="background:#ead5f0;text-align:center"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frt${i}" style="width:50px;font-size:10px;background:#f9e8ff;text-align:center;" readonly></td>
   </tr>`;
 });
 
@@ -1053,8 +1053,16 @@ function syncCotBE(){
   else if(!cb.checked && sel.value==='2026') sel.value='';
   markDirty();
 }
+function fmtToPage(fmt){
+  if(!fmt) return 0;
+  if(fmt.startsWith('1/4')) return 0.25;
+  if(fmt.startsWith('1/2')) return 0.5;
+  if(fmt.startsWith('1/1')||fmt.startsWith('1 ')) return 1;
+  return 0;
+}
 function updateNewsTotal(pfx){
   const fmtE=v=>v?v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €':'—';
+  const fmtP=v=>v?v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
   const isB=(pfx==='bx');
   const p=isB?'bx':'fr';
   const sel  =document.getElementById(isB?'tot-nbx-sel':'tot-nfr-sel');
@@ -1069,15 +1077,18 @@ function updateNewsTotal(pfx){
   }
   const i=sel.value;
   const nbr =Number(document.getElementById('tr-'+p+'n'+i)?.value)||0;
+  const fmt =document.getElementById('tr-'+p+'f'+i)?.value||'';
   const tar =Number(document.getElementById('tr-'+p+'p'+i)?.value)||0;
   const cred=Number(document.getElementById('tr-'+p+'c'+i)?.value)||0;
-  // TOTAL = champ readonly tr-bxt/frt ; si vide on recalcule NBR × TARIF
+  // TOTAL € = NBR × TARIF (recalcule si champ readonly vide)
   const totInput=document.getElementById('tr-'+p+'t'+i);
   let tot=Number(totInput?.value)||0;
   if(!tot && nbr && tar){ tot=nbr*tar; if(totInput) totInput.value=tot.toFixed(2); }
-  if(totEl) totEl.textContent=fmtE(tot);  // TOTAL = NBR × TARIF
-  if(tarEl) tarEl.textContent=fmtE(tar);  // Tarif unitaire
-  if(crEl)  crEl.textContent =fmtE(cred); // Crédit
+  // Total pages = NBR × fraction du format
+  const pages = nbr * fmtToPage(fmt);
+  if(totEl) totEl.textContent=fmtP(pages);  // Totaux Page = nb de pages
+  if(tarEl) tarEl.textContent=fmtE(tot);     // Tarif (€) = TOTAL € (NBR × PRIX)
+  if(crEl)  crEl.textContent =fmtE(cred);    // Crédit
 }
 
 function markDirty(){
