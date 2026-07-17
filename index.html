@@ -181,10 +181,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
   <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
-  <select id="f-agent" onchange="markDirty()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
+  <select id="f-agent" onchange="markDirty();toggleDeleteBtn()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
     <option>MARC</option><option>MAITE</option><option>PASCAL</option><option>VANESSA</option>
   </select>
+  <button id="btn-delete" onclick="deleteMember()" style="display:none;margin-left:12px;padding:4px 10px;font-size:11px;font-weight:700;background:#8b0000;color:#fff;border:none;border-radius:3px;cursor:pointer;" title="Réservé à MARC">🗑️ Supprimer</button>
   <span id="dirty-indicator" style="margin-left:10px;color:#c55a11;font-weight:700;font-size:12px;display:none;">● Non sauvegardé</span>
   <span class="save-info" id="save-info"></span>
 </div>
@@ -1508,21 +1509,21 @@ function collectFields(){
     'SORTIES SCOLAIRES FRANCE 2027':gv('p-fr27'),'SORTIES SCOLAIRES FRANCE 2028':gv('p-fr28'),'SORTIES SCOLAIRES FRANCE 2029':gv('p-fr29'),
     'TIPS voor SCHOOLTRIPS 2026':gv('p-tp26'),'TIPS voor SCHOOLTRIPS 2027':gv('p-tp27'),'TIPS voor SCHOOLTRIPS 2028':gv('p-tp28'),
     'SEJOURS SCOLAIRES 2023':gv('p-sej23'),'SEJOURS SCOLAIRES 2025':gv('p-sej25'),'SEJOURS SCOLAIRES 2027':gv('p-sej27'),
-    // Publications annuelles — page gratuite, page payante, tarif, commentaires
-    'PUB BELUX PAGE GRATUITE':gv('p-bx-pg') ? Number(gv('p-bx-pg')) : null,
-    'PUB BELUX PAGE PAYANTE':gv('p-bx-pp') ? Number(gv('p-bx-pp')) : null,
-    'PUB BELUX TARIF':gv('p-bx-t') ? Number(gv('p-bx-t')) : null,
+    // Publications annuelles — pages, tarif, commentaires
+    'PUB BELUX PAGE':       gv('p-bx-pg')  ? Number(gv('p-bx-pg'))  : null,
+    'PUB BELUX PAGE PAYANTE':gv('p-bx-pp') ? Number(gv('p-bx-pp'))  : null,
+    'PUB BELUX TARIF':      gv('p-bx-t')  ? Number(gv('p-bx-t'))   : null,
     'PUB BELUX COMMENTAIRES':gv('p-bx-com'),
-    'PUB FRANCE PAGE GRATUITE':gv('p-fr-pg') ? Number(gv('p-fr-pg')) : null,
-    'PUB FRANCE PAGE PAYANTE':gv('p-fr-pp') ? Number(gv('p-fr-pp')) : null,
-    'PUB FRANCE TARIF':gv('p-fr-t') ? Number(gv('p-fr-t')) : null,
+    'PUB FRANCE PAGE':       gv('p-fr-pg') ? Number(gv('p-fr-pg'))  : null,
+    'PUB FRANCE PAGE PAYANTE':gv('p-fr-pp')? Number(gv('p-fr-pp'))  : null,
+    'PUB FRANCE TARIF':     gv('p-fr-t')  ? Number(gv('p-fr-t'))   : null,
     'PUB FRANCE COMMENTAIRES':gv('p-fr-com'),
-    'PUB TIPS PAGE GRATUITE':gv('p-tp-pg') ? Number(gv('p-tp-pg')) : null,
-    'PUB TIPS PAGE PAYANTE':gv('p-tp-pp') ? Number(gv('p-tp-pp')) : null,
-    'PUB TIPS TARIF':gv('p-tp-t') ? Number(gv('p-tp-t')) : null,
+    'PUB TIPS PAGE':         gv('p-tp-pg') ? Number(gv('p-tp-pg'))  : null,
+    'PUB TIPS PAGE PAYANTE': gv('p-tp-pp') ? Number(gv('p-tp-pp'))  : null,
+    'PUB TIPS TARIF':       gv('p-tp-t')  ? Number(gv('p-tp-t'))   : null,
     'PUB TIPS COMMENTAIRES':gv('p-tp-com'),
-    'PUB SEJOURS PAGE GRATUITE':gv('p-sej-pg') ? Number(gv('p-sej-pg')) : null,
-    'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
+    'PUB SEJOURS PAGE':      gv('p-sej-pg')? Number(gv('p-sej-pg')) : null,
+    'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp')?Number(gv('p-sej-pp')): null,
     'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
     'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
     'PUB BELUX CREDIT':  gv('p-bx-cred')  ? Number(gv('p-bx-cred'))  : null,
@@ -1564,6 +1565,44 @@ function collectFields(){
 // ══════════════════════════════════════
 //  SAVE MEMBER
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+//  SUPPRIMER MEMBRE (réservé MARC)
+// ══════════════════════════════════════
+function toggleDeleteBtn(){
+  const agent=document.getElementById('f-agent').value;
+  const btn=document.getElementById('btn-delete');
+  if(btn) btn.style.display=(agent==='MARC'&&curId)?'':'none';
+}
+
+async function deleteMember(){
+  if(!curId){alert('Aucun membre sélectionné.');return;}
+  const nom=document.getElementById('name-bar').textContent||'ce membre';
+  if(!confirm(`⚠️ Supprimer définitivement « ${nom} » ?\n\nCette action est IRRÉVERSIBLE dans Airtable.`)) return;
+  if(!confirm(`DERNIÈRE CONFIRMATION :\nSupprimer « ${nom} » ?`)) return;
+  const info=document.getElementById('save-info');
+  info.textContent='⏳ Suppression...';
+  try{
+    const r=await fetch(URL+'/'+curId,{method:'DELETE',headers:hdrs});
+    const data=await r.json();
+    if(data.deleted||data.id){
+      // Retirer du cache local
+      members=members.filter(m=>m.id!==curId);
+      curId=null;
+      clearDirty();
+      fillForm({});
+      document.getElementById('name-bar').textContent='— MEMBRE SUPPRIMÉ —';
+      document.getElementById('btn-delete').style.display='none';
+      buildSelect();
+      buildTable();
+      info.textContent='✅ Membre supprimé';
+      setTimeout(()=>{info.textContent='';showView('recherche');},2000);
+    } else {
+      info.textContent='⚠️ Erreur suppression';
+      console.error(data);
+    }
+  }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
+}
+
 // ══════════════════════════════════════
 //  NOUVEAU MEMBRE
 // ══════════════════════════════════════
