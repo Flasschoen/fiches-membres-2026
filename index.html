@@ -533,12 +533,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <th class="sub2" style="width:40px;">PRIX</th>
             <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
-            <th class="sub2" style="width:22px;">✓</th>
-            <th class="sub2" style="width:30px;">Nbr</th>
-            <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:40px;">PRIX</th>
-            <th class="sub2" style="width:40px;">CRÉDIT</th>
-            <th class="sub2" style="width:40px;">TOTAL</th>
+            <th class="sub2" style="width:22px;background:#e8d5f0;color:#5b2c6f;">✓</th>
+            <th class="sub2" style="width:30px;background:#e8d5f0;color:#5b2c6f;">Nbr</th>
+            <th class="sub2" style="width:80px;background:#e8d5f0;color:#5b2c6f;">Format</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">PRIX</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">CRÉDIT</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">TOTAL</th>
           </tr>
         </thead>
         <tbody id="trim-body"></tbody>
@@ -804,8 +804,24 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <h2 style="color:#1e3a6e;font-size:16px;font-weight:700;">🔍 LISTE DES MEMBRES 2026</h2>
     <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
       oninput="filterTable()"
-      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:300px;font-size:13px;">
-    <span id="rch-cnt" style="font-size:12px;color:#555;"></span>
+      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:280px;font-size:13px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">CODE :</label>
+    <select id="rch-code" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 1 :</label>
+    <select id="rch-tri1" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 2 :</label>
+    <select id="rch-tri2" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 3 :</label>
+    <select id="rch-tri3" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <span id="rch-cnt" style="font-size:12px;color:#555;white-space:nowrap;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   </div>
   <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
@@ -1097,6 +1113,7 @@ async function loadAll(){
     });
     buildSelect();
     buildTable();
+    buildFilterOptions();
     setSt(`✅ ${members.length} membres chargés`);
   } catch(e){
     setSt('⚠️ Erreur connexion Airtable');
@@ -1431,12 +1448,20 @@ function buildTable(){
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
   const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
+  const selCode=(document.getElementById('rch-code')||{value:''}).value;
+  const selTri1=(document.getElementById('rch-tri1')||{value:''}).value;
+  const selTri2=(document.getElementById('rch-tri2')||{value:''}).value;
+  const selTri3=(document.getElementById('rch-tri3')||{value:''}).value;
   const filtered=members.filter(m=>{
-    if(!q) return true;
     const f=m.fields;
-    return [f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+    if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
-      .some(v=>(v||'').toLowerCase().includes(q));
+      .some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(selCode && String(f['CODE']!==undefined&&f['CODE']!==null?f['CODE']:'')!==selCode) return false;
+    if(selTri1 && String(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?f['Clé de TRI 2']:'')!==selTri1) return false;
+    if(selTri2 && String(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?f['Clé de TRI 3']:'')!==selTri2) return false;
+    if(selTri3 && String(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?f['Clé de TRI 4']:'')!==selTri3) return false;
+    return true;
   });
   filtered.forEach(m=>{
     const f=m.fields;
@@ -1485,6 +1510,30 @@ function buildTable(){
 
 function filterTable(){
   buildTable();
+}
+
+function buildFilterOptions(){
+  const defs=[
+    {id:'rch-code', field:'CODE'},
+    {id:'rch-tri1', field:'Clé de TRI 2'},
+    {id:'rch-tri2', field:'Clé de TRI 3'},
+    {id:'rch-tri3', field:'Clé de TRI 4'},
+  ];
+  defs.forEach(({id,field})=>{
+    const sel=document.getElementById(id);
+    if(!sel) return;
+    // Keep "Tous" option only
+    sel.innerHTML='<option value="">Tous</option>';
+    const vals=[...new Set(
+      members.map(m=>m.fields[field]).filter(v=>v!==undefined&&v!==null&&v!=='')
+      .map(v=>String(v))
+    )].sort((a,b)=>isNaN(a)||isNaN(b)?a.localeCompare(b,'fr'):Number(a)-Number(b));
+    vals.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+  });
 }
 
 // ══════════════════════════════════════
