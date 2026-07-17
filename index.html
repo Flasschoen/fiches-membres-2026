@@ -132,6 +132,10 @@ body{background:#dce3ef;min-height:100vh;}
   .hdr,.search-bar,.actions-bar,.view:not(.active),.btn-back,.btn-print{display:none!important;}
   .conf-doc{box-shadow:none;margin:0;padding:20px;}
 }
+/* Remove number spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 </style>
 </head>
 <body>
@@ -398,8 +402,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-bx-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-bx-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-bx-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -432,8 +436,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-fr-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-fr-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-fr-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -466,8 +470,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-tp-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-tp-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-tp-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -500,8 +504,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-sej-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-sej-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-sej-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -649,6 +653,7 @@ body{background:#dce3ef;min-height:100vh;}
         <thead>
           <tr style="background:#2e5096;color:#fff;text-align:center;">
             <th style="padding:3px 6px;text-align:left;">Publication</th>
+            <th style="padding:3px;">Totaux Page</th>
             <th style="padding:3px;">Tarif (€)</th>
             <th style="padding:3px;">Crédit (€)</th>
           </tr>
@@ -656,107 +661,127 @@ body{background:#dce3ef;min-height:100vh;}
         <tbody>
           <tr style="background:#ffd966;color:#1e3a6e;">
             <td style="padding:2px 6px;font-weight:700;">📗 Sorties BELUX</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-page">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-cred">—</span></td>
           </tr>
           <tr style="background:#d6e4f7;">
             <td style="padding:2px 6px;font-weight:700;">📘 Sorties France</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-page">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-cred">—</span></td>
           </tr>
           <tr style="background:#fce5cd;">
             <td style="padding:2px 6px;font-weight:700;">📙 TIPS Schooltrips</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-page">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-cred">—</span></td>
           </tr>
           <tr style="background:#e8d5f0;">
             <td style="padding:2px 6px;font-weight:700;">🏕️ Séjours Scolaires</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-page">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
           </tr>
           <tr style="background:#2e5096;color:#fff;font-size:10px;">
-            <th colspan="3" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
             <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
           </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
-            <th colspan="3" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
             <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
@@ -992,22 +1017,28 @@ function calcGrandTotal(){
     const cEl=document.getElementById('p-'+pfx+'-cred');
     const tarif=tEl&&tEl.value ? Number(tEl.value) : 0;
     const cred =cEl&&cEl.value ? Number(cEl.value) : 0;
+    const elP=document.getElementById(tid+'-page'); if(elP){const ts=document.getElementById('p-'+pfx+'-tot'); elP.textContent=ts&&ts.textContent&&ts.textContent!=='0,00'?ts.textContent+' €':'—';}
     const elT=document.getElementById(tid+'-tarif'); if(elT) elT.textContent=tarif?fmt(tarif):'—';
     const elC=document.getElementById(tid+'-cred');  if(elC) elC.textContent=cred?fmt(cred):'—';
+    const elCS=document.getElementById('p-'+pfx+'-cred-show'); if(elCS) elCS.textContent=cred?cred.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
     grandTarif+=tarif; grandCred+=cred;
   });
   // ── NEWS par N° ──
   let grandNewsT=0,grandNewsC=0;
   TRIMS.forEach((_,i)=>{
+    const bxTot=Number(document.getElementById('tr-bxt'+i)?.value)||0;
     const bxTar=Number(document.getElementById('tr-bxp'+i)?.value)||0;
     const bxCred=Number(document.getElementById('tr-bxc'+i)?.value)||0;
+    const e1=document.getElementById('tot-nbx-tot-'+i); if(e1) e1.textContent=bxTot?fmt(bxTot):'—';
     const e2=document.getElementById('tot-nbx-tar-'+i); if(e2) e2.textContent=bxTar?fmt(bxTar):'—';
     const e3=document.getElementById('tot-nbx-cred-'+i); if(e3) e3.textContent=bxCred?fmt(bxCred):'—';
+    const frTot=Number(document.getElementById('tr-frt'+i)?.value)||0;
     const frTar=Number(document.getElementById('tr-frp'+i)?.value)||0;
     const frCred=Number(document.getElementById('tr-frc'+i)?.value)||0;
+    const e4=document.getElementById('tot-nfr-tot-'+i); if(e4) e4.textContent=frTot?fmt(frTot):'—';
     const e5=document.getElementById('tot-nfr-tar-'+i); if(e5) e5.textContent=frTar?fmt(frTar):'—';
     const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
-    grandNewsT+=bxTar+frTar; grandNewsC+=bxCred+frCred;
+    grandNewsT+=bxTot+frTot; grandNewsC+=bxCred+frCred;
   });
 }
 
