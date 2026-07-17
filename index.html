@@ -1574,10 +1574,11 @@ async function rplApply(){
   if(!confirm(`Remplacer ${label} par ${toN} pour ${rplMatches.length} membre(s) ?\nCette opération est irréversible.`)) return;
   btn.disabled=true;
   info.textContent='⏳ Mise à jour en cours...'; info.style.color='#555';
+  const today=new Date().toISOString().split('T')[0];
   let ok=0,errs=0;
   for(let i=0;i<rplMatches.length;i+=10){
     const batch=rplMatches.slice(i,i+10);
-    const body=JSON.stringify({records:batch.map(r=>({id:r.id,fields:{[field]:toN}})),typecast:true});
+    const body=JSON.stringify({records:batch.map(r=>({id:r.id,fields:{[field]:toN,'Date de modification':today}})),typecast:true});
     try{
       const res=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},body});
       const data=await res.json();
