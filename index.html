@@ -1,7 +1,3 @@
-https://raw.githubusercontent.com/Flasschoen/fiches-membres-2026/main/index.html
-→ https://raw.githubusercontent.com/Flasschoen/fiches-membres-2026/main/index.html
-Content-Type: text/plain; charset=utf-8
-
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -116,7 +112,10 @@ body{background:#dce3ef;min-height:100vh;}
 
 /* ── CONFIRMATION ── */
 .conf-doc{background:#fff;max-width:820px;margin:18px auto;padding:38px 44px;box-shadow:0 3px 12px rgba(0,0,0,.18);font-size:12.5px;line-height:1.6;}
-.conf-title{font-size:17px;font-weight:700;color:#1e3a6e;text-align:center;text-transform:uppercase;letter-spacing:2px;margin:14px 0;}
+.conf-header{display:flex;align-items:center;margin-bottom:6px;}
+.conf-logo{height:50px;width:auto;object-fit:contain;margin-right:16px;}
+.conf-title-wrap{flex:1;text-align:center;}
+.conf-title{font-size:17px;font-weight:700;color:#1e3a6e;text-align:center;text-transform:uppercase;letter-spacing:2px;margin:4px 0;}
 .conf-sub{font-size:10px;color:#666;text-align:center;}
 .conf-table{width:100%;border-collapse:collapse;margin:12px 0;}
 .conf-table td{padding:4px 6px;}
@@ -133,6 +132,10 @@ body{background:#dce3ef;min-height:100vh;}
   .hdr,.search-bar,.actions-bar,.view:not(.active),.btn-back,.btn-print{display:none!important;}
   .conf-doc{box-shadow:none;margin:0;padding:20px;}
 }
+/* Remove number spinners */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 </style>
 </head>
 <body>
@@ -166,6 +169,8 @@ body{background:#dce3ef;min-height:100vh;}
 <div class="actions-bar">
   <button class="btn btn-save" onclick="saveMember()">💾 Enregistrer</button>
   <button class="btn btn-cancel" onclick="loadMember()">↩ Annuler</button>
+  <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
+  <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
   <select id="f-agent" onchange="markDirty()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
@@ -189,7 +194,7 @@ body{background:#dce3ef;min-height:100vh;}
       <input type="date" id="f-modif" style="border:1px solid #bbb;padding:2px 4px;font-size:11px;margin-left:4px;"></span>
     <span style="margin-left:auto;font-size:13px;">
       <b style="color:#1e3a6e;">N° :</b>
-      <span id="f-num" style="font-size:17px;font-weight:700;color:#c55a11;margin-left:5px;"></span>
+      <input type="number" id="f-num" oninput="markDirty()" min="1" style="font-size:16px;font-weight:700;color:#c55a11;margin-left:5px;width:65px;border:1px solid #bbb;border-radius:3px;padding:2px 5px;text-align:center;">
     </span>
   </div>
 
@@ -385,7 +390,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-bx-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -396,8 +402,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-bx-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-bx-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-bx-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -408,7 +414,7 @@ body{background:#dce3ef;min-height:100vh;}
 
         <!-- FRANCE card (BLEU) -->
         <div class="pub-card">
-          <div class="pub-hdr" style="background:#1a5276;color:#fff;">📘 SORTIES SCOLAIRES France</div>
+          <div class="pub-hdr" style="background:#bdd7ee;color:#1e3a6e;">📘 SORTIES SCOLAIRES France</div>
           <div class="pub-years">
             <label><input type="checkbox" id="p-fr27" onchange="markDirty()"> 2027</label>
             <label><input type="checkbox" id="p-fr28" onchange="markDirty()"> 2028</label>
@@ -418,7 +424,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-fr-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -429,8 +436,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-fr-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-fr-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-fr-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -451,7 +458,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-tp-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -462,8 +470,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-tp-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-tp-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-tp-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -484,7 +492,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-sej-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -495,8 +504,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-sej-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-sej-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-sej-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -514,22 +523,22 @@ body{background:#dce3ef;min-height:100vh;}
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="6" class="sub2">NEWS SCOLAIRES France</th>
+            <th colspan="6" class="sub2" style="background:#e8d5f0;color:#5b2c6f;">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
             <th class="sub2" style="width:22px;">✓</th>
             <th class="sub2" style="width:30px;">Nbr</th>
             <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:28px;">DEC</th>
             <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
-            <th class="sub2" style="width:22px;">✓</th>
-            <th class="sub2" style="width:30px;">Nbr</th>
-            <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:28px;">DEC</th>
-            <th class="sub2" style="width:40px;">PRIX</th>
-            <th class="sub2" style="width:40px;">TOTAL</th>
+            <th class="sub2" style="width:22px;background:#e8d5f0;color:#5b2c6f;">✓</th>
+            <th class="sub2" style="width:30px;background:#e8d5f0;color:#5b2c6f;">Nbr</th>
+            <th class="sub2" style="width:80px;background:#e8d5f0;color:#5b2c6f;">Format</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">PRIX</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">CRÉDIT</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">TOTAL</th>
           </tr>
         </thead>
         <tbody id="trim-body"></tbody>
@@ -547,34 +556,34 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <th style="width:24px;">✓</th>
               <th>NL MENSUELLE — Tarif (€)</th>
-              <th style="width:24px;">✓</th>
-              <th>NL PERSONNALISÉE — Tarif (€)</th>
+              <th style="width:24px;background:#d6e4f7;">✓</th>
+              <th style="background:#d6e4f7;color:#1e3a6e;">NL PERSONNALISÉE — Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
               <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
           </tbody>
         </table>
@@ -639,22 +648,146 @@ body{background:#dce3ef;min-height:100vh;}
           </tbody>
         </table>
       </div>
+      <div class="sec" style="margin-top:7px;background:#1e3a6e;color:#fff;">💰 Totaux Insertions Publications</div>
+      <table style="width:100%;font-size:11px;border-collapse:collapse;margin-top:2px;">
+        <thead>
+          <tr style="background:#2e5096;color:#fff;text-align:center;">
+            <th style="padding:3px 6px;text-align:left;">Publication</th>
+            <th style="padding:3px;">Totaux Page</th>
+            <th style="padding:3px;">Tarif (€)</th>
+            <th style="padding:3px;">Crédit (€)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#ffd966;color:#1e3a6e;">
+            <td style="padding:2px 6px;font-weight:700;">📗 Sorties BELUX</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-cred">—</span></td>
+          </tr>
+          <tr style="background:#d6e4f7;">
+            <td style="padding:2px 6px;font-weight:700;">📘 Sorties France</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-cred">—</span></td>
+          </tr>
+          <tr style="background:#fce5cd;">
+            <td style="padding:2px 6px;font-weight:700;">📙 TIPS Schooltrips</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-cred">—</span></td>
+          </tr>
+          <tr style="background:#e8d5f0;">
+            <td style="padding:2px 6px;font-weight:700;">🏕️ Séjours Scolaires</td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
+          </tr>
+          <tr style="background:#2e5096;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+          </tr>
+          <tr style="background:#555;color:#fff;font-size:9px;">
+            <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
+          </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
+          </tr>
+          <tr style="background:#8e44ad;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+          </tr>
+          <tr style="background:#555;color:#fff;font-size:9px;">
+            <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
+          </tr>
 
-      <div class="sec" style="margin-top:7px;">📊 Totaux Sorties Scolaires</div>
-      <div class="fg">
-        <div class="fr">
-          <div class="fl">Sorties BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">Sorties BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxa" style="width:70px;"></div>
-        </div>
-        <div class="fr">
-          <div class="fl">News BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">News BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxa" style="width:70px;"></div>
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div><!-- /right col -->
   </div><!-- /two-col -->
   <div style="height:25px;"></div>
@@ -671,8 +804,24 @@ body{background:#dce3ef;min-height:100vh;}
     <h2 style="color:#1e3a6e;font-size:16px;font-weight:700;">🔍 LISTE DES MEMBRES 2026</h2>
     <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
       oninput="filterTable()"
-      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:300px;font-size:13px;">
-    <span id="rch-cnt" style="font-size:12px;color:#555;"></span>
+      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:280px;font-size:13px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">CODE :</label>
+    <select id="rch-code" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 1 :</label>
+    <select id="rch-tri1" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 2 :</label>
+    <select id="rch-tri2" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 3 :</label>
+    <select id="rch-tri3" onchange="buildTable()" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:60px;">
+      <option value="">Tous</option>
+    </select>
+    <span id="rch-cnt" style="font-size:12px;color:#555;white-space:nowrap;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   </div>
   <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
@@ -711,8 +860,13 @@ body{background:#dce3ef;min-height:100vh;}
     <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>
   </div>
   <div class="conf-doc" id="conf-doc">
-    <div class="conf-sub">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
-    <div class="conf-title">Confirmation « Workshop »</div>
+    <div class="conf-header">
+      <img class="conf-logo" src="New_logo_jpeg.jpg" alt="Educpass">
+      <div class="conf-title-wrap">
+        <div class="conf-sub">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
+        <div class="conf-title">Confirmation « Workshop »</div>
+      </div>
+    </div>
 
     <table class="conf-table">
       <tr><td class="lbl">Concerne :</td><td><b>PROFS-CONTACTS 2026</b></td>
@@ -795,13 +949,13 @@ const URL=`https://api.airtable.com/v0/${B}/${T}`;
 //  PÉRIODES TRIMESTRIELLES
 // ══════════════════════════════════════
 const TRIMS=[
-  {n:'N°3',p:'SEPT-OCT-NOV 2026',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
-  {n:'N°4',p:'DÉC-JAN-FÉV 2027', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
-  {n:'N°5',p:'MARS-AVR-MAI 2027', bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
-  {n:'N°6',p:'JUIN-JUIL-AOÛT 2027',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
-  {n:'N°7',p:'SEPT-OCT-NOV 2027', bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
-  {n:'N°8',p:'DÉC-JAN-FÉV 2028', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
-  {n:'N°9',p:'MARS-AVR-MAI 2028', bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
+  {n:'N°3',p:'SEPT 26',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
+  {n:'N°4',p:'DÉC 26', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
+  {n:'N°5',p:'MARS 27',bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
+  {n:'N°6',p:'JUIN 27',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
+  {n:'N°7',p:'SEPT 27',bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
+  {n:'N°8',p:'DÉC 27', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
+  {n:'N°9',p:'MARS 28',bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
 const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
@@ -810,18 +964,18 @@ TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
-    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
+    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
     <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-bxd${i}`,24)}</td>
-    <td>${_inp(`tr-bxp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-bxt${i}`,36)}</td>
-    <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-frn${i}`,26,'number')}</td>
-    <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-frd${i}`,24)}</td>
-    <td>${_inp(`tr-frp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-frt${i}`,36)}</td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
+    <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
   </tr>`;
 });
 
@@ -830,9 +984,30 @@ TRIMS.forEach((t,i)=>{
 // ══════════════════════════════════════
 let members=[], curId=null, isDirty=false;
 
+// ── Dossier membres (mettre à jour pour Google Drive) ──
+const DOSSIER_BASE = 'C:\\Users\\Marc\\Desktop\\DOSSIER PARTENAIRES 2026';
+
+function copyDossierPath(){
+  const m = members.find(x => x.id === curId);
+  if(!m){ alert('Aucun membre sélectionné.'); return; }
+  const nom = m.fields['NOM ATTRACTION'] || m.fields['ENSEIGNE'] || '';
+  if(!nom){ alert('Nom du membre introuvable.'); return; }
+  const path = DOSSIER_BASE + '\\' + nom;
+  navigator.clipboard.writeText(path).then(()=>{
+    const msg = document.getElementById('dossier-msg');
+    if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
+  }).catch(()=>{ prompt('Copiez ce chemin :', path); });
+}
+
 // ══════════════════════════════════════
 //  DIRTY TRACKING
 // ══════════════════════════════════════
+function calcTrimTot(pfx,i){
+  const n=parseFloat(document.getElementById('tr-'+pfx+'n'+i)?.value)||0;
+  const p=parseFloat(document.getElementById('tr-'+pfx+'p'+i)?.value)||0;
+  const el=document.getElementById('tr-'+pfx+'t'+i);
+  if(el) el.value=n&&p?(n*p).toFixed(2):'';
+}
 function calcPubTot(pfx){
   const pg=parseFloat(document.getElementById('p-'+pfx+'-pg').value)||0;
   const pp=parseFloat(document.getElementById('p-'+pfx+'-pp').value)||0;
@@ -841,6 +1016,46 @@ function calcPubTot(pfx){
   const tval=document.getElementById('p-'+pfx+'-tval');
   if(tot) tot.textContent=(pg+pp).toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(tval) tval.textContent=t ? Number(t).toLocaleString('fr-BE',{style:'currency',currency:'EUR'}) : '—';
+  calcGrandTotal();
+}
+
+function calcGrandTotal(){
+  const fmt=(v)=>v===null?'—':v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+  const pubs=[
+    {pfx:'bx',  tid:'tot-bx'},
+    {pfx:'fr',  tid:'tot-fr'},
+    {pfx:'tp',  tid:'tot-tp'},
+    {pfx:'sej', tid:'tot-sej'},
+  ];
+  let grandTarif=0, grandCred=0;
+  pubs.forEach(({pfx,tid})=>{
+    const tEl=document.getElementById('p-'+pfx+'-t');
+    const cEl=document.getElementById('p-'+pfx+'-cred');
+    const tarif=tEl&&tEl.value ? Number(tEl.value) : 0;
+    const cred =cEl&&cEl.value ? Number(cEl.value) : 0;
+    const elP=document.getElementById(tid+'-page'); if(elP){const ts=document.getElementById('p-'+pfx+'-tot'); elP.textContent=ts&&ts.textContent&&ts.textContent!=='0,00'?ts.textContent+' €':'—';}
+    const elT=document.getElementById(tid+'-tarif'); if(elT) elT.textContent=tarif?fmt(tarif):'—';
+    const elC=document.getElementById(tid+'-cred');  if(elC) elC.textContent=cred?fmt(cred):'—';
+    const elCS=document.getElementById('p-'+pfx+'-cred-show'); if(elCS) elCS.textContent=cred?cred.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+    grandTarif+=tarif; grandCred+=cred;
+  });
+  // ── NEWS par N° ──
+  let grandNewsT=0,grandNewsC=0;
+  TRIMS.forEach((_,i)=>{
+    const bxTot=Number(document.getElementById('tr-bxt'+i)?.value)||0;
+    const bxTar=Number(document.getElementById('tr-bxp'+i)?.value)||0;
+    const bxCred=Number(document.getElementById('tr-bxc'+i)?.value)||0;
+    const e1=document.getElementById('tot-nbx-tot-'+i); if(e1) e1.textContent=bxTot?fmt(bxTot):'—';
+    const e2=document.getElementById('tot-nbx-tar-'+i); if(e2) e2.textContent=bxTar?fmt(bxTar):'—';
+    const e3=document.getElementById('tot-nbx-cred-'+i); if(e3) e3.textContent=bxCred?fmt(bxCred):'—';
+    const frTot=Number(document.getElementById('tr-frt'+i)?.value)||0;
+    const frTar=Number(document.getElementById('tr-frp'+i)?.value)||0;
+    const frCred=Number(document.getElementById('tr-frc'+i)?.value)||0;
+    const e4=document.getElementById('tot-nfr-tot-'+i); if(e4) e4.textContent=frTot?fmt(frTot):'—';
+    const e5=document.getElementById('tot-nfr-tar-'+i); if(e5) e5.textContent=frTar?fmt(frTar):'—';
+    const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
+    grandNewsT+=bxTot+frTot; grandNewsC+=bxCred+frCred;
+  });
 }
 
 function markDirty(){
@@ -898,6 +1113,7 @@ async function loadAll(){
     });
     buildSelect();
     buildTable();
+    buildFilterOptions();
     setSt(`✅ ${members.length} membres chargés`);
   } catch(e){
     setSt('⚠️ Erreur connexion Airtable');
@@ -970,8 +1186,8 @@ function sv(id,val,cb=false){
 }
 
 function fillForm(f){
-  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['ENSEIGNE']||'— MEMBRE —';
-  document.getElementById('f-num').textContent=f['Nº de membre']||f['﻿N°']||'';
+  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'— MEMBRE —';
+  document.getElementById('f-num').value=f['Nº de membre']||f['﻿N°']||'';
 
   sv('f-entree', fmtDate(f['DATE ENTRÉE']));
   sv('f-modif',  fmtDate(f['Date de modification']));
@@ -1014,10 +1230,7 @@ function fillForm(f){
   sv('f-majp', f['Effectué par']);
 
   // Totaux sorties
-  sv('f-ss-bxt',f['SORTIES SCOLAIRES BELUX (trim.)']);
-  sv('f-ss-bxa',f['SORTIES SCOLAIRES BELUX (annuel)']);
-  sv('f-ns-bxt',f['NEWS SCOLAIRES BELUX (trim.)']);
-  sv('f-ns-bxa',f['NEWS SCOLAIRES BELUX (annuel)']);
+  // Champs Totaux Sorties Scolaires supprimés de l'interface
 
   // Publications annuelles — checkboxes
   sv('p-bx26',f['SORTIES SCOLAIRES BELUX 2026']||f['PUB BELUX 2026'],true);
@@ -1050,20 +1263,26 @@ function fillForm(f){
   sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
   sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
   sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
+  // Crédits
+  sv('p-bx-cred',  f['PUB BELUX CREDIT']!==undefined&&f['PUB BELUX CREDIT']!==null ? String(f['PUB BELUX CREDIT']) : null);
+  sv('p-fr-cred',  f['PUB FRANCE CREDIT']!==undefined&&f['PUB FRANCE CREDIT']!==null ? String(f['PUB FRANCE CREDIT']) : null);
+  sv('p-tp-cred',  f['PUB TIPS CREDIT']!==undefined&&f['PUB TIPS CREDIT']!==null ? String(f['PUB TIPS CREDIT']) : null);
+  sv('p-sej-cred', f['PUB SEJOURS CREDIT']!==undefined&&f['PUB SEJOURS CREDIT']!==null ? String(f['PUB SEJOURS CREDIT']) : null);
+  calcGrandTotal();
 
   // Trimestrielles
   TRIMS.forEach((t,i)=>{
     sv(`tr-bx${i}`,f[t.bx],true);
     sv(`tr-bxn${i}`,f[t.bx+' NBR']);
     sv(`tr-bxf${i}`,f[t.bx+' FORMAT']);
-    sv(`tr-bxd${i}`,f[t.bx+' DEC']);
     sv(`tr-bxp${i}`,f[t.bx+' PRIX']);
+    sv(`tr-bxc${i}`,f[t.bx+' CREDIT']!==undefined&&f[t.bx+' CREDIT']!==null?String(f[t.bx+' CREDIT']):null);
     sv(`tr-bxt${i}`,f[t.bx+' TOTAL']);
     sv(`tr-fr${i}`,f[t.fr],true);
     sv(`tr-frn${i}`,f[t.fr+' NBR']);
     sv(`tr-frf${i}`,f[t.fr+' FORMAT']);
-    sv(`tr-frd${i}`,f[t.fr+' DEC']);
     sv(`tr-frp${i}`,f[t.fr+' PRIX']);
+    sv(`tr-frc${i}`,f[t.fr+' CREDIT']!==undefined&&f[t.fr+' CREDIT']!==null?String(f[t.fr+' CREDIT']):null);
     sv(`tr-frt${i}`,f[t.fr+' TOTAL']);
   });
 
@@ -1106,9 +1325,15 @@ function gv(id){
   if(e.type==='checkbox') return e.checked;
   return e.value||null;
 }
+function gn(id){
+  const v=gv(id); if(!v) return null;
+  const n=Number(v); return isNaN(n)?null:n;
+}
 
 function collectFields(){
   const F={
+    'Nº de membre': gn('f-num'),
+    'DATE ENTRÉE': gv('f-entree')||null,
     'NOM ATTRACTION':gv('f-attr'),
     'CATÉGORIE':gv('f-cat'),
     'Enseigne commerciale':gv('f-ens'),
@@ -1151,6 +1376,10 @@ function collectFields(){
     'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
     'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
     'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
+    'PUB BELUX CREDIT':  gv('p-bx-cred')  ? Number(gv('p-bx-cred'))  : null,
+    'PUB FRANCE CREDIT': gv('p-fr-cred')  ? Number(gv('p-fr-cred'))  : null,
+    'PUB TIPS CREDIT':   gv('p-tp-cred')  ? Number(gv('p-tp-cred'))  : null,
+    'PUB SEJOURS CREDIT':gv('p-sej-cred') ? Number(gv('p-sej-cred')) : null,
     // Newsletters / Bannières (4 lignes chacun) — ajoutées dynamiquement ci-dessous
   };
   for(let i=1;i<=4;i++){
@@ -1166,15 +1395,15 @@ function collectFields(){
     F[t.bx]=gv(`tr-bx${i}`);
     F[t.bx+' NBR']=gv(`tr-bxn${i}`) ? Number(gv(`tr-bxn${i}`)) : null;
     F[t.bx+' FORMAT']=gv(`tr-bxf${i}`);
-    F[t.bx+' DEC']=gv(`tr-bxd${i}`);
     F[t.bx+' PRIX']=gv(`tr-bxp${i}`) ? Number(gv(`tr-bxp${i}`)) : null;
-    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`);
+    F[t.bx+' CREDIT']=gv(`tr-bxc${i}`) ? Number(gv(`tr-bxc${i}`)) : null;
+    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`) ? Number(gv(`tr-bxt${i}`)) : null;
     F[t.fr]=gv(`tr-fr${i}`);
     F[t.fr+' NBR']=gv(`tr-frn${i}`) ? Number(gv(`tr-frn${i}`)) : null;
     F[t.fr+' FORMAT']=gv(`tr-frf${i}`);
-    F[t.fr+' DEC']=gv(`tr-frd${i}`);
     F[t.fr+' PRIX']=gv(`tr-frp${i}`) ? Number(gv(`tr-frp${i}`)) : null;
-    F[t.fr+' TOTAL']=gv(`tr-frt${i}`);
+    F[t.fr+' CREDIT']=gv(`tr-frc${i}`) ? Number(gv(`tr-frc${i}`)) : null;
+    F[t.fr+' TOTAL']=gv(`tr-frt${i}`) ? Number(gv(`tr-frt${i}`)) : null;
   });
   // Remove null/empty/false
   Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
@@ -1210,11 +1439,11 @@ async function saveMember(){
              ||msg.match(/for field (.+)$/);
       const bad=m&&m[1]&&m[1].trim();
       if(bad){
-        const key=Object.prototype.hasOwnProperty.call(fields,bad)?bad
-          :Object.keys(fields).find(function(k){return k.startsWith(bad)||bad.startsWith(k);});
-        if(key){console.warn('Champ ignoré:',key);delete fields[key];continue;}
+        const key=fields.hasOwnProperty(bad)?bad
+          :Object.keys(fields).find(k=>k.startsWith(bad)||bad.startsWith(k));
+        if(key){ console.warn('Champ ignoré:',key); delete fields[key]; continue; }
       }
-      info.textContent='⚠️ '+msg;return;
+      info.textContent='⚠️ '+msg; return;
     }
     if(res.error){info.textContent='⚠️ '+res.error.message;return;}
     clearDirty();
@@ -1223,13 +1452,15 @@ async function saveMember(){
     await loadAll();
     if(curId){
       document.getElementById('msel').value=curId;
+      const saved=members.find(m=>m.id===curId);
+      if(saved) fillForm(saved.fields);
       if(!wasExisting){
         showView('recherche');
-        setTimeout(function(){
-          var row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
+        setTimeout(()=>{
+          const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
           if(row){row.scrollIntoView({behavior:'smooth',block:'center'});
                   row.classList.add('flash-new');
-                  setTimeout(function(){row.classList.remove('flash-new');},7000);}
+                  setTimeout(()=>row.classList.remove('flash-new'),7000);}
         },400);
       }
     }
@@ -1247,12 +1478,20 @@ function buildTable(){
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
   const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
+  const selCode=(document.getElementById('rch-code')||{value:''}).value;
+  const selTri1=(document.getElementById('rch-tri1')||{value:''}).value;
+  const selTri2=(document.getElementById('rch-tri2')||{value:''}).value;
+  const selTri3=(document.getElementById('rch-tri3')||{value:''}).value;
   const filtered=members.filter(m=>{
-    if(!q) return true;
     const f=m.fields;
-    return [f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+    if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
-      .some(v=>(v||'').toLowerCase().includes(q));
+      .some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(selCode && String(f['CODE']!==undefined&&f['CODE']!==null?f['CODE']:'')!==selCode) return false;
+    if(selTri1 && String(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?f['Clé de TRI 2']:'')!==selTri1) return false;
+    if(selTri2 && String(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?f['Clé de TRI 3']:'')!==selTri2) return false;
+    if(selTri3 && String(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?f['Clé de TRI 4']:'')!==selTri3) return false;
+    return true;
   });
   filtered.forEach(m=>{
     const f=m.fields;
@@ -1303,6 +1542,30 @@ function filterTable(){
   buildTable();
 }
 
+function buildFilterOptions(){
+  const defs=[
+    {id:'rch-code', field:'CODE'},
+    {id:'rch-tri1', field:'Clé de TRI 2'},
+    {id:'rch-tri2', field:'Clé de TRI 3'},
+    {id:'rch-tri3', field:'Clé de TRI 4'},
+  ];
+  defs.forEach(({id,field})=>{
+    const sel=document.getElementById(id);
+    if(!sel) return;
+    // Keep "Tous" option only
+    sel.innerHTML='<option value="">Tous</option>';
+    const vals=[...new Set(
+      members.map(m=>m.fields[field]).filter(v=>v!==undefined&&v!==null&&v!=='')
+      .map(v=>String(v))
+    )].sort((a,b)=>isNaN(a)||isNaN(b)?a.localeCompare(b,'fr'):Number(a)-Number(b));
+    vals.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+  });
+}
+
 // ══════════════════════════════════════
 //  VIEW NAVIGATION (classList-based)
 // ══════════════════════════════════════
@@ -1323,23 +1586,24 @@ function newMember(){
   }
   curId=null;
   clearDirty();
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  const maxNum=members.length>0
+    ? Math.max(...members.map(m=>parseInt(m.fields['Nº de membre']||m.fields['\ufeffN°']||0)||0))
+    : 0;
+  document.getElementById('f-num').value=Math.max(maxNum,0)+1;
+  const todayStr=new Date().toISOString().split('T')[0];
+  const fe=document.getElementById('f-entree');
+  if(fe) fe.value=todayStr;
+  const le=document.getElementById('f-lang');
+  if(le) le.value='FR';
   document.querySelectorAll('#view-fiche input').forEach(el=>{
     if(el.type==='checkbox') el.checked=false;
     else el.value='';
   });
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
-  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  const _maxN=members.length>0?Math.max(0,...members.map(function(m){
-    var v=m.fields['Nº de membre'];
-    if(v===undefined||v===null){
-      var k=Object.keys(m.fields).find(function(x){return x.indexOf('N°')>=0;});
-      v=k?m.fields[k]:0;
-    }
-    return parseInt(v)||0;
-  })):0;
-  document.getElementById('f-num').textContent=String(_maxN+1);
-  const le=document.getElementById('f-lang');
+  // Restaurer valeurs par défaut après vidage
+  document.getElementById('f-num').value=Math.max(maxNum,0)+1;
   if(le) le.value='FR';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   const t=document.getElementById('view-fiche');
