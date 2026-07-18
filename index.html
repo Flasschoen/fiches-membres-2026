@@ -1586,7 +1586,7 @@ function newMember(){
   const maxNum=members.length>0
     ? Math.max(...members.map(m=>parseInt(m.fields['Nº de membre']||m.fields['\ufeffN°']||0)||0))
     : 0;
-  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+  document.getElementById('f-num').value=Math.max(maxNum,0)+1;
   const todayStr=new Date().toISOString().split('T')[0];
   const fe=document.getElementById('f-entree');
   if(fe) fe.value=todayStr;
@@ -1599,7 +1599,7 @@ function newMember(){
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
   // Restaurer valeurs par défaut après vidage
-  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+  document.getElementById('f-num').value=Math.max(maxNum,0)+1;
   if(fe) fe.value=todayStr;
   const fm=document.getElementById('f-modif'); if(fm) fm.value=todayStr;
   if(le) le.value='FR';
