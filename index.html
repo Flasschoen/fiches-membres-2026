@@ -1643,11 +1643,20 @@ async function saveMember(){
   const wasExisting=!!curId;
   try{
     let res;
-    if(curId){
-      res=await atPatch(curId,fields);
-    } else {
-      res=await atPost(fields);
-      if(res.records&&res.records[0]) curId=res.records[0].id;
+    // Retry : si un champ est rejeté (formule/lecture seule), on le retire et on réessaie
+    for(let attempt=0;attempt<10;attempt++){
+      if(curId){
+        res=await atPatch(curId,fields);
+      } else {
+        res=await atPost(fields);
+        if(res.records&&res.records[0]) curId=res.records[0].id;
+      }
+      if(!res.error) break;
+      const m=res.error.message&&res.error.message.match(/"([^"]+)"/);
+      if(m&&fields.hasOwnProperty(m[1])){
+        console.warn('Champ ignoré (lecture seule):', m[1]);
+        delete fields[m[1]];
+      } else { break; }
     }
     if(res.error){info.textContent='⚠️ '+res.error.message;return;}
     clearDirty();
