@@ -1456,6 +1456,9 @@ function fillConf(f){
   // NOM DU PARTICIPANT = Enseigne (input)
   const partEl=document.getElementById('cc-part');
   if(partEl) partEl.value=f['ENSEIGNE']||f['NOM ATTRACTION']||'';
+  // Envoyer à = email du responsable (contact 1)
+  const envEl=document.getElementById('cc-envoyer');
+  if(envEl) envEl.value=f['EMAIL_CONTACT']||f['EMAIL']||'';
   // Date du jour
   const dateEl=document.getElementById('conf-date');
   if(dateEl) dateEl.textContent=new Date().toLocaleDateString('fr-BE',{day:'numeric',month:'long',year:'numeric'});
