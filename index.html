@@ -101,10 +101,6 @@ body{background:#dce3ef;min-height:100vh;}
 /* ── RECHERCHE TABLE ── */
 .rt{width:100%;border-collapse:collapse;font-size:12px;}
 .rt th{background:#1e3a6e;color:#fff;padding:7px 9px;text-align:left;position:sticky;top:0;z-index:1;}
-.rt th.sortable{cursor:pointer;user-select:none;}
-.rt th.sortable:hover{background:#2a4f9a;}
-.rt th.sorted-asc::after{content:' ▲';font-size:9px;}
-.rt th.sorted-desc::after{content:' ▼';font-size:9px;}
 .rt td{padding:5px 9px;border-bottom:1px solid #dde3ee;}
 .rt tr:nth-child(even) td{background:#f0f5fb;}
 .rt tr:hover td{background:#d0e0f8;cursor:pointer;}
@@ -116,8 +112,13 @@ body{background:#dce3ef;min-height:100vh;}
 
 /* ── CONFIRMATION ── */
 .conf-doc{background:#fff;max-width:820px;margin:18px auto;padding:38px 44px;box-shadow:0 3px 12px rgba(0,0,0,.18);font-size:12.5px;line-height:1.6;}
-.conf-title{font-size:17px;font-weight:700;color:#1e3a6e;text-align:center;text-transform:uppercase;letter-spacing:2px;margin:14px 0;}
+.conf-header{display:flex;align-items:center;margin-bottom:6px;}
+.conf-logo{height:50px;width:auto;object-fit:contain;margin-right:16px;}
+.conf-title-wrap{flex:1;text-align:center;}
+.conf-title{font-size:24px;font-weight:800;color:#1e3a6e;text-align:center;text-transform:uppercase;letter-spacing:2px;margin:4px 0;}
 .conf-sub{font-size:10px;color:#666;text-align:center;}
+.conf-sub-full{font-size:10.5px;color:#444;text-align:center;border-top:1.5px solid #aaa;border-bottom:1.5px solid #aaa;padding:6px 0;margin:8px 0 14px;font-style:italic;}
+.conf-table td:nth-child(2){width:210px;}
 .conf-table{width:100%;border-collapse:collapse;margin:12px 0;}
 .conf-table td{padding:4px 6px;}
 .conf-table .lbl{font-weight:700;width:160px;color:#1e3a6e;}
@@ -133,6 +134,17 @@ body{background:#dce3ef;min-height:100vh;}
   .hdr,.search-bar,.actions-bar,.view:not(.active),.btn-back,.btn-print{display:none!important;}
   .conf-doc{box-shadow:none;margin:0;padding:20px;}
 }
+/* Remove number spinners */
+@keyframes flash-new {
+  0%,100%{background:inherit;}
+  20%,60%{background:#b8f5b8;}
+  40%,80%{background:#66e066;}
+}
+tr.flash-new{animation:flash-new 2s ease 3;}
+
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button{-webkit-appearance:none;margin:0;}
+input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 </style>
 </head>
 <body>
@@ -166,6 +178,8 @@ body{background:#dce3ef;min-height:100vh;}
 <div class="actions-bar">
   <button class="btn btn-save" onclick="saveMember()">💾 Enregistrer</button>
   <button class="btn btn-cancel" onclick="loadMember()">↩ Annuler</button>
+  <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
+  <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
   <select id="f-agent" onchange="markDirty();toggleDeleteBtn()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
@@ -190,7 +204,7 @@ body{background:#dce3ef;min-height:100vh;}
       <input type="date" id="f-modif" style="border:1px solid #bbb;padding:2px 4px;font-size:11px;margin-left:4px;"></span>
     <span style="margin-left:auto;font-size:13px;">
       <b style="color:#1e3a6e;">N° :</b>
-      <input type="text" id="f-num" readonly style="font-size:17px;font-weight:700;color:#c55a11;margin-left:5px;border:none;background:transparent;width:60px;">
+      <input type="number" id="f-num" oninput="markDirty()" min="1" style="font-size:16px;font-weight:700;color:#c55a11;margin-left:5px;width:65px;border:1px solid #bbb;border-radius:3px;padding:2px 5px;text-align:center;">
     </span>
   </div>
 
@@ -270,7 +284,7 @@ body{background:#dce3ef;min-height:100vh;}
         </div>
       </div>
 
-      <div class="sec" style="margin-top:7px;">🌐 Langue &amp; Abonnements</div>
+      <div class="sec" style="margin-top:7px;">🌐 Langue & Abonnements</div>
       <div class="fg">
         <div class="fr">
           <div class="fl">Langue :</div>
@@ -316,7 +330,7 @@ body{background:#dce3ef;min-height:100vh;}
           <div class="fl">Cotisation BE :</div>
           <div class="fv" style="flex:0 0 90px;">
             <select id="f-cotbe" onchange="markDirty()" style="width:70px;">
-              <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+              <option value="">—</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option>
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant BE :</div>
@@ -331,7 +345,7 @@ body{background:#dce3ef;min-height:100vh;}
           <div class="fl">Cotisation LU :</div>
           <div class="fv" style="flex:0 0 90px;">
             <select id="f-cotlu" onchange="markDirty()" style="width:70px;">
-              <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+              <option value="">—</option><option>2025</option><option>2026</option><option>2027</option><option>2028</option>
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant LU :</div>
@@ -378,7 +392,7 @@ body{background:#dce3ef;min-height:100vh;}
         <div class="pub-card">
           <div class="pub-hdr" style="background:#ffd966;color:#1e3a6e;">📗 SORTIES SCOLAIRES Belux</div>
           <div class="pub-years">
-            <label><input type="checkbox" id="p-bx26" onchange="markDirty()"> 2026</label>
+            <label><input type="checkbox" id="p-bx26" onchange="syncCotBE()"> 2026</label>
             <label><input type="checkbox" id="p-bx27" onchange="markDirty()"> 2027</label>
             <label><input type="checkbox" id="p-bx28" onchange="markDirty()"> 2028</label>
           </div>
@@ -386,7 +400,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-bx-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -397,8 +412,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-bx-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-bx-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-bx-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-bx-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -409,7 +424,7 @@ body{background:#dce3ef;min-height:100vh;}
 
         <!-- FRANCE card (BLEU) -->
         <div class="pub-card">
-          <div class="pub-hdr" style="background:#1a5276;color:#fff;">📘 SORTIES SCOLAIRES France</div>
+          <div class="pub-hdr" style="background:#bdd7ee;color:#1e3a6e;">📘 SORTIES SCOLAIRES France</div>
           <div class="pub-years">
             <label><input type="checkbox" id="p-fr27" onchange="markDirty()"> 2027</label>
             <label><input type="checkbox" id="p-fr28" onchange="markDirty()"> 2028</label>
@@ -419,7 +434,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-fr-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -430,8 +446,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-fr-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-fr-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-fr-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-fr-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -452,7 +468,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-tp-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -463,8 +480,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-tp-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-tp-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-tp-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-tp-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -485,7 +502,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
               <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.5</option><option>1</option></select></td>
-              <td colspan="2"></td>
+              <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
+              <td><input type="number" id="p-sej-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
@@ -496,8 +514,8 @@ body{background:#dce3ef;min-height:100vh;}
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
               <td><span id="p-sej-tot" style="font-weight:700;color:#217346;font-size:11px;">0,00</span></td>
-              <td class="pub-lbl" style="color:#217346;font-size:10px;">TARIF :</td>
-              <td><span id="p-sej-tval" style="font-weight:700;color:#217346;font-size:11px;">—</span></td>
+              <td style="font-size:10px;color:#217346;white-space:nowrap;">TARIF : <b><span id="p-sej-tval" style="font-size:11px;">—</span></b></td>
+              <td style="font-size:10px;color:#c55a11;font-weight:700;white-space:nowrap;">CRÉDIT : <span id="p-sej-cred-show">—</span></td>
             </tr>
             <tr>
               <td class="pub-lbl">Commentaires :</td>
@@ -515,67 +533,125 @@ body{background:#dce3ef;min-height:100vh;}
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
-            <th colspan="6" class="sub2">NEWS SCOLAIRES France</th>
+            <th colspan="6" class="sub2" style="background:#e8d5f0;color:#5b2c6f;">NEWS SCOLAIRES France</th>
           </tr>
           <tr>
             <th class="sub2"></th><th class="sub2"></th>
             <th class="sub2" style="width:22px;">✓</th>
             <th class="sub2" style="width:30px;">Nbr</th>
             <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:28px;">DEC</th>
             <th class="sub2" style="width:40px;">PRIX</th>
+            <th class="sub2" style="width:40px;">CRÉDIT</th>
             <th class="sub2" style="width:40px;">TOTAL</th>
-            <th class="sub2" style="width:22px;">✓</th>
-            <th class="sub2" style="width:30px;">Nbr</th>
-            <th class="sub2" style="width:80px;">Format</th>
-            <th class="sub2" style="width:28px;">DEC</th>
-            <th class="sub2" style="width:40px;">PRIX</th>
-            <th class="sub2" style="width:40px;">TOTAL</th>
+            <th class="sub2" style="width:22px;background:#e8d5f0;color:#5b2c6f;">✓</th>
+            <th class="sub2" style="width:30px;background:#e8d5f0;color:#5b2c6f;">Nbr</th>
+            <th class="sub2" style="width:80px;background:#e8d5f0;color:#5b2c6f;">Format</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">PRIX</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">CRÉDIT</th>
+            <th class="sub2" style="width:40px;background:#e8d5f0;color:#5b2c6f;">TOTAL</th>
           </tr>
         </thead>
         <tbody id="trim-body"></tbody>
       </table>
 
-      <div class="sec" style="margin-top:7px;">📧 Newsletters &amp; Bannières</div>
+      <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
       <div style="display:grid;grid-template-columns:3fr 2fr;gap:5px;margin-top:2px;">
 
         <!-- NEWSLETTERS (gauche) -->
         <table class="pt">
           <thead>
             <tr>
-              <th colspan="4" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
+              <th colspan="6" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
             </tr>
             <tr>
               <th style="width:24px;">✓</th>
-              <th>NL MENSUELLE — Tarif (€)</th>
-              <th style="width:24px;">✓</th>
-              <th>NL PERSONNALISÉE — Tarif (€)</th>
+              <th>NL MENSUELLE — Période</th>
+              <th style="width:55px;">Tarif (€)</th>
+              <th style="width:24px;background:#d6e4f7;">✓</th>
+              <th style="background:#d6e4f7;color:#1e3a6e;">NL PERSONNALISÉE — Période</th>
+              <th style="width:55px;background:#d6e4f7;color:#1e3a6e;">Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td ><select id="p-nlm-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar1" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar1" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td ><select id="p-nlm-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar2" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar2" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td ><select id="p-nlm-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar3" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar3" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
-              <td><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td ><select id="p-nlm-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td><input type="number" id="p-nlm-tar4" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
+                <option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option>
+              </select></td>
+              <td style="background:#eef4fb"><input type="number" id="p-nlp-tar4" style="width:55px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
           </tbody>
         </table>
@@ -640,22 +716,76 @@ body{background:#dce3ef;min-height:100vh;}
           </tbody>
         </table>
       </div>
+      <div class="sec" style="margin-top:7px;background:#1e3a6e;color:#fff;">💰 Totaux Insertions Publications</div>
+      <table style="width:100%;font-size:11px;border-collapse:collapse;margin-top:2px;">
+        <thead>
+          <tr style="background:#2e5096;color:#fff;text-align:center;">
+            <th style="padding:3px 6px;text-align:left;">Publication</th>
+            <th style="padding:3px;">Totaux Page</th>
+            <th style="padding:3px;">Tarif (€)</th>
+            <th style="padding:3px;">Crédit (€)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="background:#ffd966;color:#1e3a6e;">
+            <td style="padding:2px 6px;font-weight:700;">📗 Sorties BELUX</td>
+            <td style="text-align:left;padding:2px 6px;font-weight:700;font-size:12px;"><span id="tot-bx-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-bx-cred">—</span></td>
+          </tr>
+          <tr style="background:#d6e4f7;">
+            <td style="padding:2px 6px;font-weight:700;">📘 Sorties France</td>
+            <td style="text-align:left;padding:2px 6px;font-weight:700;font-size:12px;"><span id="tot-fr-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-fr-cred">—</span></td>
+          </tr>
+          <tr style="background:#fce5cd;">
+            <td style="padding:2px 6px;font-weight:700;">📙 TIPS Schooltrips</td>
+            <td style="text-align:left;padding:2px 6px;font-weight:700;font-size:12px;"><span id="tot-tp-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-tp-cred">—</span></td>
+          </tr>
+          <tr style="background:#e8d5f0;">
+            <td style="padding:2px 6px;font-weight:700;">🏕️ Séjours Scolaires</td>
+            <td style="text-align:left;padding:2px 6px;font-weight:700;font-size:12px;"><span id="tot-sej-page">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
+            <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
+          </tr>
+          <tr style="background:#2e5096;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:3px 6px;white-space:nowrap;font-size:11px;">N° :
+              <select id="tot-nbx-sel" onchange="updateNewsTotal('bx')" style="font-size:11px;padding:1px 3px;border:1px solid #bbb;border-radius:2px;margin-left:3px;">
+                <option value="">—</option>
+                <option value="0">N°3</option><option value="1">N°4</option><option value="2">N°5</option>
+                <option value="3">N°6</option><option value="4">N°7</option><option value="5">N°8</option>
+                <option value="6">N°9</option>
+              </select>
+            </td>
+            <td style="font-weight:700;font-size:12px;padding:3px 4px;"><span id="tot-nbx-tot-show">—</span></td>
+            <td style="text-align:right;padding:3px 4px;font-size:11px;"><span id="tot-nbx-tar-show">—</span></td>
+            <td style="text-align:right;padding:3px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-cred-show">—</span></td>
+          </tr>
+          <tr style="background:#8e44ad;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:3px 6px;white-space:nowrap;font-size:11px;">N° :
+              <select id="tot-nfr-sel" onchange="updateNewsTotal('fr')" style="font-size:11px;padding:1px 3px;border:1px solid #bbb;border-radius:2px;margin-left:3px;background:#f0f4ff;">
+                <option value="">—</option>
+                <option value="0">N°3</option><option value="1">N°4</option><option value="2">N°5</option>
+                <option value="3">N°6</option><option value="4">N°7</option><option value="5">N°8</option>
+                <option value="6">N°9</option>
+              </select>
+            </td>
+            <td style="font-weight:700;font-size:12px;padding:3px 4px;"><span id="tot-nfr-tot-show">—</span></td>
+            <td style="text-align:right;padding:3px 4px;font-size:11px;"><span id="tot-nfr-tar-show">—</span></td>
+            <td style="text-align:right;padding:3px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-cred-show">—</span></td>
+          </tr>
 
-      <div class="sec" style="margin-top:7px;">📊 Totaux Sorties Scolaires</div>
-      <div class="fg">
-        <div class="fr">
-          <div class="fl">Sorties BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">Sorties BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ss-bxa" style="width:70px;"></div>
-        </div>
-        <div class="fr">
-          <div class="fl">News BELUX (trim.) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxt" style="width:70px;"></div>
-          <div class="fl" style="min-width:130px;">News BELUX (annuel) :</div>
-          <div class="fv"><input type="text" id="f-ns-bxa" style="width:70px;"></div>
-        </div>
-      </div>
+        </tbody>
+      </table>
     </div><!-- /right col -->
   </div><!-- /two-col -->
   <div style="height:25px;"></div>
@@ -672,11 +802,19 @@ body{background:#dce3ef;min-height:100vh;}
     <h2 style="color:#1e3a6e;font-size:16px;font-weight:700;">🔍 LISTE DES MEMBRES 2026</h2>
     <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
       oninput="filterTable()"
-      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:300px;font-size:13px;">
-    <span id="rch-cnt" style="font-size:12px;color:#555;"></span>
+      style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:280px;font-size:13px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">CODE :</label>
+    <input type="text" id="rch-code" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 1 :</label>
+    <input type="text" id="rch-tri1" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 2 :</label>
+    <input type="text" id="rch-tri2" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
+    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 3 :</label>
+    <input type="text" id="rch-tri3" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
+    <span id="rch-cnt" style="font-size:12px;color:#555;white-space:nowrap;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   </div>
-  <!-- REMPLACER -->
+  <!-- ── RECHERCHER / REMPLACER ── -->
   <div style="display:flex;align-items:center;gap:8px;margin:0 0 8px;padding:6px 10px;background:#fff8e7;border:1px solid #e0c060;border-radius:4px;flex-wrap:wrap;">
     <span style="font-size:11px;font-weight:700;color:#7d6608;white-space:nowrap;">🔄 REMPLACER :</span>
     <select id="rpl-field" style="font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
@@ -684,12 +822,13 @@ body{background:#dce3ef;min-height:100vh;}
       <option value="Clé de TRI 3">TRI 2</option>
       <option value="Clé de TRI 4">TRI 3</option>
     </select>
+    <span style="font-size:12px;color:#555;">=</span>
     <input type="number" id="rpl-from" placeholder="Valeur actuelle" style="width:90px;font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
-    <span style="font-size:11px;color:#555;">→</span>
+    <span style="font-size:12px;color:#555;">→ remplacer par</span>
     <input type="number" id="rpl-to" placeholder="Nouvelle valeur" style="width:90px;font-size:12px;padding:3px 6px;border:1px solid #aaa;border-radius:3px;">
-    <button onclick="rplPreview()" style="padding:3px 10px;font-size:11px;font-weight:700;background:#2e75b6;color:#fff;border:none;border-radius:3px;cursor:pointer;">Prévisualiser</button>
-    <button id="rpl-btn" onclick="rplApply()" style="display:none;padding:3px 10px;font-size:11px;font-weight:700;background:#1a7a3d;color:#fff;border:none;border-radius:3px;cursor:pointer;">Remplacer</button>
-    <span id="rpl-info" style="font-size:11px;color:#555;"></span>
+    <button onclick="rplPreview()" style="font-size:11px;padding:4px 10px;background:#2e75b6;color:#fff;border:none;border-radius:3px;cursor:pointer;">Prévisualiser</button>
+    <button id="rpl-btn" onclick="rplApply()" style="font-size:11px;padding:4px 10px;background:#c0392b;color:#fff;border:none;border-radius:3px;cursor:pointer;display:none;">Remplacer</button>
+    <span id="rpl-info" style="font-size:12px;font-weight:600;"></span>
   </div>
   <div id="rch-loading" style="text-align:center;padding:40px;color:#666;">⏳ Chargement des membres...</div>
   <div style="overflow-x:auto;">
@@ -697,20 +836,19 @@ body{background:#dce3ef;min-height:100vh;}
       <thead>
         <tr>
           <th>N°</th>
-          <th class="sortable" onclick="sortTable('ENSEIGNE')" id="th-ens">ENSEIGNE</th>
-          <th class="sortable" onclick="sortTable('NOM ATTRACTION')" id="th-nom">ATTRACTION / MUSÉE</th>
+          <th>ENSEIGNE</th>
+          <th>ATTRACTION / MUSÉE</th>
           <th>CATÉGORIE</th>
           <th>COMMUNE</th>
           <th>PROVINCE</th>
-          <th class="sortable" onclick="sortTable('CODE')" id="th-code">CODE</th>
+          <th>CODE</th>
           <th>TRI 1</th>
           <th>TRI 2</th>
           <th>TRI 3</th>
           <th>AGENT</th>
           <th>LANGUE</th>
-          <th class="sortable" onclick="sortTable('COTISATION BE')" id="th-cotbe">COTIS. BE</th>
+          <th>COTIS. BE</th>
           <th>ÉCHÉANCE BE</th>
-          <th class="sortable" onclick="sortTable('COTISATION LU')" id="th-cotlu">COTIS. LU</th>
         </tr>
       </thead>
       <tbody id="rch-tbody"></tbody>
@@ -728,83 +866,170 @@ body{background:#dce3ef;min-height:100vh;}
     <button class="btn btn-print" onclick="window.print()">🖨️ Imprimer / PDF</button>
   </div>
   <div class="conf-doc" id="conf-doc">
-    <div class="conf-sub">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
-    <div class="conf-title">Confirmation « Workshop »</div>
+    <div class="conf-header">
+      <img class="conf-logo" src="New_logo_jpeg.jpg" alt="Educpass">
+      <div class="conf-title-wrap">
+        <div class="conf-title">Confirmation « Workshop »</div>
+      </div>
+    </div>
+    <div class="conf-sub-full">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
+
     <table class="conf-table">
-      <tr><td class="lbl">Concerne :</td><td><b>PROFS-CONTACTS 2026</b></td>
-          <td class="lbl">Enseigne :</td><td><b id="cc-ens">—</b></td></tr>
-      <tr><td class="lbl">Lieu :</td><td>Musée Royal Afrique Centrale</td>
-          <td class="lbl">Responsable :</td><td id="cc-resp">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl">Rue + N° :</td><td id="cc-rue">—</td></tr>
-      <tr><td class="lbl">Date :</td><td><b>Dimanche 27 septembre 2026</b></td>
-          <td class="lbl">CP + Localité :</td><td id="cc-cpl">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl">Réf. Educpass :</td><td>26-<span id="cc-ref">—</span></td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl">TEL n° :</td><td id="cc-tel">—</td></tr>
-      <tr><td class="lbl"></td><td></td>
-          <td class="lbl">GSM n° :</td><td id="cc-gsm">—</td></tr>
+      <colgroup><col style="width:140px"><col style="width:200px"><col style="width:130px"><col></colgroup>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Concerne :</td>
+        <td style="padding-left:20px;"><b>PROFS-CONTACTS 2026</b></td>
+        <td class="lbl" style="padding-left:8px;">Enseigne</td>
+        <td><b id="cc-ens">—</b></td>
+      </tr>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Lieu :</td>
+        <td style="padding-left:20px;"><b>Musée Royal Afrique Centrale</b></td>
+        <td class="lbl" style="padding-left:8px;">Responsable</td>
+        <td id="cc-resp">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">Rue + N°</td>
+        <td id="cc-rue">—</td>
+      </tr>
+      <tr>
+        <td class="lbl" style="padding-left:20px;">Date :</td>
+        <td style="padding-left:20px;"><b>Dimanche 27 septembre 2026</b></td>
+        <td class="lbl" style="padding-left:8px;">CP + Localité</td>
+        <td id="cc-cpl">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">Réf. Educpass :</td>
+        <td>26-<span id="cc-ref">—</span></td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">TEL n° :</td>
+        <td id="cc-tel">—</td>
+      </tr>
+      <tr>
+        <td style="padding-left:20px;"></td><td style="padding-left:20px;"></td>
+        <td class="lbl" style="padding-left:8px;">GSM n° :</td>
+        <td id="cc-gsm">—</td>
+      </tr>
+      <tr>
+        <td colspan="2"></td>
+        <td colspan="2" style="text-align:right;font-size:11px;color:#555;padding-top:6px;">
+          Stoumont, le <span id="conf-date"></span>
+        </td>
+      </tr>
     </table>
-    <div style="text-align:right;font-size:11px;color:#555;margin-bottom:14px;">Stoumont, le <span id="conf-date"></span></div>
+
     <p style="margin-bottom:12px;font-size:13px;">Suite à votre inscription, veuillez vérifier les données ci-après.</p>
+
     <table class="part-table">
       <thead>
         <tr><th>TABLE N°</th><th>NOM DU PARTICIPANT</th><th>REPAS</th><th>STATUT</th><th>MONTANT</th></tr>
       </thead>
       <tbody>
         <tr>
-          <td style="text-align:center;"><input type="text" id="cc-table1" value="Libre" style="width:50px;text-align:center;border:1px solid #bbb;border-radius:2px;font-size:12px;padding:1px 3px;"></td>
-          <td><input type="text" id="cc-part" style="width:100%;border:1px solid #bbb;border-radius:2px;font-size:12px;padding:1px 4px;"></td>
-          <td style="text-align:center;"><select id="cc-repas1" onchange="calcConfTotal()" style="width:50px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option>0</option><option>1</option><option>2</option><option>3</option></select></td>
-          <td style="text-align:center;"><select id="cc-statut1" style="font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;background:#e2efda;font-weight:700;"><option>MEMBRE</option><option>NON-MEMBRE</option></select></td>
-          <td style="text-align:right;"><select id="cc-mont1" onchange="calcConfTotal()" style="width:70px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;font-weight:700;"><option>0</option><option>70</option><option value="195" selected>195</option><option>235</option></select> €</td>
+          <td style="text-align:center;">
+            <input type="text" id="cc-tabnum" value="Libre" style="width:60px;text-align:center;border:1px solid #ccc;border-radius:3px;padding:2px 4px;font-size:12px;">
+          </td>
+          <td>
+            <input type="text" id="cc-part" style="width:98%;border:1px solid #ccc;border-radius:3px;padding:2px 4px;font-size:12px;">
+          </td>
+          <td style="text-align:center;">
+            <select id="cc-repas1" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
+          <td style="text-align:center;">
+            <select id="cc-statut" style="font-size:12px;background:#e2efda;font-weight:700;padding:2px;">
+              <option>MEMBRE</option><option>NON-MEMBRE</option>
+            </select>
+          </td>
+          <td style="text-align:right;">
+            <select id="cc-mont1" onchange="calcConfTotal()" style="width:78px;font-size:12px;font-weight:700;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195" selected>195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
         <tr>
-          <td></td><td>Repas supplémentaire(s)</td>
-          <td style="text-align:center;"><select id="cc-repas2" onchange="calcConfTotal()" style="width:50px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option>0</option><option>1</option><option>2</option><option>3</option></select></td>
           <td></td>
-          <td style="text-align:right;"><select id="cc-mont2" onchange="calcConfTotal()" style="width:70px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option value="0" selected>0</option><option>70</option><option>195</option><option>235</option></select> €</td>
+          <td>Repas supplémentaire(s)</td>
+          <td style="text-align:center;">
+            <select id="cc-repas2" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
+          <td></td>
+          <td style="text-align:right;">
+            <select id="cc-mont2" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
         <tr>
           <td colspan="2">Participation au drink</td>
-          <td style="text-align:center;"><select id="cc-repas3" onchange="calcConfTotal()" style="width:50px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option>0</option><option>1</option><option>2</option><option>3</option></select></td>
-          <td></td>
-          <td style="text-align:right;"><select id="cc-mont3" onchange="calcConfTotal()" style="width:70px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option value="0" selected>0</option><option>70</option><option>195</option><option>235</option></select> €</td>
+          <td></td><td></td>
+          <td style="text-align:right;">
+            <select id="cc-mont3" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
         <tr>
           <td colspan="2">Table commune</td>
-          <td style="text-align:center;"><select id="cc-repas4" onchange="calcConfTotal()" style="width:50px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option>0</option><option>1</option><option>2</option><option>3</option></select></td>
+          <td style="text-align:center;">
+            <select id="cc-repas4" onchange="calcConfTotal()" style="width:52px;font-size:12px;">
+              <option>0</option><option>1</option><option>2</option><option>3</option>
+            </select>
+          </td>
           <td></td>
-          <td style="text-align:right;"><select id="cc-mont4" onchange="calcConfTotal()" style="width:70px;font-size:12px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;"><option value="0" selected>0</option><option>70</option><option>195</option><option>235</option></select> €</td>
+          <td style="text-align:right;">
+            <select id="cc-mont4" onchange="calcConfTotal()" style="width:78px;font-size:12px;">
+              <option value="0">0 €</option>
+              <option value="70">70 €</option>
+              <option value="195">195 €</option>
+              <option value="235">235 €</option>
+            </select>
+          </td>
         </tr>
         <tr class="total-row">
           <td colspan="2">Code : <span id="cc-code">—</span></td>
           <td colspan="2" style="text-align:right;">TOTAL à payer =</td>
-          <td style="text-align:right;color:#c00;font-weight:700;"><span id="cc-total">195 €</span></td>
+          <td style="text-align:right;color:#c00;font-weight:700;" id="cc-total">195 €</td>
         </tr>
       </tbody>
     </table>
-    <p style="margin:12px 0 6px;"><b>Envoyer à :</b> <input type="text" id="cc-envoi" style="width:60%;border:1px solid #bbb;border-radius:2px;padding:2px 6px;font-size:12px;" placeholder="adresse email ou nom..."></p>
-    <div style="background:#fff3cd;border:1px solid #ffc107;padding:9px 12px;margin-bottom:14px;font-size:12px;">
-      <b>RENDEZ-VOUS à partir de 08h15</b> dans la Salle d'expositions. Parking gratuit sur le site.
-    </div>
+
+    <p style="margin:12px 0 4px;font-size:13px;"><b>Envoyer à :</b></p>
+    <input type="text" id="cc-envoyer" style="width:100%;box-sizing:border-box;border:1px solid #ccc;border-radius:3px;padding:5px 8px;font-size:12px;margin-bottom:14px;" placeholder="Adresse d'envoi...">
+
     <h3 style="color:#1e3a6e;font-size:13px;margin-bottom:8px;text-transform:uppercase;">Programme de la journée :</h3>
-    <table class="prog-table" id="cc-prog">
-      <tr><td class="time">08h45 :</td><td contenteditable="true">Accueil exposant</td></tr>
-      <tr><td class="time">08h55 :</td><td contenteditable="true">Café de bienvenue (café ou jus d'orange + viennoiseries)</td></tr>
-      <tr><td class="time">09h30 :</td><td contenteditable="true">Ouverture du workshop</td></tr>
-      <tr><td class="time">13h00 :</td><td contenteditable="true">Fin du workshop</td></tr>
-      <tr><td class="time">13h15 :</td><td contenteditable="true">Apéritif</td></tr>
-      <tr><td class="time">13h30 :</td><td contenteditable="true">Repas des exposants : 1 verre + ½ litre d'eau + 1 café.</td></tr>
-      <tr><td class="time">15h45 :</td><td contenteditable="true">Visite guidée du Musée et de l'expo temporaire.</td></tr>
-      <tr><td class="time">17h00 :</td><td contenteditable="true">Drink de clôture</td></tr>
-      <tr><td class="time">17h30 :</td><td contenteditable="true">Fin d'activité.</td></tr>
+    <table class="prog-table">
+      <tr><td class="time" contenteditable="true" style="outline:none;">08h45 :</td><td contenteditable="true" style="outline:none;">Accueil exposant</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">08h55 :</td><td contenteditable="true" style="outline:none;">Café de bienvenue (café ou jus d'orange + viennoiseries)</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">09h30 :</td><td contenteditable="true" style="outline:none;">Ouverture du workshop</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h00 :</td><td contenteditable="true" style="outline:none;">Fin du workshop</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h15 :</td><td contenteditable="true" style="outline:none;">Apéritif</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">13h30 :</td><td contenteditable="true" style="outline:none;">Repas des exposants : 1 verre + ½ litre d'eau + 1 café.</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">15h45 :</td><td contenteditable="true" style="outline:none;">Visite guidée du Musée et de l'expo temporaire.</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">17h00 :</td><td contenteditable="true" style="outline:none;">Drink de clôture</td></tr>
+      <tr><td class="time" contenteditable="true" style="outline:none;">17h30 :</td><td contenteditable="true" style="outline:none;">Fin d'activité.</td></tr>
     </table>
   </div>
 </div><!-- /view-confirmation -->
 
 </div><!-- /app -->
+
 <script>
 // ══════════════════════════════════════
 //  CONFIG AIRTABLE
@@ -817,13 +1042,13 @@ const URL=`https://api.airtable.com/v0/${B}/${T}`;
 //  PÉRIODES TRIMESTRIELLES
 // ══════════════════════════════════════
 const TRIMS=[
-  {n:'N°3',p:'SEPT-OCT-NOV 2026',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
-  {n:'N°4',p:'DÉC-JAN-FÉV 2027', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
-  {n:'N°5',p:'MARS-AVR-MAI 2027', bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
-  {n:'N°6',p:'JUIN-JUIL-AOÛT 2027',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
-  {n:'N°7',p:'SEPT-OCT-NOV 2027', bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
-  {n:'N°8',p:'DÉC-JAN-FÉV 2028', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
-  {n:'N°9',p:'MARS-AVR-MAI 2028', bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
+  {n:'N°3',p:'SEPT 26',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
+  {n:'N°4',p:'DÉC 26', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
+  {n:'N°5',p:'MARS 27',bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
+  {n:'N°6',p:'JUIN 27',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
+  {n:'N°7',p:'SEPT 27',bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
+  {n:'N°8',p:'DÉC 27', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
+  {n:'N°9',p:'MARS 28',bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
 const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
@@ -832,18 +1057,18 @@ TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
-    <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-bxn${i}`,26,'number')}</td>
-    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-bxd${i}`,24)}</td>
-    <td>${_inp(`tr-bxp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-bxt${i}`,36)}</td>
-    <td><input type="checkbox" id="tr-fr${i}" onchange="markDirty()"></td>
-    <td>${_inp(`tr-frn${i}`,26,'number')}</td>
-    <td><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td>${_inp(`tr-frd${i}`,24)}</td>
-    <td>${_inp(`tr-frp${i}`,36,'number')}</td>
-    <td>${_inp(`tr-frt${i}`,36)}</td>
+    <td style="text-align:center"><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="text-align:center"><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
+    <td style="text-align:center"><select id="tr-bxf${i}" style="width:78px;font-size:10px;text-align:center;" onchange="markDirty();calcTrimTot('bx',${i})">${_fmtOpts}</select></td>
+    <td style="text-align:center"><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
+    <td style="text-align:center"><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;text-align:center;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="text-align:center"><input type="number" id="tr-bxt${i}" style="width:50px;font-size:10px;background:#e8f5e9;text-align:center;" readonly></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
+    <td style="background:#f3e5f5;text-align:center"><select id="tr-frf${i}" style="width:78px;font-size:10px;text-align:center;" onchange="markDirty();calcTrimTot('fr',${i})">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
+    <td style="background:#ead5f0;text-align:center"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;text-align:center;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
+    <td style="background:#f3e5f5;text-align:center"><input type="number" id="tr-frt${i}" style="width:50px;font-size:10px;background:#f9e8ff;text-align:center;" readonly></td>
   </tr>`;
 });
 
@@ -851,11 +1076,32 @@ TRIMS.forEach((t,i)=>{
 //  STATE
 // ══════════════════════════════════════
 let members=[], curId=null, isDirty=false;
-let sortCol=null, sortDir=1; // 1=asc, -1=desc
+
+// ── Dossier membres (mettre à jour pour Google Drive) ──
+const DOSSIER_BASE = 'C:\\Users\\Marc\\Desktop\\DOSSIER PARTENAIRES 2026';
+
+function copyDossierPath(){
+  const m = members.find(x => x.id === curId);
+  if(!m){ alert('Aucun membre sélectionné.'); return; }
+  const nom = m.fields['NOM ATTRACTION'] || m.fields['ENSEIGNE'] || '';
+  if(!nom){ alert('Nom du membre introuvable.'); return; }
+  const path = DOSSIER_BASE + '\\' + nom;
+  navigator.clipboard.writeText(path).then(()=>{
+    const msg = document.getElementById('dossier-msg');
+    if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
+  }).catch(()=>{ prompt('Copiez ce chemin :', path); });
+}
 
 // ══════════════════════════════════════
 //  DIRTY TRACKING
 // ══════════════════════════════════════
+function calcTrimTot(pfx,i){
+  const n=parseFloat(document.getElementById('tr-'+pfx+'n'+i)?.value)||0;
+  const p=parseFloat(document.getElementById('tr-'+pfx+'p'+i)?.value)||0;
+  const el=document.getElementById('tr-'+pfx+'t'+i);
+  if(el) el.value=n&&p?(n*p).toFixed(2):'';
+  updateNewsTotal(pfx);
+}
 function calcPubTot(pfx){
   const pg=parseFloat(document.getElementById('p-'+pfx+'-pg').value)||0;
   const pp=parseFloat(document.getElementById('p-'+pfx+'-pp').value)||0;
@@ -864,6 +1110,88 @@ function calcPubTot(pfx){
   const tval=document.getElementById('p-'+pfx+'-tval');
   if(tot) tot.textContent=(pg+pp).toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(tval) tval.textContent=t ? Number(t).toLocaleString('fr-BE',{style:'currency',currency:'EUR'}) : '—';
+  calcGrandTotal();
+}
+
+function calcGrandTotal(){
+  const fmt=(v)=>v===null?'—':v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+  const pubs=[
+    {pfx:'bx',  tid:'tot-bx'},
+    {pfx:'fr',  tid:'tot-fr'},
+    {pfx:'tp',  tid:'tot-tp'},
+    {pfx:'sej', tid:'tot-sej'},
+  ];
+  let grandTarif=0, grandCred=0;
+  pubs.forEach(({pfx,tid})=>{
+    const tEl=document.getElementById('p-'+pfx+'-t');
+    const cEl=document.getElementById('p-'+pfx+'-cred');
+    const tarif=tEl&&tEl.value ? Number(tEl.value) : 0;
+    const cred =cEl&&cEl.value ? Number(cEl.value) : 0;
+    const elP=document.getElementById(tid+'-page'); if(elP){const ts=document.getElementById('p-'+pfx+'-tot'); elP.textContent=ts&&ts.textContent&&ts.textContent!=='0,00'?ts.textContent:'—';}
+    const elT=document.getElementById(tid+'-tarif'); if(elT) elT.textContent=tarif?fmt(tarif):'—';
+    const elC=document.getElementById(tid+'-cred');  if(elC) elC.textContent=cred?fmt(cred):'—';
+    const elCS=document.getElementById('p-'+pfx+'-cred-show'); if(elCS) elCS.textContent=cred?cred.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+    grandTarif+=tarif; grandCred+=cred;
+  });
+  // ── NEWS par N° ──
+  let grandNewsT=0,grandNewsC=0;
+  TRIMS.forEach((_,i)=>{
+    const bxTot=Number(document.getElementById('tr-bxt'+i)?.value)||0;
+    const bxTar=Number(document.getElementById('tr-bxp'+i)?.value)||0;
+    const bxCred=Number(document.getElementById('tr-bxc'+i)?.value)||0;
+    const frTot=Number(document.getElementById('tr-frt'+i)?.value)||0;
+    const frTar=Number(document.getElementById('tr-frp'+i)?.value)||0;
+    const frCred=Number(document.getElementById('tr-frc'+i)?.value)||0;
+    grandNewsT+=bxTot+frTot; grandNewsC+=bxCred+frCred;
+  });
+  updateNewsTotal('bx');
+  updateNewsTotal('fr');
+}
+
+function syncCotBE(){
+  const cb=document.getElementById('p-bx26');
+  const sel=document.getElementById('f-cotbe');
+  if(!cb||!sel) return;
+  if(cb.checked && !sel.value) sel.value='2026';
+  else if(!cb.checked && sel.value==='2026') sel.value='';
+  markDirty();
+}
+function fmtToPage(fmt){
+  if(!fmt) return 0;
+  if(fmt.startsWith('1/4')) return 0.25;
+  if(fmt.startsWith('1/2')) return 0.5;
+  if(fmt.startsWith('1/1')||fmt.startsWith('1 ')) return 1;
+  return 0;
+}
+function updateNewsTotal(pfx){
+  const fmtE=v=>v?v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €':'—';
+  const fmtP=v=>v?v.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
+  const isB=(pfx==='bx');
+  const p=isB?'bx':'fr';
+  const sel  =document.getElementById(isB?'tot-nbx-sel':'tot-nfr-sel');
+  const totEl=document.getElementById(isB?'tot-nbx-tot-show':'tot-nfr-tot-show');
+  const tarEl=document.getElementById(isB?'tot-nbx-tar-show':'tot-nfr-tar-show');
+  const crEl =document.getElementById(isB?'tot-nbx-cred-show':'tot-nfr-cred-show');
+  if(!sel||sel.value===''){
+    if(totEl)totEl.textContent='—';
+    if(tarEl)tarEl.textContent='—';
+    if(crEl) crEl.textContent='—';
+    return;
+  }
+  const i=sel.value;
+  const nbr =Number(document.getElementById('tr-'+p+'n'+i)?.value)||0;
+  const fmt =document.getElementById('tr-'+p+'f'+i)?.value||'';
+  const tar =Number(document.getElementById('tr-'+p+'p'+i)?.value)||0;
+  const cred=Number(document.getElementById('tr-'+p+'c'+i)?.value)||0;
+  // TOTAL € = NBR × TARIF (recalcule si champ readonly vide)
+  const totInput=document.getElementById('tr-'+p+'t'+i);
+  let tot=Number(totInput?.value)||0;
+  if(!tot && nbr && tar){ tot=nbr*tar; if(totInput) totInput.value=tot.toFixed(2); }
+  // Total pages = NBR × fraction du format
+  const pages = nbr * fmtToPage(fmt);
+  if(totEl) totEl.textContent=fmtP(pages);  // Totaux Page = nb de pages
+  if(tarEl) tarEl.textContent=fmtE(tot);     // Tarif (€) = TOTAL € (NBR × PRIX)
+  if(crEl)  crEl.textContent =fmtE(cred);    // Crédit
 }
 
 function markDirty(){
@@ -990,11 +1318,11 @@ function fmtDate(v){
 function sv(id,val,cb=false){
   const el=document.getElementById(id); if(!el) return;
   if(cb) el.checked=!!val;
-  else el.value=val||'';
+  else el.value=(val!==null&&val!==undefined)?String(val):'';
 }
 
 function fillForm(f){
-  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['ENSEIGNE']||'— MEMBRE —';
+  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'— MEMBRE —';
   document.getElementById('f-num').value=f['Nº de membre']||f['﻿N°']||'';
 
   sv('f-entree', fmtDate(f['DATE ENTRÉE']));
@@ -1038,10 +1366,7 @@ function fillForm(f){
   sv('f-majp', f['Effectué par']);
 
   // Totaux sorties
-  sv('f-ss-bxt',f['SORTIES SCOLAIRES BELUX (trim.)']);
-  sv('f-ss-bxa',f['SORTIES SCOLAIRES BELUX (annuel)']);
-  sv('f-ns-bxt',f['NEWS SCOLAIRES BELUX (trim.)']);
-  sv('f-ns-bxa',f['NEWS SCOLAIRES BELUX (annuel)']);
+  // Champs Totaux Sorties Scolaires supprimés de l'interface
 
   // Publications annuelles — checkboxes
   sv('p-bx26',f['SORTIES SCOLAIRES BELUX 2026']||f['PUB BELUX 2026'],true);
@@ -1074,28 +1399,36 @@ function fillForm(f){
   sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
   sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
   sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
+  // Crédits
+  sv('p-bx-cred',  f['PUB BELUX CREDIT']!==undefined&&f['PUB BELUX CREDIT']!==null ? String(f['PUB BELUX CREDIT']) : null);
+  sv('p-fr-cred',  f['PUB FRANCE CREDIT']!==undefined&&f['PUB FRANCE CREDIT']!==null ? String(f['PUB FRANCE CREDIT']) : null);
+  sv('p-tp-cred',  f['PUB TIPS CREDIT']!==undefined&&f['PUB TIPS CREDIT']!==null ? String(f['PUB TIPS CREDIT']) : null);
+  sv('p-sej-cred', f['PUB SEJOURS CREDIT']!==undefined&&f['PUB SEJOURS CREDIT']!==null ? String(f['PUB SEJOURS CREDIT']) : null);
+  calcGrandTotal();
 
   // Trimestrielles
   TRIMS.forEach((t,i)=>{
     sv(`tr-bx${i}`,f[t.bx],true);
     sv(`tr-bxn${i}`,f[t.bx+' NBR']);
     sv(`tr-bxf${i}`,f[t.bx+' FORMAT']);
-    sv(`tr-bxd${i}`,f[t.bx+' DEC']);
     sv(`tr-bxp${i}`,f[t.bx+' PRIX']);
+    sv(`tr-bxc${i}`,f[t.bx+' CREDIT']!==undefined&&f[t.bx+' CREDIT']!==null?String(f[t.bx+' CREDIT']):null);
     sv(`tr-bxt${i}`,f[t.bx+' TOTAL']);
     sv(`tr-fr${i}`,f[t.fr],true);
     sv(`tr-frn${i}`,f[t.fr+' NBR']);
     sv(`tr-frf${i}`,f[t.fr+' FORMAT']);
-    sv(`tr-frd${i}`,f[t.fr+' DEC']);
     sv(`tr-frp${i}`,f[t.fr+' PRIX']);
+    sv(`tr-frc${i}`,f[t.fr+' CREDIT']!==undefined&&f[t.fr+' CREDIT']!==null?String(f[t.fr+' CREDIT']):null);
     sv(`tr-frt${i}`,f[t.fr+' TOTAL']);
   });
 
   // Newsletters / Bannières (4 lignes chacun)
   for(let i=1;i<=4;i++){
     sv(`p-nlm${i}`,f[`NL MENSUELLE ${i}`],true);
+    sv(`p-nlm-per${i}`,f[`NL MENSUELLE PERIODE ${i}`]);
     sv(`p-nlm-tar${i}`,f[`NL MENSUELLE TARIF ${i}`]!==undefined&&f[`NL MENSUELLE TARIF ${i}`]!==null ? String(f[`NL MENSUELLE TARIF ${i}`]) : null);
     sv(`p-nlp${i}`,f[`NL PERSO ${i}`],true);
+    sv(`p-nlp-per${i}`,f[`NL PERSO PERIODE ${i}`]);
     sv(`p-nlp-tar${i}`,f[`NL PERSO TARIF ${i}`]!==undefined&&f[`NL PERSO TARIF ${i}`]!==null ? String(f[`NL PERSO TARIF ${i}`]) : null);
     sv(`p-ban${i}`,f[`BANNIERE ${i}`],true);
     sv(`p-banp${i}`,f[`BANNIERE PERIODE ${i}`]);
@@ -1119,10 +1452,13 @@ function fillConf(f){
   st('cc-gsm',  f['GSM']);
   st('cc-ref',  f['Nº de membre']||'');
   st('cc-code', f['CODE']);
+  // NOM DU PARTICIPANT = Enseigne (input)
   const partEl=document.getElementById('cc-part');
   if(partEl) partEl.value=f['ENSEIGNE']||f['NOM ATTRACTION']||'';
+  // Date du jour
   const dateEl=document.getElementById('conf-date');
   if(dateEl) dateEl.textContent=new Date().toLocaleDateString('fr-BE',{day:'numeric',month:'long',year:'numeric'});
+  // Reset montants + total
   ['cc-mont1','cc-mont2','cc-mont3','cc-mont4'].forEach(id=>{
     const s=document.getElementById(id); if(s) s.value='0';
   });
@@ -1131,9 +1467,8 @@ function fillConf(f){
 }
 
 function calcConfTotal(){
-  const vals=['cc-mont1','cc-mont2','cc-mont3','cc-mont4']
-    .map(id=>Number(document.getElementById(id)?.value||0));
-  const total=vals.reduce((s,v)=>s+v,0);
+  const total=['cc-mont1','cc-mont2','cc-mont3','cc-mont4']
+    .reduce((s,id)=>s+Number(document.getElementById(id)?.value||0),0);
   const el=document.getElementById('cc-total');
   if(el) el.textContent=total+' €';
 }
@@ -1149,6 +1484,7 @@ function gv(id){
 
 function collectFields(){
   const F={
+    'DATE ENTRÉE':  gv('f-entree') || null,
     'NOM ATTRACTION':gv('f-attr'),
     'CATÉGORIE':gv('f-cat'),
     'Enseigne commerciale':gv('f-ens'),
@@ -1164,8 +1500,8 @@ function collectFields(){
     'CONTACT 2':gv('f-c2'),'TITRE 2':gv('f-t2'),'GSM 2':gv('f-g2'),'EMAIL 2':gv('f-e2'),
     'CONTACT 3':gv('f-c3'),'TITRE 3':gv('f-t3'),'GSM 3':gv('f-g3'),'EMAIL 3':gv('f-e3'),
     'CONTACT 4':gv('f-c4'),'TITRE 4':gv('f-t4'),'GSM 4':gv('f-g4'),'EMAIL 4':gv('f-e4'),
-    'COTISATION BE':gv('f-cotbe'),'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
-    'COTISATION LU':gv('f-cotlu'),'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
+    'COTISATION BE':gv('f-cotbe')||null,'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
+    'COTISATION LU':gv('f-cotlu')||null,'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
     'REMARQUES':gv('f-rem'),
     'Date mise à jour données':gv('f-majd')||null,
     'Effectué par':gv('f-majp'),
@@ -1174,29 +1510,35 @@ function collectFields(){
     'SORTIES SCOLAIRES FRANCE 2027':gv('p-fr27'),'SORTIES SCOLAIRES FRANCE 2028':gv('p-fr28'),'SORTIES SCOLAIRES FRANCE 2029':gv('p-fr29'),
     'TIPS voor SCHOOLTRIPS 2026':gv('p-tp26'),'TIPS voor SCHOOLTRIPS 2027':gv('p-tp27'),'TIPS voor SCHOOLTRIPS 2028':gv('p-tp28'),
     'SEJOURS SCOLAIRES 2023':gv('p-sej23'),'SEJOURS SCOLAIRES 2025':gv('p-sej25'),'SEJOURS SCOLAIRES 2027':gv('p-sej27'),
-    // Publications annuelles — page gratuite, page payante, tarif, commentaires
-    'PUB BELUX PAGE':gv('p-bx-pg') ? Number(gv('p-bx-pg')) : null,
-    'PUB BELUX PAGE PAYANTE':gv('p-bx-pp') ? Number(gv('p-bx-pp')) : null,
-    'PUB BELUX TARIF':gv('p-bx-t') ? Number(gv('p-bx-t')) : null,
+    // Publications annuelles — pages, tarif, commentaires
+    'PUB BELUX PAGE':       gv('p-bx-pg')  ? Number(gv('p-bx-pg'))  : null,
+    'PUB BELUX PAGE PAYANTE':gv('p-bx-pp') ? Number(gv('p-bx-pp'))  : null,
+    'PUB BELUX TARIF':      gv('p-bx-t')  ? Number(gv('p-bx-t'))   : null,
     'PUB BELUX COMMENTAIRES':gv('p-bx-com'),
-    'PUB FRANCE PAGE':gv('p-fr-pg') ? Number(gv('p-fr-pg')) : null,
-    'PUB FRANCE PAGE PAYANTE':gv('p-fr-pp') ? Number(gv('p-fr-pp')) : null,
-    'PUB FRANCE TARIF':gv('p-fr-t') ? Number(gv('p-fr-t')) : null,
+    'PUB FRANCE PAGE':       gv('p-fr-pg') ? Number(gv('p-fr-pg'))  : null,
+    'PUB FRANCE PAGE PAYANTE':gv('p-fr-pp')? Number(gv('p-fr-pp'))  : null,
+    'PUB FRANCE TARIF':     gv('p-fr-t')  ? Number(gv('p-fr-t'))   : null,
     'PUB FRANCE COMMENTAIRES':gv('p-fr-com'),
-    'PUB TIPS PAGE':gv('p-tp-pg') ? Number(gv('p-tp-pg')) : null,
-    'PUB TIPS PAGE PAYANTE':gv('p-tp-pp') ? Number(gv('p-tp-pp')) : null,
-    'PUB TIPS TARIF':gv('p-tp-t') ? Number(gv('p-tp-t')) : null,
+    'PUB TIPS PAGE':         gv('p-tp-pg') ? Number(gv('p-tp-pg'))  : null,
+    'PUB TIPS PAGE PAYANTE': gv('p-tp-pp') ? Number(gv('p-tp-pp'))  : null,
+    'PUB TIPS TARIF':       gv('p-tp-t')  ? Number(gv('p-tp-t'))   : null,
     'PUB TIPS COMMENTAIRES':gv('p-tp-com'),
-    'PUB SEJOURS PAGE':gv('p-sej-pg') ? Number(gv('p-sej-pg')) : null,
-    'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp') ? Number(gv('p-sej-pp')) : null,
+    'PUB SEJOURS PAGE':      gv('p-sej-pg')? Number(gv('p-sej-pg')) : null,
+    'PUB SEJOURS PAGE PAYANTE':gv('p-sej-pp')?Number(gv('p-sej-pp')): null,
     'PUB SEJOURS TARIF':gv('p-sej-t') ? Number(gv('p-sej-t')) : null,
     'PUB SEJOURS COMMENTAIRES':gv('p-sej-com'),
+    'PUB BELUX CREDIT':  gv('p-bx-cred')  ? Number(gv('p-bx-cred'))  : null,
+    'PUB FRANCE CREDIT': gv('p-fr-cred')  ? Number(gv('p-fr-cred'))  : null,
+    'PUB TIPS CREDIT':   gv('p-tp-cred')  ? Number(gv('p-tp-cred'))  : null,
+    'PUB SEJOURS CREDIT':gv('p-sej-cred') ? Number(gv('p-sej-cred')) : null,
     // Newsletters / Bannières (4 lignes chacun) — ajoutées dynamiquement ci-dessous
   };
   for(let i=1;i<=4;i++){
     F[`NL MENSUELLE ${i}`]=gv(`p-nlm${i}`);
+    F[`NL MENSUELLE PERIODE ${i}`]=gv(`p-nlm-per${i}`)||null;
     F[`NL MENSUELLE TARIF ${i}`]=gv(`p-nlm-tar${i}`) ? Number(gv(`p-nlm-tar${i}`)) : null;
     F[`NL PERSO ${i}`]=gv(`p-nlp${i}`);
+    F[`NL PERSO PERIODE ${i}`]=gv(`p-nlp-per${i}`)||null;
     F[`NL PERSO TARIF ${i}`]=gv(`p-nlp-tar${i}`) ? Number(gv(`p-nlp-tar${i}`)) : null;
     F[`BANNIERE ${i}`]=gv(`p-ban${i}`);
     F[`BANNIERE PERIODE ${i}`]=gv(`p-banp${i}`)||null;
@@ -1206,15 +1548,15 @@ function collectFields(){
     F[t.bx]=gv(`tr-bx${i}`);
     F[t.bx+' NBR']=gv(`tr-bxn${i}`) ? Number(gv(`tr-bxn${i}`)) : null;
     F[t.bx+' FORMAT']=gv(`tr-bxf${i}`);
-    F[t.bx+' DEC']=gv(`tr-bxd${i}`);
     F[t.bx+' PRIX']=gv(`tr-bxp${i}`) ? Number(gv(`tr-bxp${i}`)) : null;
-    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`);
+    F[t.bx+' CREDIT']=gv(`tr-bxc${i}`) ? Number(gv(`tr-bxc${i}`)) : null;
+    F[t.bx+' TOTAL']=gv(`tr-bxt${i}`) ? Number(gv(`tr-bxt${i}`)) : null;
     F[t.fr]=gv(`tr-fr${i}`);
     F[t.fr+' NBR']=gv(`tr-frn${i}`) ? Number(gv(`tr-frn${i}`)) : null;
     F[t.fr+' FORMAT']=gv(`tr-frf${i}`);
-    F[t.fr+' DEC']=gv(`tr-frd${i}`);
     F[t.fr+' PRIX']=gv(`tr-frp${i}`) ? Number(gv(`tr-frp${i}`)) : null;
-    F[t.fr+' TOTAL']=gv(`tr-frt${i}`);
+    F[t.fr+' CREDIT']=gv(`tr-frc${i}`) ? Number(gv(`tr-frc${i}`)) : null;
+    F[t.fr+' TOTAL']=gv(`tr-frt${i}`) ? Number(gv(`tr-frt${i}`)) : null;
   });
   // Remove null/empty/false
   Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
@@ -1224,6 +1566,67 @@ function collectFields(){
 // ══════════════════════════════════════
 //  SAVE MEMBER
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+//  SUPPRIMER MEMBRE (réservé MARC)
+// ══════════════════════════════════════
+function toggleDeleteBtn(){
+  const agent=document.getElementById('f-agent').value;
+  const btn=document.getElementById('btn-delete');
+  if(btn) btn.style.display=(agent==='MARC'&&curId)?'':'none';
+}
+
+async function deleteMember(){
+  if(!curId){alert('Aucun membre sélectionné.');return;}
+  const nom=document.getElementById('name-bar').textContent||'ce membre';
+  if(!confirm(`⚠️ Supprimer définitivement « ${nom} » ?\n\nCette action est IRRÉVERSIBLE dans Airtable.`)) return;
+  if(!confirm(`DERNIÈRE CONFIRMATION :\nSupprimer « ${nom} » ?`)) return;
+  const info=document.getElementById('save-info');
+  info.textContent='⏳ Suppression...';
+  try{
+    const r=await fetch(URL+'/'+curId,{method:'DELETE',headers:hdrs});
+    const data=await r.json();
+    if(data.deleted||data.id){
+      // Retirer du cache local
+      members=members.filter(m=>m.id!==curId);
+      curId=null;
+      clearDirty();
+      fillForm({});
+      document.getElementById('name-bar').textContent='— MEMBRE SUPPRIMÉ —';
+      document.getElementById('btn-delete').style.display='none';
+      buildSelect();
+      buildTable();
+      info.textContent='✅ Membre supprimé';
+      setTimeout(()=>{info.textContent='';showView('recherche');},2000);
+    } else {
+      info.textContent='⚠️ Erreur suppression';
+      console.error(data);
+    }
+  }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
+}
+
+// ══════════════════════════════════════
+//  NOUVEAU MEMBRE
+// ══════════════════════════════════════
+function newMember(){
+  if(isDirty&&!confirm('Des modifications non sauvegardées seront perdues. Continuer ?')) return;
+  curId=null;
+  clearDirty();
+  fillForm({});
+  // N° = max existant + 1
+  const maxNum=members.reduce((mx,m)=>Math.max(mx,Number(m.fields['Nº de membre']||0)),0);
+  document.getElementById('f-num').value=maxNum+1;
+  // Dates = aujourd'hui
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-entree').value=today;
+  document.getElementById('f-modif').value=today;
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  const btnD=document.getElementById('btn-delete');
+  if(btnD) btnD.style.display='none';
+  showView('fiche');
+  markDirty();
+  setTimeout(()=>document.getElementById('f-attr').focus(),100);
+}
+
 async function saveMember(){
   const agent=gv('f-agent');
   if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
@@ -1233,53 +1636,76 @@ async function saveMember(){
   info.textContent='⏳ Enregistrement...';
   const fields=collectFields();
   fields['Date de modification']=today;
-  const skipped=[];
+  const wasExisting=!!curId;
   try{
     let res;
-    // Retry loop: if a field is rejected, remove it and try again (handles formula/read-only fields)
-    for(let attempt=0;attempt<10;attempt++){
-      if(curId){
-        res=await atPatch(curId,fields);
-      } else {
-        res=await atPost(fields);
-        if(res.records&&res.records[0]) curId=res.records[0].id;
-      }
-      if(!res.error) break;
-      // Extract the offending field name from the error message
-      const m=res.error.message&&res.error.message.match(/"([^"]+)"/);
-      if(m&&fields.hasOwnProperty(m[1])){
-        console.warn('Champ ignoré (lecture seule?):', m[1]);
-        skipped.push(m[1]);
-        delete fields[m[1]];
-      } else {
-        break; // unrecognized error, stop retrying
-      }
+    if(curId){
+      res=await atPatch(curId,fields);
+    } else {
+      res=await atPost(fields);
+      if(res.records&&res.records[0]) curId=res.records[0].id;
     }
     if(res.error){info.textContent='⚠️ '+res.error.message;return;}
     clearDirty();
-    info.textContent=skipped.length?`✅ Sauvegardé (${skipped.length} champ(s) ignoré(s))`:'✅ Sauvegardé';
-    if(skipped.length) console.info('Champs non sauvegardés (formule Airtable?):', skipped.join(', '));
+    info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
+    const wasNew=!wasExisting;
     await loadAll();
-    if(curId) document.getElementById('msel').value=curId;
+    if(curId){
+      document.getElementById('msel').value=curId;
+      const saved=members.find(m=>m.id===curId);
+      if(saved) fillForm(saved.fields);
+      if(wasNew){
+        // Aller dans RECHERCHE et surligner le nouveau membre
+        showView('recherche');
+        setTimeout(()=>{
+          const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
+          if(row){row.scrollIntoView({behavior:'smooth',block:'center'});row.classList.add('flash-new');setTimeout(()=>row.classList.remove('flash-new'),7000);}
+        },400);
+      }
+    }
   }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
 }
 
+// ════════════════════════════════�
 // ══════════════════════════════════════
-//  RECHERCHER / REMPLACER (TRI fields)
+//  BUILD RECHERCHE TABLE
+// ══════════════════════════════════════
+// ══════════════════════════════════════
+//  RECHERCHER / REMPLACER (Clés de TRI)
 // ══════════════════════════════════════
 let rplMatches=[];
+
 function rplPreview(){
   const field=document.getElementById('rpl-field').value;
   const fromV=document.getElementById('rpl-from').value;
   const toV=document.getElementById('rpl-to').value;
   const info=document.getElementById('rpl-info');
   const btn=document.getElementById('rpl-btn');
-  if(!field||fromV===''||toV===''){info.textContent='⚠️ Remplissez tous les champs.';btn.style.display='none';return;}
+  info.textContent=''; btn.style.display='none';
+  if(fromV===''){
+    info.textContent='⚠️ Entrez une valeur à rechercher';
+    info.style.color='#c0392b'; return;
+  }
   const fromN=Number(fromV);
-  rplMatches=members.filter(m=>m.fields[field]!==undefined&&m.fields[field]!==null&&Number(m.fields[field])===fromN);
-  if(rplMatches.length===0){info.textContent='Aucun membre trouvé avec cette valeur.';btn.style.display='none';}
-  else{info.textContent=`${rplMatches.length} membre(s) trouvé(s) — cliquez Remplacer pour confirmer.`;btn.style.display='';}
+  const label=document.getElementById('rpl-field').options[document.getElementById('rpl-field').selectedIndex].text;
+  rplMatches=members.filter(m=>{
+    const v=m.fields[field];
+    return v!==undefined&&v!==null&&Number(v)===fromN;
+  });
+  if(!rplMatches.length){
+    info.textContent=`Aucun membre avec ${label} = ${fromN}`;
+    info.style.color='#888';
+  } else {
+    info.textContent=`${rplMatches.length} membre(s) avec ${label} = ${fromN}`;
+    info.style.color='#2e7d32';
+    if(toV!==''){
+      btn.textContent=`Remplacer les ${rplMatches.length} membres`;
+      btn.style.display='';
+    } else {
+      info.textContent+=' — entrez la nouvelle valeur';
+    }
+  }
 }
 
 async function rplApply(){
@@ -1287,49 +1713,37 @@ async function rplApply(){
   const toV=document.getElementById('rpl-to').value;
   const info=document.getElementById('rpl-info');
   const btn=document.getElementById('rpl-btn');
-  if(!rplMatches.length){info.textContent='Aucun match à remplacer.';return;}
+  const label=document.getElementById('rpl-field').options[document.getElementById('rpl-field').selectedIndex].text;
+  if(!rplMatches.length||toV==='') return;
   const toN=Number(toV);
+  if(!confirm(`Remplacer ${label} par ${toN} pour ${rplMatches.length} membre(s) ?\nCette opération est irréversible.`)) return;
+  btn.disabled=true;
+  info.textContent='⏳ Mise à jour en cours...'; info.style.color='#555';
   const today=new Date().toISOString().split('T')[0];
-  info.textContent='⏳ Remplacement en cours...';
-  btn.style.display='none';
-  let ok=0,err=0;
+  let ok=0,errs=0;
   for(let i=0;i<rplMatches.length;i+=10){
     const batch=rplMatches.slice(i,i+10);
     const body=JSON.stringify({records:batch.map(r=>({id:r.id,fields:{[field]:toN,'Date de modification':today}})),typecast:true});
     try{
-      const r=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},body});
-      const d=await r.json();
-      if(d.records) ok+=d.records.length;
-      else err+=batch.length;
-    }catch(e){err+=batch.length;}
+      const res=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},body});
+      const data=await res.json();
+      if(data.records){
+        ok+=data.records.length;
+        data.records.forEach(rec=>{
+          const idx=members.findIndex(m=>m.id===rec.id);
+          if(idx!==-1) members[idx].fields[field]=toN;
+        });
+      } else { errs+=batch.length; console.error(data); }
+    } catch(e){ errs+=batch.length; }
+    await new Promise(r=>setTimeout(r,250));
   }
-  info.textContent=`✅ ${ok} modifié(s)${err?' / ⚠️ '+err+' erreur(s)':''}`;
+  info.textContent=`✅ ${ok} mis à jour${errs?` | ❌ ${errs} erreurs`:''}`;
+  info.style.color=ok>0?'#2e7d32':'#c0392b';
+  btn.disabled=false; btn.style.display='none';
   rplMatches=[];
-  await loadAll();
-}
-
-// ══════════════════════════════════════
-//  TRI COLONNES
-// ══════════════════════════════════════
-const SORT_TH={
-  'ENSEIGNE':'th-ens','NOM ATTRACTION':'th-nom',
-  'CODE':'th-code','COTISATION BE':'th-cotbe','COTISATION LU':'th-cotlu'
-};
-function sortTable(col){
-  if(sortCol===col) sortDir*=-1; else{sortCol=col;sortDir=1;}
-  // Mise à jour visuelle des en-têtes
-  Object.values(SORT_TH).forEach(id=>{
-    const th=document.getElementById(id);
-    if(th){th.classList.remove('sorted-asc','sorted-desc');}
-  });
-  const active=document.getElementById(SORT_TH[col]);
-  if(active) active.classList.add(sortDir===1?'sorted-asc':'sorted-desc');
   buildTable();
 }
 
-// ══════════════════════════════════════
-//  BUILD RECHERCHE TABLE
-// ══════════════════════════════════════
 function buildTable(){
   const tbody=document.getElementById('rch-tbody');
   const tbl=document.getElementById('rch-tbl');
@@ -1337,27 +1751,25 @@ function buildTable(){
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
   const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
-  let filtered=members.filter(m=>{
-    if(!q) return true;
+  const selCode=(document.getElementById('rch-code')||{value:''}).value;
+  const selTri1=(document.getElementById('rch-tri1')||{value:''}).value;
+  const selTri2=(document.getElementById('rch-tri2')||{value:''}).value;
+  const selTri3=(document.getElementById('rch-tri3')||{value:''}).value;
+  const filtered=members.filter(m=>{
     const f=m.fields;
-    return [f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+    if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
-      .some(v=>(v||'').toLowerCase().includes(q));
+      .some(v=>(v||'').toLowerCase().includes(q))) return false;
+    if(selCode && !String(f['CODE']!==undefined&&f['CODE']!==null?f['CODE']:'').includes(selCode)) return false;
+    if(selTri1 && !String(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?f['Clé de TRI 2']:'').includes(selTri1)) return false;
+    if(selTri2 && !String(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?f['Clé de TRI 3']:'').includes(selTri2)) return false;
+    if(selTri3 && !String(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?f['Clé de TRI 4']:'').includes(selTri3)) return false;
+    return true;
   });
-  // Tri
-  if(sortCol){
-    filtered.sort((a,b)=>{
-      let va=a.fields[sortCol], vb=b.fields[sortCol];
-      if(sortCol==='CODE'){va=Number(va||0);vb=Number(vb||0);}
-      else{va=String(va||'').toLowerCase();vb=String(vb||'').toLowerCase();}
-      if(va<vb) return -1*sortDir;
-      if(va>vb) return 1*sortDir;
-      return 0;
-    });
-  }
   filtered.forEach(m=>{
     const f=m.fields;
     const tr=document.createElement('tr');
+    tr.dataset.id=m.id;
     tr.style.cursor='pointer';
     tr.onclick=()=>{
       if(isDirty){
@@ -1368,7 +1780,6 @@ function buildTable(){
       curId=m.id;
       fillForm(f);
       clearDirty();
-      toggleDeleteBtn();
       document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
       const t=document.getElementById('view-fiche');
       if(t) t.classList.add('active');
@@ -1394,7 +1805,6 @@ function buildTable(){
     tr.appendChild(td(f['LANGUE']||''));
     tr.appendChild(td(f['COTISATION BE']||''));
     tr.appendChild(td(f['ÉCHÉANCE BE']?f['ÉCHÉANCE BE'].substring(0,10):''));
-    tr.appendChild(td(f['COTISATION LU']||''));
     tbody.appendChild(tr);
   });
   if(loading) loading.style.display='none';
@@ -1404,6 +1814,30 @@ function buildTable(){
 
 function filterTable(){
   buildTable();
+}
+
+function buildFilterOptions(){
+  const defs=[
+    {id:'rch-code', field:'CODE'},
+    {id:'rch-tri1', field:'Clé de TRI 2'},
+    {id:'rch-tri2', field:'Clé de TRI 3'},
+    {id:'rch-tri3', field:'Clé de TRI 4'},
+  ];
+  defs.forEach(({id,field})=>{
+    const sel=document.getElementById(id);
+    if(!sel) return;
+    // Keep "Tous" option only
+    sel.innerHTML='<option value="">Tous</option>';
+    const vals=[...new Set(
+      members.map(m=>m.fields[field]).filter(v=>v!==undefined&&v!==null&&v!=='')
+      .map(v=>String(v))
+    )].sort((a,b)=>isNaN(a)||isNaN(b)?a.localeCompare(b,'fr'):Number(a)-Number(b));
+    vals.forEach(v=>{
+      const o=document.createElement('option');
+      o.value=v; o.textContent=v;
+      sel.appendChild(o);
+    });
+  });
 }
 
 // ══════════════════════════════════════
@@ -1420,67 +1854,38 @@ function showView(v){
   if(v==='recherche') buildTable();
 }
 
-// ══════════════════════════════════════
-//  SUPPRIMER MEMBRE (réservé MARC)
-// ══════════════════════════════════════
-// ══════════════════════════════════════
-//  SUPPRIMER MEMBRE (réservé MARC)
-// ══════════════════════════════════════
-function toggleDeleteBtn(){
-  const agent=document.getElementById('f-agent').value;
-  const btn=document.getElementById('btn-delete');
-  if(btn) btn.style.display=(agent==='MARC'&&curId)?'':'none';
-}
-
-async function deleteMember(){
-  if(!curId){alert('Aucun membre sélectionné.');return;}
-  const nom=document.getElementById('name-bar').textContent||'ce membre';
-  if(!confirm(`⚠️ Supprimer définitivement « ${nom} » ?\n\nCette action est IRRÉVERSIBLE dans Airtable.`)) return;
-  if(!confirm(`DERNIÈRE CONFIRMATION :\nSupprimer « ${nom} » ?`)) return;
-  const info=document.getElementById('save-info');
-  info.textContent='⏳ Suppression...';
-  try{
-    const r=await fetch(URL+'/'+curId,{method:'DELETE',headers:hdrs});
-    const data=await r.json();
-    if(data.deleted||data.id){
-      members=members.filter(m=>m.id!==curId);
-      curId=null;
-      clearDirty();
-      document.getElementById('btn-delete').style.display='none';
-      buildSelect();
-      buildTable();
-      info.textContent='✅ Membre supprimé';
-      setTimeout(()=>{info.textContent='';showView('recherche');},2000);
-    } else {
-      info.textContent='⚠️ Erreur suppression';
-      console.error(data);
-    }
-  }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
-}
-
 function newMember(){
-  if(isDirty&&!confirm('Des modifications non sauvegardées seront perdues. Continuer ?')) return;
+  if(isDirty){
+    if(!confirm('Des modifications non sauvegardées seront perdues. Nouveau membre quand même ?')) return;
+  }
   curId=null;
   clearDirty();
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  const maxNum=members.length>0
+    ? Math.max(...members.map(m=>parseInt(m.fields['Nº de membre']||m.fields['\ufeffN°']||0)||0))
+    : 0;
+  document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+  const todayStr=new Date().toISOString().split('T')[0];
+  const fe=document.getElementById('f-entree');
+  if(fe) fe.value=todayStr;
+  const le=document.getElementById('f-lang');
+  if(le) le.value='FR';
   document.querySelectorAll('#view-fiche input').forEach(el=>{
-    if(el.readOnly) return;
     if(el.type==='checkbox') el.checked=false;
-    else el.value='';
+    else if(!el.readOnly) el.value='';
   });
   document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
   document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
-  const maxNum=members.reduce((mx,m)=>Math.max(mx,Number(m.fields['Nº de membre']||0)),0);
-  document.getElementById('f-num').value=maxNum+1;
-  const today=new Date().toISOString().split('T')[0];
-  document.getElementById('f-entree').value=today;
-  document.getElementById('f-modif').value=today;
-  const le=document.getElementById('f-lang'); if(le) le.value='FR';
-  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
-  const btnD=document.getElementById('btn-delete'); if(btnD) btnD.style.display='none';
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
-  const t=document.getElementById('view-fiche'); if(t) t.classList.add('active');
-  markDirty();
-  setTimeout(()=>document.getElementById('f-attr')?.focus(),100);
+  const t=document.getElementById('view-fiche');
+  if(t) t.classList.add('active');
+  // Restaurer valeurs par défaut (setTimeout garantit l'ordre DOM)
+  setTimeout(()=>{
+    document.getElementById('f-num').value=maxNum>0 ? maxNum+1 : '';
+    if(fe) fe.value=todayStr;
+    const fm=document.getElementById('f-modif'); if(fm) fm.value=todayStr;
+    if(le) le.value='FR';
+  },30);
 }
 
 function setSt(msg){
