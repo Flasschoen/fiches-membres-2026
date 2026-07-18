@@ -1423,5 +1423,75 @@ function showView(v){
 // ══════════════════════════════════════
 //  SUPPRIMER MEMBRE (réservé MARC)
 // ══════════════════════════════════════
+// ══════════════════════════════════════
+//  SUPPRIMER MEMBRE (réservé MARC)
+// ══════════════════════════════════════
 function toggleDeleteBtn(){
-  const agent=document.
+  const agent=document.getElementById('f-agent').value;
+  const btn=document.getElementById('btn-delete');
+  if(btn) btn.style.display=(agent==='MARC'&&curId)?'':'none';
+}
+
+async function deleteMember(){
+  if(!curId){alert('Aucun membre sélectionné.');return;}
+  const nom=document.getElementById('name-bar').textContent||'ce membre';
+  if(!confirm(`⚠️ Supprimer définitivement « ${nom} » ?\n\nCette action est IRRÉVERSIBLE dans Airtable.`)) return;
+  if(!confirm(`DERNIÈRE CONFIRMATION :\nSupprimer « ${nom} » ?`)) return;
+  const info=document.getElementById('save-info');
+  info.textContent='⏳ Suppression...';
+  try{
+    const r=await fetch(URL+'/'+curId,{method:'DELETE',headers:hdrs});
+    const data=await r.json();
+    if(data.deleted||data.id){
+      members=members.filter(m=>m.id!==curId);
+      curId=null;
+      clearDirty();
+      document.getElementById('btn-delete').style.display='none';
+      buildSelect();
+      buildTable();
+      info.textContent='✅ Membre supprimé';
+      setTimeout(()=>{info.textContent='';showView('recherche');},2000);
+    } else {
+      info.textContent='⚠️ Erreur suppression';
+      console.error(data);
+    }
+  }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
+}
+
+function newMember(){
+  if(isDirty&&!confirm('Des modifications non sauvegardées seront perdues. Continuer ?')) return;
+  curId=null;
+  clearDirty();
+  document.querySelectorAll('#view-fiche input').forEach(el=>{
+    if(el.readOnly) return;
+    if(el.type==='checkbox') el.checked=false;
+    else el.value='';
+  });
+  document.querySelectorAll('#view-fiche select').forEach(el=>el.value='');
+  document.querySelectorAll('#view-fiche textarea').forEach(el=>el.value='');
+  const maxNum=members.reduce((mx,m)=>Math.max(mx,Number(m.fields['Nº de membre']||0)),0);
+  document.getElementById('f-num').value=maxNum+1;
+  const today=new Date().toISOString().split('T')[0];
+  document.getElementById('f-entree').value=today;
+  document.getElementById('f-modif').value=today;
+  const le=document.getElementById('f-lang'); if(le) le.value='FR';
+  document.getElementById('name-bar').textContent='— NOUVEAU MEMBRE —';
+  const btnD=document.getElementById('btn-delete'); if(btnD) btnD.style.display='none';
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  const t=document.getElementById('view-fiche'); if(t) t.classList.add('active');
+  markDirty();
+  setTimeout(()=>document.getElementById('f-attr')?.focus(),100);
+}
+
+function setSt(msg){
+  const el=document.getElementById('status');
+  if(el) el.textContent=msg;
+}
+
+// ══════════════════════════════════════
+//  INIT
+// ══════════════════════════════════════
+loadAll();
+</script>
+</body>
+</html>
