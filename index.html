@@ -1303,8 +1303,8 @@ async function loadAll(){
       off=d.offset||'';
     } while(off);
     members.sort((a,b)=>{
-      const na=(a.fields['NOM ATTRACTION']||'').toLowerCase();
-      const nb=(b.fields['NOM ATTRACTION']||'').toLowerCase();
+      const na=(a.fields['Enseigne commerciale']||a.fields['ENSEIGNE']||a.fields['NOM ATTRACTION']||'').toLowerCase();
+      const nb=(b.fields['Enseigne commerciale']||b.fields['ENSEIGNE']||b.fields['NOM ATTRACTION']||'').toLowerCase();
       return na.localeCompare(nb,'fr');
     });
     buildSelect();
