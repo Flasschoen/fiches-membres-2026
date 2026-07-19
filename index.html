@@ -181,7 +181,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
   <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
-  <select id="f-agent" onchange="markDirty()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
+  <select id="f-agent" onchange="markDirty();updateDelBtn()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
     <option>MARC</option><option>MAITE</option><option>PASCAL</option><option>VANESSA</option>
   </select>
@@ -529,6 +529,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <table class="tt" style="font-size:10px;">
         <thead>
           <tr>
+            <th colspan="14" style="padding:2px 6px;background:#e8f5e9;font-size:11px;font-weight:normal;text-align:left;">
+              📆 Édition : <select id="trim-sel" onchange="showTrimRow(this.value)" style="font-size:11px;padding:2px 6px;border:1px solid #8abd8a;border-radius:3px;background:#fff;font-weight:700;"></select>
+            </th>
+          </tr>
+          <tr>
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
@@ -693,106 +698,94 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
           </tr>
           <tr style="background:#2e5096;color:#fff;font-size:10px;">
-            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+            <th colspan="5" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Pages</th>
             <th style="padding:1px 4px;text-align:right;">Total (€)</th>
             <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#fffde7;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-0">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-1">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-2">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-3">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-4">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
           </tr>
-          <tr style="background:#fff9c4;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
-          </tr>
-          <tr style="background:#fffde7;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
-          </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
-            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+            <th colspan="5" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
+            <th style="padding:1px 4px;text-align:right;">Pages</th>
             <th style="padding:1px 4px;text-align:right;">Total (€)</th>
             <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#e3f2fd;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°3</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-0">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°4</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-1">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-2">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-3">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-4">—</span></td>
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
-          </tr>
-          <tr style="background:#bbdefb;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
-          </tr>
-          <tr style="background:#e3f2fd;">
-            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
 
         </tbody>
@@ -865,79 +858,81 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <div style="text-align:center;margin-bottom:14px;">
       <img class="conf-logo" src="New_logo_jpeg.jpg" alt="Educpass" style="height:60px;display:block;margin:0 auto 6px;">
       <div style="font-size:9px;color:#555;">Siège social : Roanne Coo - Grand Route, 5 - 4987 STOUMONT — Tél. 04.365.20.09 — Email : info@educpass.be</div>
-      <div class="conf-title" style="margin-top:8px;">Confirmation « Workshop »</div>
+      <div class="conf-title" style="margin-top:8px;font-size:20px;font-weight:900;">Confirmation « Workshop »</div>
     </div>
 
-    <!-- TABLE INFO : colonnes décalées gauche -->
-    <table class="conf-table" style="margin-left:-2cm;width:calc(100% + 2cm);">
-      <colgroup><col style="width:100px"><col style="width:180px"><col style="width:100px"><col></colgroup>
+    <!-- TABLE INFO -->
+    <table class="conf-table" style="width:100%;margin-top:8px;">
+      <colgroup><col style="width:130px"><col style="width:160px"><col style="width:110px"><col></colgroup>
       <tr>
-        <td class="lbl">Concerne :</td>
+        <td class="lbl" style="padding-left:1cm;">Concerne :</td>
         <td><b>PROFS-CONTACTS 2026</b></td>
-        <td class="lbl">Enseigne :</td>
+        <td class="lbl" style="padding-left:0.5cm;">Enseigne :</td>
         <td><b id="cc-ens">—</b></td>
       </tr>
       <tr>
-        <td class="lbl">Lieu :</td>
+        <td class="lbl" style="padding-left:1cm;">Lieu :</td>
         <td>Musée Royal Afrique Centrale</td>
-        <td class="lbl">Responsable :</td>
+        <td class="lbl" style="padding-left:0.5cm;">Responsable :</td>
         <td id="cc-resp">—</td>
       </tr>
       <tr>
         <td></td><td></td>
-        <td class="lbl">Rue + N° :</td>
+        <td class="lbl" style="padding-left:0.5cm;">Rue + N° :</td>
         <td id="cc-rue">—</td>
       </tr>
       <tr>
-        <td class="lbl">Date :</td>
+        <td class="lbl" style="padding-left:1cm;">Date :</td>
         <td><b>Dimanche 27 septembre 2026</b></td>
-        <td class="lbl">CP + Localité :</td>
+        <td class="lbl" style="padding-left:0.5cm;">CP + Localité :</td>
         <td id="cc-cpl">—</td>
       </tr>
       <tr>
         <td></td><td></td>
-        <td class="lbl">Réf. Educpass :</td>
+        <td class="lbl" style="padding-left:0.5cm;">Réf. Educpass :</td>
         <td>26-<span id="cc-ref">—</span></td>
       </tr>
       <tr>
         <td></td><td></td>
-        <td class="lbl">TEL n° :</td>
+        <td class="lbl" style="padding-left:0.5cm;">TEL n° :</td>
         <td id="cc-tel">—</td>
       </tr>
       <tr>
-        <!-- GSM aligné avec Stoumont + date du jour -->
-        <td class="lbl" style="font-size:10px;color:#555;">Stoumont, le</td>
-        <td style="font-size:10px;color:#333;"><span id="cc-date-today">—</span></td>
-        <td class="lbl">GSM n° :</td>
+        <td></td><td></td>
+        <td class="lbl" style="padding-left:0.5cm;">GSM n° :</td>
         <td id="cc-gsm">—</td>
+      </tr>
+      <tr>
+        <td class="lbl" style="padding-left:1cm;font-size:10px;color:#555;font-style:italic;" colspan="2">Stoumont, le <span id="cc-date-today">—</span></td>
+        <td></td><td></td>
       </tr>
     </table>
 
     <p style="margin:12px 0 8px;font-size:12px;">Suite à votre inscription, veuillez vérifier les données ci-après.</p>
 
-    <!-- TABLE PARTICIPANTS avec dropdowns -->
+    <!-- TABLEAU PARTICIPANTS : TABLE N° et STATUT communs -->
+    <div style="margin-bottom:6px;font-size:11px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;">
+      <span>TABLE N° : <input type="text" id="cc-table1" value="1" style="width:42px;text-align:center;border:1px solid #ccc;border-radius:3px;padding:2px 4px;font-size:11px;"></span>
+      <span>STATUT :
+        <select id="cc-statut1" style="font-size:11px;border:1px solid #8abd8a;border-radius:3px;padding:2px 4px;background:#e2efda;">
+          <option>MEMBRE</option><option>NON-MEMBRE</option>
+        </select>
+      </span>
+    </div>
     <table class="part-table" style="width:100%;">
       <thead>
         <tr>
-          <th style="width:70px;text-align:center;">TABLE N°</th>
           <th>NOM DU PARTICIPANT</th>
           <th style="width:75px;text-align:center;">REPAS</th>
-          <th style="width:110px;text-align:center;">STATUT</th>
           <th style="width:90px;text-align:right;">MONTANT</th>
         </tr>
       </thead>
       <tbody id="cc-tbody">
-        <tr style="">
-          <td style="text-align:center;"><input type="text" id="cc-table1" value="1" style="width:36px;text-align:center;border:1px solid #ccc;border-radius:2px;padding:2px 3px;font-size:11px;"></td>
+        <tr>
           <td id="cc-part1" style="font-size:12px;">—</td>
           <td style="text-align:center;">
             <select id="cc-repas1" onchange="calcConfTotal()" style="width:65px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
               <option value="">—</option><option>1</option><option>2</option><option>3</option>
-            </select>
-          </td>
-          <td style="text-align:center;">
-            <select id="cc-statut1" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;background:#e2efda;">
-              <option>MEMBRE</option><option>NON-MEMBRE</option>
             </select>
           </td>
           <td style="text-align:right;">
@@ -947,65 +942,47 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           </td>
         </tr>
         <tr style="background:#f9f9f9;">
-          <td style="text-align:center;"><input type="text" id="cc-table2" value="2" style="width:36px;text-align:center;border:1px solid #ccc;border-radius:2px;padding:2px 3px;font-size:11px;"></td>
           <td id="cc-part2" style="font-size:12px;"></td>
           <td style="text-align:center;">
             <select id="cc-repas2" onchange="calcConfTotal()" style="width:65px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
               <option value="">—</option><option>1</option><option>2</option><option>3</option>
             </select>
           </td>
-          <td style="text-align:center;">
-            <select id="cc-statut2" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
-              <option>MEMBRE</option><option>NON-MEMBRE</option>
-            </select>
-          </td>
           <td style="text-align:right;">
             <select id="cc-mont2" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;width:78px;">
-              <option value="0">0 €</option><option value="70">70 €</option><option value="195" >195 €</option><option value="235">235 €</option>
+              <option value="0">0 €</option><option value="70">70 €</option><option value="195">195 €</option><option value="235">235 €</option>
             </select>
           </td>
         </tr>
-        <tr style="">
-          <td style="text-align:center;"><input type="text" id="cc-table3" value="3" style="width:36px;text-align:center;border:1px solid #ccc;border-radius:2px;padding:2px 3px;font-size:11px;"></td>
+        <tr>
           <td id="cc-part3" style="font-size:12px;"></td>
           <td style="text-align:center;">
             <select id="cc-repas3" onchange="calcConfTotal()" style="width:65px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
               <option value="">—</option><option>1</option><option>2</option><option>3</option>
             </select>
           </td>
-          <td style="text-align:center;">
-            <select id="cc-statut3" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
-              <option>MEMBRE</option><option>NON-MEMBRE</option>
-            </select>
-          </td>
           <td style="text-align:right;">
             <select id="cc-mont3" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;width:78px;">
-              <option value="0">0 €</option><option value="70">70 €</option><option value="195" >195 €</option><option value="235">235 €</option>
+              <option value="0">0 €</option><option value="70">70 €</option><option value="195">195 €</option><option value="235">235 €</option>
             </select>
           </td>
         </tr>
         <tr style="background:#f9f9f9;">
-          <td style="text-align:center;"><input type="text" id="cc-table4" value="4" style="width:36px;text-align:center;border:1px solid #ccc;border-radius:2px;padding:2px 3px;font-size:11px;"></td>
           <td id="cc-part4" style="font-size:12px;"></td>
           <td style="text-align:center;">
             <select id="cc-repas4" onchange="calcConfTotal()" style="width:65px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
               <option value="">—</option><option>1</option><option>2</option><option>3</option>
             </select>
           </td>
-          <td style="text-align:center;">
-            <select id="cc-statut4" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
-              <option>MEMBRE</option><option>NON-MEMBRE</option>
-            </select>
-          </td>
           <td style="text-align:right;">
             <select id="cc-mont4" onchange="calcConfTotal()" style="font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;width:78px;">
-              <option value="0">0 €</option><option value="70">70 €</option><option value="195" >195 €</option><option value="235">235 €</option>
+              <option value="0">0 €</option><option value="70">70 €</option><option value="195">195 €</option><option value="235">235 €</option>
             </select>
           </td>
         </tr>
         <tr class="total-row">
-          <td colspan="2" style="font-size:11px;">Code : <span id="cc-code">—</span></td>
-          <td colspan="2" style="text-align:right;">TOTAL à payer =</td>
+          <td style="font-size:11px;">Code : <span id="cc-code">—</span></td>
+          <td style="text-align:right;">TOTAL à payer =</td>
           <td style="text-align:right;color:#c00;font-weight:700;"><span id="cc-total">195</span> €</td>
         </tr>
       </tbody>
@@ -1030,10 +1007,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   </div>
 </div><!-- /view-confirmation -->
 
-<!-- pas de suite ici -->
-  </div>
-</div><!-- /view-confirmation -->
-
 </div><!-- /app -->
 
 <script>
@@ -1048,19 +1021,19 @@ const URL=`https://api.airtable.com/v0/${B}/${T}`;
 //  PÉRIODES TRIMESTRIELLES
 // ══════════════════════════════════════
 const TRIMS=[
-  {n:'N°3',p:'SEPT 26',bx:'NEWS BELUX N3',fr:'NEWS FRANCE N3'},
-  {n:'N°4',p:'DÉC 26', bx:'NEWS BELUX N4',fr:'NEWS FRANCE N4'},
-  {n:'N°5',p:'MARS 27',bx:'NEWS BELUX N5',fr:'NEWS FRANCE N5'},
-  {n:'N°6',p:'JUIN 27',bx:'NEWS BELUX N6',fr:'NEWS FRANCE N6'},
-  {n:'N°7',p:'SEPT 27',bx:'NEWS BELUX N7',fr:'NEWS FRANCE N7'},
-  {n:'N°8',p:'DÉC 27', bx:'NEWS BELUX N8',fr:'NEWS FRANCE N8'},
-  {n:'N°9',p:'MARS 28',bx:'NEWS BELUX N9',fr:'NEWS FRANCE N9'},
+  {n:'N°5', p:'SEPT 26', bx:'NEWS BELUX N5', fr:'NEWS FRANCE N5'},
+  {n:'N°6', p:'DÉC 26',  bx:'NEWS BELUX N6', fr:'NEWS FRANCE N6'},
+  {n:'N°7', p:'MARS 27', bx:'NEWS BELUX N7', fr:'NEWS FRANCE N7'},
+  {n:'N°8', p:'JUIN 27', bx:'NEWS BELUX N8', fr:'NEWS FRANCE N8'},
+  {n:'N°9', p:'SEPT 27', bx:'NEWS BELUX N9', fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
 const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
 const _inp=(id,w,type='text')=>`<input type="${type}" id="${id}" style="width:${w}px;font-size:10px;" oninput="markDirty()">`;
+const trimSel=document.getElementById('trim-sel');
 TRIMS.forEach((t,i)=>{
-  tb.innerHTML+=`<tr>
+  if(trimSel){const o=document.createElement('option');o.value=i;o.textContent=t.n+' — '+t.p;trimSel.appendChild(o);}
+  tb.innerHTML+=`<tr id="trim-row-${i}" style="display:${i===0?'table-row':'none'}">
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
@@ -1077,6 +1050,14 @@ TRIMS.forEach((t,i)=>{
     <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
   </tr>`;
 });
+
+function showTrimRow(idx){
+  idx=Number(idx);
+  TRIMS.forEach((_,i)=>{
+    const r=document.getElementById('trim-row-'+i);
+    if(r) r.style.display=(i===idx)?'table-row':'none';
+  });
+}
 
 // ══════════════════════════════════════
 //  STATE
@@ -1139,17 +1120,26 @@ function calcGrandTotal(){
     grandTarif+=tarif; grandCred+=cred;
   });
   // ── NEWS par N° ──
+  const _pgDec=s=>s.startsWith('1/4')?0.25:s.startsWith('1/2')?0.5:s?1:0;
   let grandNewsT=0,grandNewsC=0;
   TRIMS.forEach((_,i)=>{
     const bxTot=Number(document.getElementById('tr-bxt'+i)?.value)||0;
     const bxTar=Number(document.getElementById('tr-bxp'+i)?.value)||0;
     const bxCred=Number(document.getElementById('tr-bxc'+i)?.value)||0;
+    const bxFmt=document.getElementById('tr-bxf'+i)?.value||'';
+    const bxNbr=Number(document.getElementById('tr-bxn'+i)?.value)||0;
+    const bxPg=bxNbr*_pgDec(bxFmt);
+    const ep=document.getElementById('tot-nbx-pages-'+i); if(ep) ep.textContent=bxPg?bxPg.toFixed(2)+'p':'—';
     const e1=document.getElementById('tot-nbx-tot-'+i); if(e1) e1.textContent=bxTot?bxTot.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
     const e2=document.getElementById('tot-nbx-tar-'+i); if(e2) e2.textContent=bxTar?fmt(bxTar):'—';
     const e3=document.getElementById('tot-nbx-cred-'+i); if(e3) e3.textContent=bxCred?fmt(bxCred):'—';
     const frTot=Number(document.getElementById('tr-frt'+i)?.value)||0;
     const frTar=Number(document.getElementById('tr-frp'+i)?.value)||0;
     const frCred=Number(document.getElementById('tr-frc'+i)?.value)||0;
+    const frFmt=document.getElementById('tr-frf'+i)?.value||'';
+    const frNbr=Number(document.getElementById('tr-frn'+i)?.value)||0;
+    const frPg=frNbr*_pgDec(frFmt);
+    const efp=document.getElementById('tot-nfr-pages-'+i); if(efp) efp.textContent=frPg?frPg.toFixed(2)+'p':'—';
     const e4=document.getElementById('tot-nfr-tot-'+i); if(e4) e4.textContent=frTot?frTot.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
     const e5=document.getElementById('tot-nfr-tar-'+i); if(e5) e5.textContent=frTar?fmt(frTar):'—';
     const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
@@ -1741,7 +1731,7 @@ function setSt(msg){
 // ══════════════════════════════════════
 function updateDelBtn(){
   const btn=document.getElementById('btn-del');
-  if(btn) btn.style.display=(gv('f-agent')==='MARC'&&curId)?'':'none';
+  if(btn) btn.style.display=gv('f-agent')==='MARC'?'':'none';
 }
 async function deleteMember(){
   if(gv('f-agent')!=='MARC'){alert('Action réservée à MARC.');return;}
