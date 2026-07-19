@@ -560,38 +560,80 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <table class="pt">
           <thead>
             <tr>
-              <th colspan="4" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
+              <th colspan="6" style="background:#2e5096;text-align:center;letter-spacing:.5px;">NEWSLETTERS</th>
             </tr>
             <tr>
               <th style="width:24px;">✓</th>
+              <th style="width:90px;">Période</th>
               <th>NL MENSUELLE — Tarif (€)</th>
               <th style="width:24px;background:#d6e4f7;">✓</th>
+              <th style="width:90px;background:#d6e4f7;">Période</th>
               <th style="background:#d6e4f7;color:#1e3a6e;">NL PERSONNALISÉE — Tarif (€)</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
+              <td><select id="p-nlm-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
+              <td><select id="p-nlm-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
+              <td><select id="p-nlm-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
               <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
+              <td><select id="p-nlm-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
               <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><select id="p-nlp-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
+                <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
+                <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
+                <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
+                <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
           </tbody>
@@ -697,118 +739,118 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
-            <th style="padding:1px 4px;text-align:right;">Pages</th>
-            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Prix (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Pages</th>
+            <th style="padding:1px 4px;text-align:center;">Total (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Prix (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Crédit (€)</th>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-0">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-0">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-1">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-1">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-2">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-2">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-3">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-3">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-4">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-4">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
           </tr>
           <tr style="background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-5">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-5">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
           </tr>
           <tr style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-6">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-6">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
           </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
             <th colspan="5" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
-            <th style="padding:1px 4px;text-align:right;">Pages</th>
-            <th style="padding:1px 4px;text-align:right;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Prix (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Pages</th>
+            <th style="padding:1px 4px;text-align:center;">Total (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Prix (€)</th>
+            <th style="padding:1px 4px;text-align:center;">Crédit (€)</th>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-0">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-0">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-1">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-1">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-2">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-2">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-3">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-3">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-4">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-4">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
           </tr>
           <tr style="background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-5">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-5">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
           </tr>
           <tr style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-6">—</span></td>
-            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
-            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-6">—</span></td>
+            <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
+            <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
 
         </tbody>
@@ -1144,7 +1186,7 @@ function calcGrandTotal(){
     const bxFmt=document.getElementById('tr-bxf'+i)?.value||'';
     const bxNbr=Number(document.getElementById('tr-bxn'+i)?.value)||0;
     const bxPg=bxNbr*_pgDec(bxFmt);
-    const ep=document.getElementById('tot-nbx-pages-'+i); if(ep) ep.textContent=bxPg?bxPg.toFixed(2)+'p':'—';
+    const ep=document.getElementById('tot-nbx-pages-'+i); if(ep) ep.textContent=bxPg?bxPg.toFixed(2):'—';
     const e1=document.getElementById('tot-nbx-tot-'+i); if(e1) e1.textContent=bxTot?bxTot.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
     const e2=document.getElementById('tot-nbx-tar-'+i); if(e2) e2.textContent=bxTar?fmt(bxTar):'—';
     const e3=document.getElementById('tot-nbx-cred-'+i); if(e3) e3.textContent=bxCred?fmt(bxCred):'—';
@@ -1154,7 +1196,7 @@ function calcGrandTotal(){
     const frFmt=document.getElementById('tr-frf'+i)?.value||'';
     const frNbr=Number(document.getElementById('tr-frn'+i)?.value)||0;
     const frPg=frNbr*_pgDec(frFmt);
-    const efp=document.getElementById('tot-nfr-pages-'+i); if(efp) efp.textContent=frPg?frPg.toFixed(2)+'p':'—';
+    const efp=document.getElementById('tot-nfr-pages-'+i); if(efp) efp.textContent=frPg?frPg.toFixed(2):'—';
     const e4=document.getElementById('tot-nfr-tot-'+i); if(e4) e4.textContent=frTot?frTot.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2}):'—';
     const e5=document.getElementById('tot-nfr-tar-'+i); if(e5) e5.textContent=frTar?fmt(frTar):'—';
     const e6=document.getElementById('tot-nfr-cred-'+i); if(e6) e6.textContent=frCred?fmt(frCred):'—';
@@ -1295,7 +1337,7 @@ function sv(id,val,cb=false){
 
 function fillForm(f){
   document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'— MEMBRE —';
-  document.getElementById('f-num').value=f['Nº de membre']||f['﻿N°']||'';
+  document.getElementById('f-num').value=f['Nº de membre']||f['﻿N°']||f['N°']||'';
 
   sv('f-entree', fmtDate(f['DATE ENTRÉE']));
   sv('f-modif',  fmtDate(f['Date de modification']));
@@ -1397,8 +1439,10 @@ function fillForm(f){
   // Newsletters / Bannières (4 lignes chacun)
   for(let i=1;i<=4;i++){
     sv(`p-nlm${i}`,f[`NL MENSUELLE ${i}`],true);
+    sv(`p-nlm-per${i}`,f[`NL MENSUELLE PERIODE ${i}`]);
     sv(`p-nlm-tar${i}`,f[`NL MENSUELLE TARIF ${i}`]!==undefined&&f[`NL MENSUELLE TARIF ${i}`]!==null ? String(f[`NL MENSUELLE TARIF ${i}`]) : null);
     sv(`p-nlp${i}`,f[`NL PERSO ${i}`],true);
+    sv(`p-nlp-per${i}`,f[`NL PERSO PERIODE ${i}`]);
     sv(`p-nlp-tar${i}`,f[`NL PERSO TARIF ${i}`]!==undefined&&f[`NL PERSO TARIF ${i}`]!==null ? String(f[`NL PERSO TARIF ${i}`]) : null);
     sv(`p-ban${i}`,f[`BANNIERE ${i}`],true);
     sv(`p-banp${i}`,f[`BANNIERE PERIODE ${i}`]);
@@ -1508,8 +1552,10 @@ function collectFields(){
   };
   for(let i=1;i<=4;i++){
     F[`NL MENSUELLE ${i}`]=gv(`p-nlm${i}`);
+    F[`NL MENSUELLE PERIODE ${i}`]=gv(`p-nlm-per${i}`)||null;
     F[`NL MENSUELLE TARIF ${i}`]=gv(`p-nlm-tar${i}`) ? Number(gv(`p-nlm-tar${i}`)) : null;
     F[`NL PERSO ${i}`]=gv(`p-nlp${i}`);
+    F[`NL PERSO PERIODE ${i}`]=gv(`p-nlp-per${i}`)||null;
     F[`NL PERSO TARIF ${i}`]=gv(`p-nlp-tar${i}`) ? Number(gv(`p-nlp-tar${i}`)) : null;
     F[`BANNIERE ${i}`]=gv(`p-ban${i}`);
     F[`BANNIERE PERIODE ${i}`]=gv(`p-banp${i}`)||null;
@@ -1530,7 +1576,12 @@ function collectFields(){
     F[t.fr+' TOTAL']=gv(`tr-frt${i}`) ? Number(gv(`tr-frt${i}`)) : null;
   });
   // Remove null/empty/false
-  Object.keys(F).forEach(k=>{ if(F[k]===null||F[k]===''||F[k]===false) delete F[k]; });
+  // false gardé seulement pour les booléens Airtable confirmés
+  const _boolFields=new Set(['COUPON ACCEPTÉ','VIP ACCEPTÉ','SORTIES SCOLAIRES BELUX 2026','SORTIES SCOLAIRES BELUX 2027','SORTIES SCOLAIRES BELUX 2028','SORTIES SCOLAIRES FRANCE 2027','SORTIES SCOLAIRES FRANCE 2028','SORTIES SCOLAIRES FRANCE 2029','TIPS voor SCHOOLTRIPS 2026','TIPS voor SCHOOLTRIPS 2027','TIPS voor SCHOOLTRIPS 2028','SEJOURS SCOLAIRES 2023','SEJOURS SCOLAIRES 2025','SEJOURS SCOLAIRES 2027','NEWS BELUX N3','NEWS BELUX N4','NEWS BELUX N5','NEWS BELUX N6','NEWS BELUX N7','NEWS BELUX N8','NEWS BELUX N9','NEWS FRANCE N3','NEWS FRANCE N4','NEWS FRANCE N5','NEWS FRANCE N6','NEWS FRANCE N7','NEWS FRANCE N8','NEWS FRANCE N9']);
+  Object.keys(F).forEach(k=>{
+    if(F[k]===null||F[k]==='') delete F[k];
+    else if(F[k]===false&&!_boolFields.has(k)) delete F[k];
+  });
   return F;
 }
 
@@ -1609,7 +1660,7 @@ function buildTable(){
   const filtered=members.filter(m=>{
     const f=m.fields;
     if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
-            String(f['Nº de membre']||f['﻿N°']||''),String(f['CODE']||'')]
+            String(f['Nº de membre']||f['﻿N°']||f['N°']||''),String(f['CODE']||'')]
       .some(v=>(v||'').toLowerCase().includes(q))) return false;
     if(selCode && !String(f['CODE']!==undefined&&f['CODE']!==null?f['CODE']:'').includes(selCode)) return false;
     if(selTri1 && !String(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?f['Clé de TRI 2']:'').includes(selTri1)) return false;
@@ -1641,7 +1692,7 @@ function buildTable(){
       if(right) d.style.textAlign='right';
       return d;
     };
-    tr.appendChild(td(f['Nº de membre']||f['﻿N°']||''));
+    tr.appendChild(td(f['Nº de membre']||f['﻿N°']||f['N°']||''));
     tr.appendChild(td(f['ENSEIGNE']||''));
     tr.appendChild(td(f['NOM ATTRACTION']||''));
     tr.appendChild(td(f['CATÉGORIE']||''));
