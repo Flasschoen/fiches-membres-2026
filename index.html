@@ -353,7 +353,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
               <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
             </select> €</div>
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
-          <div class="fv"><input type="date" id="f-echlu"></div>
+          <div class="fv"><input type="date" id="f-echlu" onchange="markDirty()"></div>
         </div>
       </div>
 
@@ -734,8 +734,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-tarif">—</span></td>
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
           </tr>
+          <tr style="background:#1a3a6e;color:#fff;font-size:10px;">
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📰 TOTAUX NEWS — Édition : <select id="tot-news-sel" onchange="showBothNews(this.value)" style="color:#000;font-size:9px;padding:1px 3px;border-radius:2px;border:0;cursor:pointer;"><option value="-1" selected>Toutes</option><option value="0">N°5 – SEPT 26</option><option value="1">N°6 – DÉC 26</option><option value="2">N°7 – MARS 27</option><option value="3">N°8 – JUIN 27</option><option value="4">N°9 – SEPT 27</option><option value="5">N°10 – DÉC 27</option><option value="6">N°11 – MARS 28</option></select></th>
+          </tr>
           <tr style="background:#2e5096;color:#fff;font-size:10px;">
-            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX  <select id="tot-bx-sel" onchange="showNewsRow('bx',this.value)" style="color:#000;font-size:9px;padding:1px 3px;border-radius:2px;border:0;cursor:pointer;"><option value="-1" selected>Toutes</option><option value="0">N°5 – SEPT 26</option><option value="1">N°6 – DÉC 26</option><option value="2">N°7 – MARS 27</option><option value="3">N°8 – JUIN 27</option><option value="4">N°9 – SEPT 27</option><option value="5">N°10 – DÉC 27</option><option value="6">N°11 – MARS 28</option></select></th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
@@ -786,7 +789,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
           </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
-            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE  <select id="tot-fr-sel" onchange="showNewsRow('fr',this.value)" style="color:#000;font-size:9px;padding:1px 3px;border-radius:2px;border:0;cursor:pointer;"><option value="-1" selected>Toutes</option><option value="0">N°5 – SEPT 26</option><option value="1">N°6 – DÉC 26</option><option value="2">N°7 – MARS 27</option><option value="3">N°8 – JUIN 27</option><option value="4">N°9 – SEPT 27</option><option value="5">N°10 – DÉC 27</option><option value="6">N°11 – MARS 28</option></select></th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
@@ -1192,6 +1195,10 @@ function showNewsRow(zone,idx){
   document.querySelectorAll('.tot-'+zone+'-row').forEach(tr=>{
     tr.style.display=(idx==='-1'||Number(tr.dataset.idx)===Number(idx))?'':'none';
   });
+}
+function showBothNews(idx){
+  showNewsRow('bx',idx);
+  showNewsRow('fr',idx);
 }
 
 function calcGrandTotal(){
@@ -1652,9 +1659,9 @@ async function saveMember(){
              ||msg.match(/'([^']+)'/)
              ||msg.match(/for field (.+)$/);
       const bad=m&&m[1]&&m[1].trim();
+      console.error('Airtable rejet:',msg,'| champ:',bad);
       if(bad){
-        const key=fields.hasOwnProperty(bad)?bad
-          :Object.keys(fields).find(k=>k.startsWith(bad)||bad.startsWith(k));
+        const key=fields.hasOwnProperty(bad)?bad:null;
         if(key){ console.warn('Champ ignoré:',key); delete fields[key]; continue; }
       }
       info.textContent='⚠️ '+msg; return;
