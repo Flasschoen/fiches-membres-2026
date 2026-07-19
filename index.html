@@ -735,121 +735,105 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:right;padding:2px 4px;"><span id="tot-sej-cred">—</span></td>
           </tr>
           <tr style="background:#2e5096;color:#fff;font-size:10px;">
-            <th colspan="5" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX</th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📗 NEWS SCOLAIRES BELUX  <select id="tot-bx-sel" onchange="showNewsRow('bx',this.value)" style="color:#000;font-size:9px;padding:1px 3px;border-radius:2px;border:0;cursor:pointer;"><option value="0">N°5 – SEPT 26</option><option value="1">N°6 – DÉC 26</option><option value="2">N°7 – MARS 27</option><option value="3">N°8 – JUIN 27</option><option value="4">N°9 – SEPT 27</option><option value="5">N°10 – DÉC 27</option><option value="6">N°11 – MARS 28</option></select></th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
             <th style="padding:1px 4px;text-align:center;">Pages</th>
             <th style="padding:1px 4px;text-align:center;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:center;">Prix (€)</th>
             <th style="padding:1px 4px;text-align:center;">Crédit (€)</th>
           </tr>
-          <tr style="background:#fffde7;">
+          <tr class="tot-bx-row" data-idx="0" style="background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-0">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-0">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-0">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-0">—</span></td>
           </tr>
-          <tr style="background:#fff9c4;">
+          <tr class="tot-bx-row" data-idx="1" style="display:none;background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-1">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-1">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-1">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-1">—</span></td>
           </tr>
-          <tr style="background:#fffde7;">
+          <tr class="tot-bx-row" data-idx="2" style="display:none;background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-2">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-2">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-2">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-2">—</span></td>
           </tr>
-          <tr style="background:#fff9c4;">
+          <tr class="tot-bx-row" data-idx="3" style="display:none;background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-3">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-3">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-3">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-3">—</span></td>
           </tr>
-          <tr style="background:#fffde7;">
+          <tr class="tot-bx-row" data-idx="4" style="display:none;background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-4">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-4">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
           </tr>
-          <tr style="background:#fff9c4;">
+          <tr class="tot-bx-row" data-idx="5" style="display:none;background:#fff9c4;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-5">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
           </tr>
-          <tr style="background:#fffde7;">
+          <tr class="tot-bx-row" data-idx="6" style="display:none;background:#fffde7;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-6">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
           </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
-            <th colspan="5" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
+            <th colspan="4" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE  <select id="tot-fr-sel" onchange="showNewsRow('fr',this.value)" style="color:#000;font-size:9px;padding:1px 3px;border-radius:2px;border:0;cursor:pointer;"><option value="0">N°5 – SEPT 26</option><option value="1">N°6 – DÉC 26</option><option value="2">N°7 – MARS 27</option><option value="3">N°8 – JUIN 27</option><option value="4">N°9 – SEPT 27</option><option value="5">N°10 – DÉC 27</option><option value="6">N°11 – MARS 28</option></select></th>
           </tr>
           <tr style="background:#555;color:#fff;font-size:9px;">
             <th style="padding:1px 4px;">N°</th>
             <th style="padding:1px 4px;text-align:center;">Pages</th>
             <th style="padding:1px 4px;text-align:center;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:center;">Prix (€)</th>
             <th style="padding:1px 4px;text-align:center;">Crédit (€)</th>
           </tr>
-          <tr style="background:#e3f2fd;">
+          <tr class="tot-fr-row" data-idx="0" style="background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°5</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-0">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-0">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-0">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-0">—</span></td>
           </tr>
-          <tr style="background:#bbdefb;">
+          <tr class="tot-fr-row" data-idx="1" style="display:none;background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°6</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-1">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-1">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-1">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-1">—</span></td>
           </tr>
-          <tr style="background:#e3f2fd;">
+          <tr class="tot-fr-row" data-idx="2" style="display:none;background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°7</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-2">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-2">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-2">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-2">—</span></td>
           </tr>
-          <tr style="background:#bbdefb;">
+          <tr class="tot-fr-row" data-idx="3" style="display:none;background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°8</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-3">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-3">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-3">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-3">—</span></td>
           </tr>
-          <tr style="background:#e3f2fd;">
+          <tr class="tot-fr-row" data-idx="4" style="display:none;background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°9</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-4">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
           </tr>
-          <tr style="background:#bbdefb;">
+          <tr class="tot-fr-row" data-idx="5" style="display:none;background:#bbdefb;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-5">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
           </tr>
-          <tr style="background:#e3f2fd;">
+          <tr class="tot-fr-row" data-idx="6" style="display:none;background:#e3f2fd;">
             <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-6">—</span></td>
             <td style="text-align:center;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
-            <td style="text-align:center;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
             <td style="text-align:center;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
 
@@ -872,14 +856,62 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <input type="text" id="rch-f" placeholder="Filtrer par nom, N°, commune, agent..."
       oninput="filterTable()"
       style="padding:5px 9px;border:1px solid #aaa;border-radius:3px;width:280px;font-size:13px;">
-    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">CODE :</label>
-    <input type="text" id="rch-code" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
-    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 1 :</label>
-    <input type="text" id="rch-tri1" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
-    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 2 :</label>
-    <input type="text" id="rch-tri2" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
-    <label style="font-size:11px;font-weight:700;color:#1e3a6e;white-space:nowrap;">TRI 3 :</label>
-    <input type="text" id="rch-tri3" oninput="buildTable()" placeholder="…" style="padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:50px;">
+      <select id="rch-fld1" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
+        <option value="">Champ…</option>
+        <option value="CODE">Code</option>
+        <option value="TRI1">Tri 1</option>
+        <option value="TRI2">Tri 2</option>
+        <option value="TRI3">Tri 3</option>
+        <option value="COT-BE">Cotisation BE</option>
+        <option value="COT-LU">Cotisation LU</option>
+        <option value="CP">Code Postal</option>
+        <option value="NUM">N° Membre</option>
+        <option value="ENS">Enseigne</option>
+        <option value="ECHBE">Échéance BE</option>
+        <option value="ECHLU">Échéance LU</option>
+      </select><input type="text" id="rch-val1" oninput="buildTable()" placeholder="…" style="padding:4px 4px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:55px;margin-left:2px;">
+      <select id="rch-fld2" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
+        <option value="">Champ…</option>
+        <option value="CODE">Code</option>
+        <option value="TRI1">Tri 1</option>
+        <option value="TRI2">Tri 2</option>
+        <option value="TRI3">Tri 3</option>
+        <option value="COT-BE">Cotisation BE</option>
+        <option value="COT-LU">Cotisation LU</option>
+        <option value="CP">Code Postal</option>
+        <option value="NUM">N° Membre</option>
+        <option value="ENS">Enseigne</option>
+        <option value="ECHBE">Échéance BE</option>
+        <option value="ECHLU">Échéance LU</option>
+      </select><input type="text" id="rch-val2" oninput="buildTable()" placeholder="…" style="padding:4px 4px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:55px;margin-left:2px;">
+      <select id="rch-fld3" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
+        <option value="">Champ…</option>
+        <option value="CODE">Code</option>
+        <option value="TRI1">Tri 1</option>
+        <option value="TRI2">Tri 2</option>
+        <option value="TRI3">Tri 3</option>
+        <option value="COT-BE">Cotisation BE</option>
+        <option value="COT-LU">Cotisation LU</option>
+        <option value="CP">Code Postal</option>
+        <option value="NUM">N° Membre</option>
+        <option value="ENS">Enseigne</option>
+        <option value="ECHBE">Échéance BE</option>
+        <option value="ECHLU">Échéance LU</option>
+      </select><input type="text" id="rch-val3" oninput="buildTable()" placeholder="…" style="padding:4px 4px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:55px;margin-left:2px;">
+      <select id="rch-fld4" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
+        <option value="">Champ…</option>
+        <option value="CODE">Code</option>
+        <option value="TRI1">Tri 1</option>
+        <option value="TRI2">Tri 2</option>
+        <option value="TRI3">Tri 3</option>
+        <option value="COT-BE">Cotisation BE</option>
+        <option value="COT-LU">Cotisation LU</option>
+        <option value="CP">Code Postal</option>
+        <option value="NUM">N° Membre</option>
+        <option value="ENS">Enseigne</option>
+        <option value="ECHBE">Échéance BE</option>
+        <option value="ECHLU">Échéance LU</option>
+      </select><input type="text" id="rch-val4" oninput="buildTable()" placeholder="…" style="padding:4px 4px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:55px;margin-left:2px;">
     <span id="rch-cnt" style="font-size:12px;color:#555;white-space:nowrap;"></span>
     <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   </div>
@@ -1154,6 +1186,12 @@ function calcPubTot(pfx){
   if(tot) tot.textContent=(pg+pp).toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2});
   if(tval) tval.textContent=t ? Number(t).toLocaleString('fr-BE',{style:'currency',currency:'EUR'}) : '—';
   calcGrandTotal();
+}
+
+function showNewsRow(zone,idx){
+  document.querySelectorAll('.tot-'+zone+'-row').forEach(tr=>{
+    tr.style.display=Number(tr.dataset.idx)===Number(idx)?'':'none';
+  });
 }
 
 function calcGrandTotal(){
@@ -1653,19 +1691,24 @@ function buildTable(){
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
   const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
-  const selCode=(document.getElementById('rch-code')||{value:''}).value;
-  const selTri1=(document.getElementById('rch-tri1')||{value:''}).value;
-  const selTri2=(document.getElementById('rch-tri2')||{value:''}).value;
-  const selTri3=(document.getElementById('rch-tri3')||{value:''}).value;
+  const _fldMap={
+    'CODE':'CODE','TRI1':'Clé de TRI 2','TRI2':'Clé de TRI 3','TRI3':'Clé de TRI 4',
+    'COT-BE':'COTISATION BE','COT-LU':'COTISATION LU','CP':'CODE POSTAL',
+    'NUM':'Nº de membre','ENS':'ENSEIGNE','ECHBE':'ÉCHÉANCE BE','ECHLU':'ÉCHÉANCE LU'
+  };
   const filtered=members.filter(m=>{
     const f=m.fields;
     if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['Nº de membre']||f['﻿N°']||f['N°']||''),String(f['CODE']||'')]
       .some(v=>(v||'').toLowerCase().includes(q))) return false;
-    if(selCode && !String(f['CODE']!==undefined&&f['CODE']!==null?f['CODE']:'').includes(selCode)) return false;
-    if(selTri1 && !String(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?f['Clé de TRI 2']:'').includes(selTri1)) return false;
-    if(selTri2 && !String(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?f['Clé de TRI 3']:'').includes(selTri2)) return false;
-    if(selTri3 && !String(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?f['Clé de TRI 4']:'').includes(selTri3)) return false;
+    for(let i=1;i<=4;i++){
+      const fldKey=(document.getElementById(`rch-fld${i}`)||{value:''}).value;
+      const val=(document.getElementById(`rch-val${i}`)||{value:''}).value.toLowerCase();
+      if(!fldKey||!val) continue;
+      const fldName=_fldMap[fldKey]||fldKey;
+      const fv=String(f[fldName]!==undefined&&f[fldName]!==null?f[fldName]:'').toLowerCase();
+      if(!fv.includes(val)) return false;
+    }
     return true;
   });
   filtered.forEach(m=>{
@@ -1717,29 +1760,7 @@ function filterTable(){
   buildTable();
 }
 
-function buildFilterOptions(){
-  const defs=[
-    {id:'rch-code', field:'CODE'},
-    {id:'rch-tri1', field:'Clé de TRI 2'},
-    {id:'rch-tri2', field:'Clé de TRI 3'},
-    {id:'rch-tri3', field:'Clé de TRI 4'},
-  ];
-  defs.forEach(({id,field})=>{
-    const sel=document.getElementById(id);
-    if(!sel) return;
-    // Keep "Tous" option only
-    sel.innerHTML='<option value="">Tous</option>';
-    const vals=[...new Set(
-      members.map(m=>m.fields[field]).filter(v=>v!==undefined&&v!==null&&v!=='')
-      .map(v=>String(v))
-    )].sort((a,b)=>isNaN(a)||isNaN(b)?a.localeCompare(b,'fr'):Number(a)-Number(b));
-    vals.forEach(v=>{
-      const o=document.createElement('option');
-      o.value=v; o.textContent=v;
-      sel.appendChild(o);
-    });
-  });
-}
+// buildFilterOptions() removed
 
 // ══════════════════════════════════════
 //  VIEW NAVIGATION (classList-based)
