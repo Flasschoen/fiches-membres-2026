@@ -529,11 +529,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <table class="tt" style="font-size:10px;">
         <thead>
           <tr>
-            <th colspan="14" style="padding:2px 6px;background:#e8f5e9;font-size:11px;font-weight:normal;text-align:left;">
-              📆 Édition : <select id="trim-sel" onchange="showTrimRow(this.value)" style="font-size:11px;padding:2px 6px;border:1px solid #8abd8a;border-radius:3px;background:#fff;font-weight:700;"></select>
-            </th>
-          </tr>
-          <tr>
             <th style="width:30px;">N°</th>
             <th>PÉRIODE</th>
             <th colspan="6" class="sub2">NEWS SCOLAIRES Belux</th>
@@ -704,7 +699,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <th style="padding:1px 4px;">N°</th>
             <th style="padding:1px 4px;text-align:right;">Pages</th>
             <th style="padding:1px 4px;text-align:right;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Prix (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#fffde7;">
@@ -742,6 +737,20 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-4">—</span></td>
           </tr>
+          <tr style="background:#fff9c4;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-5">—</span></td>
+            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#fffde7;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#1a5276;font-weight:700;"><span id="tot-nbx-pages-6">—</span></td>
+            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nbx-tot-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nbx-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nbx-cred-6">—</span></td>
+          </tr>
           <tr style="background:#8e44ad;color:#fff;font-size:10px;">
             <th colspan="5" style="padding:2px 6px;text-align:left;">📘 NEWS SCOLAIRES FRANCE</th>
           </tr>
@@ -749,7 +758,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <th style="padding:1px 4px;">N°</th>
             <th style="padding:1px 4px;text-align:right;">Pages</th>
             <th style="padding:1px 4px;text-align:right;">Total (€)</th>
-            <th style="padding:1px 4px;text-align:right;">Tarif (€)</th>
+            <th style="padding:1px 4px;text-align:right;">Prix (€)</th>
             <th style="padding:1px 4px;text-align:right;">Crédit (€)</th>
           </tr>
           <tr style="background:#e3f2fd;">
@@ -786,6 +795,20 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-4">—</span></td>
             <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-4">—</span></td>
+          </tr>
+          <tr style="background:#bbdefb;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°10</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-5">—</span></td>
+            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-5">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-5">—</span></td>
+          </tr>
+          <tr style="background:#e3f2fd;">
+            <td style="padding:1px 5px;font-size:10px;font-weight:700;">N°11</td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;color:#6c3483;font-weight:700;"><span id="tot-nfr-pages-6">—</span></td>
+            <td style="text-align:left;padding:1px 4px;font-size:11px;font-weight:700;"><span id="tot-nfr-tot-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;"><span id="tot-nfr-tar-6">—</span></td>
+            <td style="text-align:right;padding:1px 3px;font-size:10px;font-weight:700;"><span id="tot-nfr-cred-6">—</span></td>
           </tr>
 
         </tbody>
@@ -1021,43 +1044,35 @@ const URL=`https://api.airtable.com/v0/${B}/${T}`;
 //  PÉRIODES TRIMESTRIELLES
 // ══════════════════════════════════════
 const TRIMS=[
-  {n:'N°5', p:'SEPT 26', bx:'NEWS BELUX N5', fr:'NEWS FRANCE N5'},
-  {n:'N°6', p:'DÉC 26',  bx:'NEWS BELUX N6', fr:'NEWS FRANCE N6'},
-  {n:'N°7', p:'MARS 27', bx:'NEWS BELUX N7', fr:'NEWS FRANCE N7'},
-  {n:'N°8', p:'JUIN 27', bx:'NEWS BELUX N8', fr:'NEWS FRANCE N8'},
-  {n:'N°9', p:'SEPT 27', bx:'NEWS BELUX N9', fr:'NEWS FRANCE N9'},
+  {n:'N°5',  p:'SEPT 26', bx:'NEWS BELUX N3', fr:'NEWS FRANCE N3'},
+  {n:'N°6',  p:'DÉC 26',  bx:'NEWS BELUX N4', fr:'NEWS FRANCE N4'},
+  {n:'N°7',  p:'MARS 27', bx:'NEWS BELUX N5', fr:'NEWS FRANCE N5'},
+  {n:'N°8',  p:'JUIN 27', bx:'NEWS BELUX N6', fr:'NEWS FRANCE N6'},
+  {n:'N°9',  p:'SEPT 27', bx:'NEWS BELUX N7', fr:'NEWS FRANCE N7'},
+  {n:'N°10', p:'DÉC 27',  bx:'NEWS BELUX N8', fr:'NEWS FRANCE N8'},
+  {n:'N°11', p:'MARS 28', bx:'NEWS BELUX N9', fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
 const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
 const _inp=(id,w,type='text')=>`<input type="${type}" id="${id}" style="width:${w}px;font-size:10px;" oninput="markDirty()">`;
-const trimSel=document.getElementById('trim-sel');
 TRIMS.forEach((t,i)=>{
-  if(trimSel){const o=document.createElement('option');o.value=i;o.textContent=t.n+' — '+t.p;trimSel.appendChild(o);}
-  tb.innerHTML+=`<tr id="trim-row-${i}" style="display:${i===0?'table-row':'none'}">
+  tb.innerHTML+=`<tr>
     <td class="nl">${t.n}</td>
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
-    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',i);calcGrandTotal()"></td>
+    <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
+    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty();calcTrimTot('bx',${i});calcGrandTotal()">${_fmtOpts}</select></td>
+    <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
     <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
     <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty()">${_fmtOpts}</select></td>
-    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',i);calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
+    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty();calcTrimTot('fr',${i});calcGrandTotal()">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
     <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
   </tr>`;
 });
-
-function showTrimRow(idx){
-  idx=Number(idx);
-  TRIMS.forEach((_,i)=>{
-    const r=document.getElementById('trim-row-'+i);
-    if(r) r.style.display=(i===idx)?'table-row':'none';
-  });
-}
 
 // ══════════════════════════════════════
 //  STATE
