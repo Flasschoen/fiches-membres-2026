@@ -1080,31 +1080,15 @@ function copyDossierPath(){
 }
 
 function downloadDossierBat(nom){
-  const safeName = nom.replace(/[<>:"/\\|?*\x00-\x1f]/g,'_');
-  const path = DOSSIER_BASE + '\\' + safeName;
-  const lines = [
-    '@echo off',
-    'chcp 65001 >nul',
-    'echo.',
-    'echo  Creation du dossier membre...',
-    'echo.',
-    'mkdir "' + path + '"',
-    'mkdir "' + path + '\\ADMINISTRATIF"',
-    'echo.',
-    'echo  Dossier cree : ' + safeName,
-    'echo.',
-    'pause'
-  ];
-  const bat = lines.join('\r\n');
-  const blob = new Blob([bat], {type:'text/plain'});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'CREER_DOSSIER_' + safeName.replace(/\s+/g,'_').substring(0,40) + '.bat';
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+  try{
+    const safe=nom.replace(/[<>:|?*]/g,'_').trim();
+    const fullPath=DOSSIER_BASE+'\\'+safe;
+    const bat='@echo off\r\nchcp 65001 >nul\r\necho.\r\necho Creation dossier : '+safe+'\r\nmkdir "'+fullPath+'"\r\nmkdir "'+fullPath+'\\ADMINISTRATIF"\r\necho.\r\necho OK - Dossier cree !\r\npause\r\n';
+    const a=document.createElement('a');
+    a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(bat);
+    a.download='CREER_'+safe.replace(/\s+/g,'_').substring(0,30)+'.bat';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  }catch(e){ console.warn('Bat download error:',e); }
 }
 
 // ══════════════════════════════════════
@@ -1624,8 +1608,8 @@ async function saveMember(){
       const saved=members.find(m=>m.id===curId);
       if(saved) fillForm(saved.fields);
       if(!wasExisting){
-        const savedNom = saved?.fields['NOM ATTRACTION'] || saved?.fields['Enseigne commerciale'] || saved?.fields['ENSEIGNE'] || '';
-        if(savedNom) downloadDossierBat(savedNom);
+        const newNom=saved?.fields['NOM ATTRACTION']||saved?.fields['Enseigne commerciale']||saved?.fields['ENSEIGNE']||'';
+        if(newNom) downloadDossierBat(newNom);
         showView('recherche');
         setTimeout(()=>{
           const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
