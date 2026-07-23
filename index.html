@@ -1079,16 +1079,40 @@ function copyDossierPath(){
   }).catch(()=>{ prompt('Copiez ce chemin :', path); });
 }
 
-function downloadDossierBat(nom){
+function showDossierModal(nom){
   try{
-    const safe=nom.replace(/[<>:|?*]/g,'_').trim();
-    const fullPath=DOSSIER_BASE+'\\'+safe;
-    const bat='@echo off\r\nchcp 65001 >nul\r\necho.\r\necho Creation dossier : '+safe+'\r\nmkdir "'+fullPath+'"\r\nmkdir "'+fullPath+'\\ADMINISTRATIF"\r\necho.\r\necho OK - Dossier cree !\r\npause\r\n';
-    const a=document.createElement('a');
-    a.href='data:text/plain;charset=utf-8,'+encodeURIComponent(bat);
-    a.download='CREER_'+safe.replace(/\s+/g,'_').substring(0,30)+'.bat';
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  }catch(e){ console.warn('Bat download error:',e); }
+    const safe=nom.replace(/["<>:|?*]/g,'_').trim();
+    const p1=DOSSIER_BASE+'\\'+safe;
+    const p2=p1+'\\ADMINISTRATIF';
+    const cmdStr='mkdir "'+p1+'"\r\nmkdir "'+p2+'"';
+    const overlay=document.createElement('div');
+    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;';
+    const box=document.createElement('div');
+    box.style.cssText='background:#fff;border-radius:8px;padding:22px 24px;max-width:540px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.3);font-family:Arial,sans-serif;';
+    const title=document.createElement('p');
+    title.style.cssText='margin:0 0 6px;font-weight:700;font-size:14px;color:#1e3a6e;';
+    title.textContent='📁 Créer le dossier : '+safe;
+    const hint=document.createElement('p');
+    hint.style.cssText='margin:0 0 4px;font-size:12px;color:#555;';
+    hint.textContent='Ouvrez PowerShell (Win+R → powershell) et collez :';
+    const ta=document.createElement('textarea');
+    ta.readOnly=true; ta.value=cmdStr;
+    ta.style.cssText='width:100%;height:58px;font-family:monospace;font-size:11px;border:1px solid #ccc;border-radius:4px;padding:6px;background:#f5f5f5;resize:none;margin:6px 0;box-sizing:border-box;';
+    const btnCopy=document.createElement('button');
+    btnCopy.textContent='📋 Copier la commande';
+    btnCopy.style.cssText='background:#1e3a6e;color:#fff;border:none;border-radius:4px;padding:7px 16px;cursor:pointer;font-size:13px;margin-right:8px;';
+    btnCopy.onclick=()=>navigator.clipboard.writeText(cmdStr).then(()=>{btnCopy.textContent='✅ Copié !';setTimeout(()=>{btnCopy.textContent='📋 Copier la commande';},2500);});
+    const btnClose=document.createElement('button');
+    btnClose.textContent='Fermer';
+    btnClose.style.cssText='background:#888;color:#fff;border:none;border-radius:4px;padding:7px 16px;cursor:pointer;font-size:13px;';
+    btnClose.onclick=()=>overlay.remove();
+    overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
+    const btnRow=document.createElement('div');
+    btnRow.style.cssText='margin-top:10px;text-align:right;';
+    btnRow.appendChild(btnCopy); btnRow.appendChild(btnClose);
+    box.appendChild(title); box.appendChild(hint); box.appendChild(ta); box.appendChild(btnRow);
+    overlay.appendChild(box); document.body.appendChild(overlay);
+  }catch(e){console.warn('Dossier modal error:',e);}
 }
 
 // ══════════════════════════════════════
@@ -1609,7 +1633,7 @@ async function saveMember(){
       if(saved) fillForm(saved.fields);
       if(!wasExisting){
         const newNom=saved?.fields['NOM ATTRACTION']||saved?.fields['Enseigne commerciale']||saved?.fields['ENSEIGNE']||'';
-        if(newNom) downloadDossierBat(newNom);
+        if(newNom) showDossierModal(newNom);
         showView('recherche');
         setTimeout(()=>{
           const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
