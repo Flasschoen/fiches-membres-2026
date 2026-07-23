@@ -1079,6 +1079,34 @@ function copyDossierPath(){
   }).catch(()=>{ prompt('Copiez ce chemin :', path); });
 }
 
+function downloadDossierBat(nom){
+  const safeName = nom.replace(/[<>:"/\\|?*\x00-\x1f]/g,'_');
+  const path = DOSSIER_BASE + '\\' + safeName;
+  const lines = [
+    '@echo off',
+    'chcp 65001 >nul',
+    'echo.',
+    'echo  Creation du dossier membre...',
+    'echo.',
+    'mkdir "' + path + '"',
+    'mkdir "' + path + '\\ADMINISTRATIF"',
+    'echo.',
+    'echo  Dossier cree : ' + safeName,
+    'echo.',
+    'pause'
+  ];
+  const bat = lines.join('\r\n');
+  const blob = new Blob([bat], {type:'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'CREER_DOSSIER_' + safeName.replace(/\s+/g,'_').substring(0,40) + '.bat';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url), 2000);
+}
+
 // ══════════════════════════════════════
 //  DIRTY TRACKING
 // ══════════════════════════════════════
@@ -1596,6 +1624,8 @@ async function saveMember(){
       const saved=members.find(m=>m.id===curId);
       if(saved) fillForm(saved.fields);
       if(!wasExisting){
+        const savedNom = saved?.fields['NOM ATTRACTION'] || saved?.fields['Enseigne commerciale'] || saved?.fields['ENSEIGNE'] || '';
+        if(savedNom) downloadDossierBat(savedNom);
         showView('recherche');
         setTimeout(()=>{
           const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
