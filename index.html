@@ -158,6 +158,32 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .recap-table .rtfoot td{background:#fff59d;font-weight:700;border:1px solid #999;font-size:12px;}
 .recap-table input[type=number]{width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;}
 @media print{.recap-zone{box-shadow:none;margin:0;padding:10mm 15mm;page-break-before:always;}}
+
+/* ── LOGIN PIN ── */
+#overlay-pin{position:fixed;inset:0;background:rgba(10,20,50,.82);z-index:99999;display:flex;align-items:center;justify-content:center;}
+#overlay-pin.hidden{display:none;}
+.pin-box{background:#fff;border-radius:10px;padding:36px 40px;min-width:300px;max-width:360px;box-shadow:0 10px 40px rgba(0,0,0,.4);text-align:center;font-family:Arial,sans-serif;}
+.pin-box .pin-logo{font-size:13px;font-weight:700;color:#1e3a6e;letter-spacing:2px;margin-bottom:4px;}
+.pin-box h2{margin:0 0 20px;color:#1e3a6e;font-size:16px;font-weight:700;}
+.pin-box label{display:block;text-align:left;font-size:11px;font-weight:700;color:#555;margin-bottom:3px;}
+.pin-box select,.pin-box input[type=password]{width:100%;font-size:14px;padding:8px 10px;border:1px solid #bbb;border-radius:5px;margin-bottom:14px;box-sizing:border-box;text-align:center;}
+.pin-box input[type=password]{letter-spacing:8px;font-size:20px;}
+.pin-box .pin-btn{width:100%;background:#1e3a6e;color:#fff;border:none;border-radius:5px;padding:10px;font-size:14px;font-weight:700;cursor:pointer;margin-top:4px;}
+.pin-box .pin-btn:hover{background:#2a4f8e;}
+#overlay-pin-mgr{position:fixed;inset:0;background:rgba(10,20,50,.82);z-index:99999;display:flex;align-items:center;justify-content:center;}
+#overlay-pin-mgr.hidden{display:none;}
+.pin-mgr-box{background:#fff;border-radius:10px;padding:28px 36px;min-width:320px;max-width:380px;box-shadow:0 10px 40px rgba(0,0,0,.4);font-family:Arial,sans-serif;}
+.pin-mgr-box h2{margin:0 0 16px;color:#1e3a6e;font-size:15px;font-weight:700;text-align:center;}
+.pin-mgr-box .pin-row{display:flex;align-items:center;margin-bottom:10px;gap:10px;}
+.pin-mgr-box .pin-row label{flex:0 0 90px;font-size:12px;font-weight:700;color:#555;}
+.pin-mgr-box .pin-row input{flex:1;font-size:16px;padding:6px 10px;border:1px solid #bbb;border-radius:5px;letter-spacing:6px;text-align:center;}
+.pin-mgr-box .pin-mgr-btns{display:flex;gap:10px;margin-top:16px;}
+.pin-mgr-box .pin-mgr-btns button{flex:1;padding:9px;border:none;border-radius:5px;font-size:13px;font-weight:700;cursor:pointer;}
+.pin-mgr-box .btn-save-pins{background:#1e3a6e;color:#fff;}
+.pin-mgr-box .btn-save-pins:hover{background:#2a4f8e;}
+.pin-mgr-box .btn-cancel-pins{background:#eee;color:#333;}
+.pin-mgr-box .pin-mgr-msg{text-align:center;font-size:12px;min-height:16px;margin-top:6px;}
+.pin-box .pin-err{color:#c0392b;font-size:12px;min-height:18px;margin-bottom:6px;}
 </style>
 </head>
 <body>
@@ -174,6 +200,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <button class="btn btn-nouveau" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   <button class="btn" onclick="showRechRemplac()" style="background:#6c3483;color:#fff;margin-left:6px;">🔄 RECHERCHER/REMPLACER</button>
   <button id="btn-del" class="btn" onclick="deleteMember()" style="background:#a93226;color:#fff;display:none;margin-left:6px;">🗑️ SUPPRIMER</button>
+  <button id="btn-pin-mgr" class="btn" onclick="showGestionPins()" style="background:#1e3a6e;color:#fff;margin-left:6px;font-size:11px;padding:4px 10px;display:none;" title="Gérer les codes PIN">🔑 PINs</button>
+  <button class="btn" onclick="logoutPin()" style="background:#555;color:#fff;margin-left:6px;font-size:11px;padding:4px 10px;" title="Déconnexion">🔒 <span id="header-agent">—</span></button>
 </div>
 
 <!-- NAME BAR -->
@@ -198,7 +226,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
   <select id="f-agent" onchange="markDirty();updateDelBtn()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
-    <option>MARC</option><option>MAITE</option><option>PASCAL</option><option>VANESSA</option>
+    <option>MARC</option><option>MAÏTE</option><option>PASCAL</option><option>VANESSA</option>
   </select>
   <span id="dirty-indicator" style="margin-left:10px;color:#c55a11;font-weight:700;font-size:12px;display:none;">● Non sauvegardé</span>
   <span class="save-info" id="save-info"></span>
@@ -245,7 +273,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <div class="fr"><div class="fl">Tél. Général :</div><div class="fv"><input type="tel" id="f-tel" style="width:100%;"></div></div>
         <div class="fr"><div class="fl">Fax :</div><div class="fv"><input type="tel" id="f-fax" style="width:100%;"></div></div>
         <div class="fr"><div class="fl">E-mail général :</div><div class="fv"><input type="email" id="f-email" style="width:100%;"></div></div>
-        <div class="fr"><div class="fl">Site internet :</div><div class="fv"><input type="url" id="f-site" style="width:100%;"></div></div>
+        <div class="fr"><div class="fl">Site internet :</div><div class="fv" style="display:flex;gap:6px;align-items:center;"><input type="text" id="f-site" style="flex:1;" oninput="majLienSite()"><button type="button" id="btn-site" onclick="ouvrirSite()" title="Ouvrir le site" style="display:none;background:#1e3a6e;color:#fff;border:none;border-radius:3px;cursor:pointer;font-size:13px;padding:2px 7px;white-space:nowrap;">🌐 Ouvrir</button></div></div>
         <div class="fr"><div class="fl">N° TVA :</div><div class="fv"><input type="text" id="f-tva" style="width:100%;"></div></div>
         <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="f-prov" style="width:100%;"></div></div>
       </div>
@@ -322,11 +350,14 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         </div>
         <div class="fr">
           <div class="fl" style="min-width:38px;font-size:10px;">Code :</div>
-          <div class="fv" style="flex:0 0 46px;padding:2px 2px;">
-            <select id="f-code" onchange="markDirty()" style="width:44px;font-size:11px;">
+          <div class="fv" style="flex:0 0 58px;padding:2px 2px;">
+            <select id="f-code" onchange="markDirty()" style="width:56px;font-size:11px;">
               <option value="">—</option>
-              <option>0</option><option>1</option><option>2</option><option>3</option>
-              <option>4</option><option>5</option><option>6</option><option>7</option>
+              <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option>
+              <option>6</option><option>7</option><option>8</option><option>9</option><option>10</option>
+              <option>11</option><option>12</option><option>13</option><option>14</option><option>15</option>
+              <option>16</option><option>17</option><option>18</option><option>19</option><option>20</option>
+              <option>21</option><option>22</option><option>23</option><option>24</option><option>25</option>
             </select>
           </div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 1:</div>
@@ -395,11 +426,11 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <div class="fg">
         <div class="fr">
           <div class="fl">Mise à jour données :</div>
-          <div class="fv" style="flex:0 0 160px;"><input type="date" id="f-majd"></div>
+          <div class="fv" style="flex:0 0 175px;"><input type="date" id="f-majd" readonly style="background:#f0f0f0;font-size:11px;width:163px;"></div>
           <div class="fl" style="min-width:100px;">Effectué par :</div>
           <div class="fv">
             <select id="f-majp" onchange="markDirty()" style="width:110px;">
-              <option value="">—</option><option>MARC</option><option>MAITE</option><option>PASCAL</option><option>VANESSA</option>
+              <option value="">—</option><option>MARC</option><option>MAÏTE</option><option>PASCAL</option><option>VANESSA</option>
             </select>
           </div>
         </div>
@@ -592,8 +623,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
               <th style="width:24px;">✓</th>
               <th style="width:90px;">Période</th>
               <th>NL MENSUELLE — Tarif (€)</th>
-              <th style="width:24px;background:#d6e4f7;">✓</th>
-              <th style="width:90px;background:#d6e4f7;">Période</th>
+              <th style="width:24px;background:#d6e4f7;color:#1e3a6e;">✓</th>
+              <th style="width:90px;background:#d6e4f7;color:#1e3a6e;">Période</th>
               <th style="background:#d6e4f7;color:#1e3a6e;">NL PERSONNALISÉE — Tarif (€)</th>
             </tr>
           </thead>
@@ -930,7 +961,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <tbody>
         <!-- Ligne 1 : participant principal -->
         <tr>
-          <td class="big-num" rowspan="3">
+          <td class="big-num" rowspan="4">
             <input type="text" id="cc-table1" value="1" style="width:38px;text-align:center;font-size:26px;font-weight:900;border:none;border-bottom:1px solid #bbb;background:transparent;font-family:Arial,sans-serif;outline:none;">
           </td>
           <td id="cc-part1" style="font-size:12px;">—</td>
@@ -983,7 +1014,27 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             </select>
           </td>
         </tr>
-        <!-- Ligne total (4ème ligne) -->
+        <!-- Ligne 4 : Activité spéciale — menu déroulant -->
+        <tr style="background:#f0f6ff;">
+          <td style="padding:2px 4px;">
+            <select id="cc-extra-sel" onchange="toggleExtraTxt()" style="font-size:11px;border:1px solid #aac;border-radius:2px;padding:2px 4px;max-width:175px;font-style:italic;color:#444;">
+              <option value="">—</option>
+              <option>Visite de l'attraction</option>
+              <option>Participation à la présentation</option>
+              <option value="__autre__">Autres…</option>
+            </select>
+            <input type="text" id="cc-extra-txt" placeholder="Précisez…" style="display:none;width:95%;font-size:11px;border:none;border-bottom:1px solid #aac;background:transparent;font-style:italic;color:#444;font-family:Arial,sans-serif;outline:none;padding:2px 0;margin-top:3px;">
+          </td>
+          <td></td>
+          <td style="text-align:center;">
+            <select id="cc-extra-nbr" style="width:55px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px;">
+              <option value="">—</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+            </select>
+          </td>
+          <td></td>
+          <td></td>
+        </tr>
+        <!-- Ligne total (5ème ligne) -->
         <tr class="total-row">
           <td colspan="2" style="font-size:11px;">
             Code :&nbsp;<input type="text" id="cc-code" style="width:70px;font-size:11px;border:1px solid #ccc;border-radius:2px;padding:2px 4px;">
@@ -1059,12 +1110,13 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
           <th style="width:65px;">N° TABLE</th>
           <th style="width:65px;">REPAS</th>
           <th style="width:65px;">DRINK</th>
+          <th style="width:70px;">ACTIVITÉ</th>
           <th style="width:95px;">STATUT</th>
           <th style="width:90px;">MONTANT (€)</th>
         </tr>
       </thead>
       <tbody id="recap-tbody">
-        <tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Sélectionnez un code et cliquez sur Afficher</td></tr>
+        <tr><td colspan="8" style="text-align:center;color:#999;padding:14px;">Sélectionnez un code et cliquez sur Afficher</td></tr>
       </tbody>
       <tfoot>
         <tr class="rtfoot">
@@ -1072,6 +1124,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
           <td id="rtot-tables">—</td>
           <td id="rtot-repas">0</td>
           <td id="rtot-drink">0</td>
+          <td id="rtot-activite" style="font-weight:700;color:#1e3a6e;">0</td>
           <td></td>
           <td id="rtot-montant" style="color:#c00;">0 €</td>
         </tr>
@@ -1128,7 +1181,7 @@ TRIMS.forEach((t,i)=>{
 // ══════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════
-let members=[], curId=null, isDirty=false, lastFiltered=[];
+let members=[], curId=null, isDirty=false, lastFiltered=[], _autoSelDone=false;
 
 // ── Dossier membres (mettre à jour pour Google Drive) ──
 const DOSSIER_BASE = 'C:\\Users\\Marc\\OneDrive - Educpass\\Bureau\\DOSSIER PARTENAIRES 2026';
@@ -1145,47 +1198,6 @@ function copyDossierPath(){
   }).catch(()=>{ prompt('Copiez ce chemin :', path); });
 }
 
-function showDossierModal(nom){
-  try{
-    const safe=nom.replace(/["<>:|?*]/g,'_').trim();
-    const p1=DOSSIER_BASE+'\\'+safe;
-    const cmdStr='mkdir "'+p1+'"\r\n'
-      +'mkdir "'+p1+'\\ADMINISTRATIF"\r\n'
-      +'mkdir "'+p1+'\\ADMINISTRATIF\\COMPTA"\r\n'
-      +'mkdir "'+p1+'\\ADMINISTRATIF\\SECRETARIAT"\r\n'
-      +'mkdir "'+p1+'\\MATERIEL"\r\n'
-      +'mkdir "'+p1+'\\MATERIEL\\ARCHIVES"\r\n'
-      +'mkdir "'+p1+'\\MATERIEL\\BROCHURES"\r\n'
-      +'mkdir "'+p1+'\\MATERIEL\\WEB"';
-    const overlay=document.createElement('div');
-    overlay.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:9999;display:flex;align-items:center;justify-content:center;';
-    const box=document.createElement('div');
-    box.style.cssText='background:#fff;border-radius:8px;padding:22px 24px;max-width:540px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.3);font-family:Arial,sans-serif;';
-    const title=document.createElement('p');
-    title.style.cssText='margin:0 0 6px;font-weight:700;font-size:14px;color:#1e3a6e;';
-    title.textContent='📁 Créer le dossier : '+safe;
-    const hint=document.createElement('p');
-    hint.style.cssText='margin:0 0 4px;font-size:12px;color:#555;';
-    hint.textContent='Ouvrez PowerShell (Win+R → powershell) et collez :';
-    const ta=document.createElement('textarea');
-    ta.readOnly=true; ta.value=cmdStr;
-    ta.style.cssText='width:100%;height:58px;font-family:monospace;font-size:11px;border:1px solid #ccc;border-radius:4px;padding:6px;background:#f5f5f5;resize:none;margin:6px 0;box-sizing:border-box;';
-    const btnCopy=document.createElement('button');
-    btnCopy.textContent='📋 Copier la commande';
-    btnCopy.style.cssText='background:#1e3a6e;color:#fff;border:none;border-radius:4px;padding:7px 16px;cursor:pointer;font-size:13px;margin-right:8px;';
-    btnCopy.onclick=()=>navigator.clipboard.writeText(cmdStr).then(()=>{btnCopy.textContent='✅ Copié !';setTimeout(()=>{btnCopy.textContent='📋 Copier la commande';},2500);});
-    const btnClose=document.createElement('button');
-    btnClose.textContent='Fermer';
-    btnClose.style.cssText='background:#888;color:#fff;border:none;border-radius:4px;padding:7px 16px;cursor:pointer;font-size:13px;';
-    btnClose.onclick=()=>overlay.remove();
-    overlay.onclick=e=>{if(e.target===overlay)overlay.remove();};
-    const btnRow=document.createElement('div');
-    btnRow.style.cssText='margin-top:10px;text-align:right;';
-    btnRow.appendChild(btnCopy); btnRow.appendChild(btnClose);
-    box.appendChild(title); box.appendChild(hint); box.appendChild(ta); box.appendChild(btnRow);
-    overlay.appendChild(box); document.body.appendChild(overlay);
-  }catch(e){console.warn('Dossier modal error:',e);}
-}
 
 // ══════════════════════════════════════
 //  DIRTY TRACKING
@@ -1338,6 +1350,20 @@ async function loadAll(){
     buildSelect();
     buildTable();
     setSt(`✅ ${members.length} membres chargés`);
+    // Auto-sélection via paramètre URL ?q=NOM (ex: depuis FICHE MEMBRE.html)
+    // _autoSelDone garantit que ce bloc ne s'exécute qu'une seule fois (bug : buildRecap appelle loadAll → loadMember → showView('fiche'))
+    if(!_autoSelDone){
+      _autoSelDone=true;
+      const _urlQ=(new URLSearchParams(window.location.search)).get('q');
+      if(_urlQ){
+        const _m=members.find(m=>(m.fields['NOM ATTRACTION']||'').toUpperCase()===_urlQ.toUpperCase()
+          ||(m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||'').toUpperCase()===_urlQ.toUpperCase());
+        if(_m){
+          document.getElementById('msel').value=_m.id;
+          await loadMember();
+        }
+      }
+    }
   } catch(e){
     setSt('⚠️ Erreur connexion Airtable');
     console.error(e);
@@ -1351,7 +1377,7 @@ function buildSelect(){
   members.forEach(m=>{
     const o=document.createElement('option');
     o.value=m.id;
-    o.textContent=m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||m.id;
+    o.textContent=m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||m.id;
     sel.appendChild(o);
   });
   if(cur) sel.value=cur;
@@ -1362,11 +1388,11 @@ function filterSelect(){
   const sel=document.getElementById('msel');
   sel.innerHTML='<option value="">— Choisir un membre —</option>';
   members.filter(m=>{
-    const n=(m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||'').toLowerCase();
+    const n=(m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||'').toLowerCase();
     return !q||n.includes(q)||String(m.fields['Nº de membre']||'').includes(q);
   }).forEach(m=>{
     const o=document.createElement('option');
-    o.value=m.id; o.textContent=m.fields['NOM ATTRACTION']||m.fields['ENSEIGNE']||m.id;
+    o.value=m.id; o.textContent=m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||m.id;
     sel.appendChild(o);
   });
 }
@@ -1397,19 +1423,40 @@ async function loadMember(){
 // ══════════════════════════════════════
 //  FILL FORM
 // ══════════════════════════════════════
+function ouvrirSite(){
+  let v=(document.getElementById('f-site')?.value||'').trim();
+  if(!v) return;
+  if(!/^https?:\/\//i.test(v)) v='https://'+v;
+  window.open(v,'_blank','noopener');
+}
+function majLienSite(){
+  const v=(document.getElementById('f-site')?.value||'').trim();
+  const btn=document.getElementById('btn-site');
+  if(btn) btn.style.display=v?'inline-block':'none';
+}
 function fmtDate(v){
   if(!v) return '';
   if(typeof v==='string'&&v.length>=10) return v.substring(0,10);
   return '';
 }
+function fmtDateTime16(v){
+  // Retourne YYYY-MM-DDTHH:MM pour datetime-local (16 chars)
+  if(!v) return '';
+  try{
+    const d=new Date(v);
+    if(isNaN(d.getTime())) return '';
+    const pad=n=>String(n).padStart(2,'0');
+    return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate())+'T'+pad(d.getHours())+':'+pad(d.getMinutes());
+  }catch(e){ return ''; }
+}
 function sv(id,val,cb=false){
   const el=document.getElementById(id); if(!el) return;
   if(cb) el.checked=!!val;
-  else el.value=val||'';
+  else el.value=val??'';
 }
 
 function fillForm(f){
-  document.getElementById('name-bar').textContent=f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'— MEMBRE —';
+  document.getElementById('name-bar').textContent=f['Enseigne commerciale']||f['ENSEIGNE']||f['NOM ATTRACTION']||'— MEMBRE —';
   document.getElementById('f-num').value=f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||'';
 
   sv('f-entree', fmtDate(f['DATE ENTRÉE']));
@@ -1423,7 +1470,7 @@ function fillForm(f){
   sv('f-tel',    f['TÉLÉPHONE']);
   sv('f-fax',    f['FAX']);
   sv('f-email',  f['EMAIL']);
-  sv('f-site',   f['SITE INTERNET']);
+  sv('f-site',   f['SITE INTERNET']); majLienSite();
   sv('f-tva',    f['N° TVA']);
   sv('f-prov',   f['PROVINCE']);
 
@@ -1534,6 +1581,21 @@ function fillForm(f){
   updateDelBtn();
 }
 
+function toTitleCase(str){
+  if(!str||typeof str!=='string') return str;
+  return str.split(' ').map(w=>
+    w.split('-').map(p=>p.charAt(0).toUpperCase()+p.slice(1).toLowerCase()).join('-')
+  ).join(' ');
+}
+
+function toggleExtraTxt(){
+  const sel=document.getElementById('cc-extra-sel');
+  const txt=document.getElementById('cc-extra-txt');
+  if(!sel||!txt) return;
+  if(sel.value==='__autre__'){ txt.style.display=''; txt.focus(); }
+  else { txt.style.display='none'; txt.value=''; }
+}
+
 function calcConfTotal(){
   // 1) Total MONTANT REPAS = lignes 1+2 uniquement (pas drink)
   const m1=Number(document.getElementById('cc-mont1')?.value)||0;
@@ -1556,7 +1618,7 @@ function fillConf(f){
   // 1) N° de membre — tous les noms de champ possibles (dont BOM)
   st('cc-ref', f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||'');
   st('cc-ens',  f['Enseigne commerciale']||f['NOM ATTRACTION']);
-  st('cc-resp', f['CONTACT']);
+  st('cc-resp', toTitleCase(f['CONTACT']));
   st('cc-rue',  f['RUE']);
   st('cc-cpl',  (f['CP']||'')+(f['CP']?' ':'')+( f['COMMUNE']||''));
   st('cc-tel',  f['TÉLÉPHONE']);
@@ -1580,6 +1642,18 @@ function fillConf(f){
   sv('cc-mont1',   f['MONT1_WKS']!==undefined&&f['MONT1_WKS']!==null   ? String(f['MONT1_WKS'])  : '195');
   sv('cc-mont2',   f['MONT2_WKS']!==undefined&&f['MONT2_WKS']!==null   ? String(f['MONT2_WKS'])  : '0');
   sv('cc-statut1', f['STATUT_WKS']||'MEMBRE');
+  // Ligne 4 : activité spéciale
+  (function(){
+    const xl=f['EXTRA_LABEL_WKS']||null;
+    const sel=document.getElementById('cc-extra-sel');
+    const txt=document.getElementById('cc-extra-txt');
+    if(!sel||!txt) return;
+    const stdOpts=['Visite de l\'attraction','Participation à la présentation'];
+    if(!xl){ sel.value=''; txt.style.display='none'; txt.value=''; }
+    else if(stdOpts.includes(xl)){ sel.value=xl; txt.style.display='none'; txt.value=''; }
+    else { sel.value='__autre__'; txt.style.display=''; txt.value=xl; }
+  })();
+  sv('cc-extra-nbr', f['EXTRA_NBR_WKS']!==undefined&&f['EXTRA_NBR_WKS']!==null ? String(f['EXTRA_NBR_WKS']) : '');
   calcConfTotal();
 }
 
@@ -1619,6 +1693,8 @@ function collectFields(){
     'REPAS1_WKS': gv('cc-repas1')  ? Number(gv('cc-repas1'))  : null,
     'REPAS2_WKS': gv('cc-repas2')  ? Number(gv('cc-repas2'))  : null,
     'DRINK_WKS' : gv('cc-repas3')  ? Number(gv('cc-repas3'))  : null,
+    'EXTRA_LABEL_WKS': (function(){ const s=gv('cc-extra-sel'),t=gv('cc-extra-txt'); return s==='__autre__'?(t||null):(s||null); })(),
+    'EXTRA_NBR_WKS'  : gv('cc-extra-nbr') ? Number(gv('cc-extra-nbr')) : null,
     'MONT1_WKS' : gv('cc-mont1')   ? Number(gv('cc-mont1'))   : null,
     'MONT2_WKS' : gv('cc-mont2')   ? Number(gv('cc-mont2'))   : null,
     'STATUT_WKS': gv('cc-statut1') || null,
@@ -1687,9 +1763,17 @@ function collectFields(){
   // Remove null/empty/false
   // false gardé seulement pour les booléens Airtable confirmés
   const _boolFields=new Set(['COUPON ACCEPTÉ','VIP ACCEPTÉ','SORTIES SCOLAIRES BELUX 2026','SORTIES SCOLAIRES BELUX 2027','SORTIES SCOLAIRES BELUX 2028','SORTIES SCOLAIRES FRANCE 2027','SORTIES SCOLAIRES FRANCE 2028','SORTIES SCOLAIRES FRANCE 2029','TIPS voor SCHOOLTRIPS 2026','TIPS voor SCHOOLTRIPS 2027','TIPS voor SCHOOLTRIPS 2028','SEJOURS SCOLAIRES 2023','SEJOURS SCOLAIRES 2025','SEJOURS SCOLAIRES 2027','NEWS BELUX N3','NEWS BELUX N4','NEWS BELUX N5','NEWS BELUX N6','NEWS BELUX N7','NEWS BELUX N8','NEWS BELUX N9','NEWS FRANCE N3','NEWS FRANCE N4','NEWS FRANCE N5','NEWS FRANCE N6','NEWS FRANCE N7','NEWS FRANCE N8','NEWS FRANCE N9']);
+  // Champs texte libres (commentaires) : garder null dans le payload pour effacer le champ dans Airtable.
+  // Selon l'API Airtable, null = effacement garanti. "" peut être ignoré selon le type de champ.
+  const _clearableTextFields=new Set(['Clé de TRI 2','Clé de TRI 3','Clé de TRI 4','PUB BELUX COMMENTAIRES','PUB FRANCE COMMENTAIRES','PUB TIPS COMMENTAIRES','PUB SEJOURS COMMENTAIRES']);
   Object.keys(F).forEach(k=>{
-    if(F[k]===null||F[k]==='') delete F[k];
-    else if(F[k]===false&&!_boolFields.has(k)) delete F[k];
+    if(_clearableTextFields.has(k)){
+      // Garder null tel quel — ne pas supprimer du payload
+    } else if(F[k]===null||F[k]==='') {
+      delete F[k];
+    } else if(F[k]===false&&!_boolFields.has(k)) {
+      delete F[k];
+    }
   });
   return F;
 }
@@ -1702,6 +1786,10 @@ async function saveMember(){
   if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('f-modif').value=today;
+  // Auto-remplir SUIVI : date et agent connecté
+  document.getElementById('f-majd').value=today;
+  const _authAgent=sessionStorage.getItem('auth_agent')||agent;
+  document.getElementById('f-majp').value=_authAgent;
   const info=document.getElementById('save-info');
   info.textContent='⏳ Enregistrement...';
   const fields=collectFields();
@@ -1739,8 +1827,6 @@ async function saveMember(){
       const saved=members.find(m=>m.id===curId);
       if(saved) fillForm(saved.fields);
       if(!wasExisting){
-        const newNom=saved?.fields['NOM ATTRACTION']||saved?.fields['Enseigne commerciale']||saved?.fields['ENSEIGNE']||'';
-        if(newNom) showDossierModal(newNom);
         showView('recherche');
         setTimeout(()=>{
           const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
@@ -1959,7 +2045,9 @@ async function executeRR(){
   let ok=0,err=0;
   for(const m of matches){
     const oldVal=String(m.fields[field]);
-    const newVal=oldVal.split(search).join(replace);
+    const newValStr=oldVal.split(search).join(replace);
+    // CODE est un champ numérique dans Airtable
+    const newVal=(field==='CODE') ? (Number(newValStr)||null) : newValStr;
     const res=await atPatch(m.id,{[field]:newVal});
     if(res.error) err++; else ok++;
   }
@@ -1993,7 +2081,7 @@ async function buildRecap(){
   });
   tbody.innerHTML='';
   if(!filtered.length){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
+    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
     document.getElementById('recap-cnt').textContent='';
     recalcRecap();
     return;
@@ -2009,6 +2097,7 @@ async function buildRecap(){
     const tbl   = f['TABLE_WKS']!==undefined&&f['TABLE_WKS']!==null ? f['TABLE_WKS'] : '';
     const rep   = (f['REPAS1_WKS']||0)+(f['REPAS2_WKS']||0);
     const drk   = f['DRINK_WKS']||0;
+    const xnbr  = f['EXTRA_NBR_WKS']!==undefined&&f['EXTRA_NBR_WKS']!==null ? f['EXTRA_NBR_WKS'] : '';
     const mont  = (f['MONT1_WKS']||0)+(f['MONT2_WKS']||0);
     const stat  = f['STATUT_WKS']||'MEMBRE';
     const tr=document.createElement('tr');
@@ -2019,6 +2108,7 @@ async function buildRecap(){
       `<td><input type="number" class="ri-table" min="1" max="99" value="${tbl}" placeholder="—" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td><input type="number" class="ri-repas" min="0" value="${rep}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td><input type="number" class="ri-drink" min="0" value="${drk}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+      `<td><input type="number" class="ri-extra" min="0" value="${xnbr}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td><select class="ri-statut" style="width:90px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:2px;">`+
         `<option${stat==='MEMBRE'?' selected':''}>MEMBRE</option>`+
         `<option${stat==='NON-MEMBRE'?' selected':''}>NON-MEMBRE</option>`+
@@ -2041,16 +2131,18 @@ async function saveRecap(){
     const tblV=row.querySelector('.ri-table')?.value;
     const repV=Number(row.querySelector('.ri-repas')?.value||0);
     const drkV=Number(row.querySelector('.ri-drink')?.value||0);
+    const xnbrV=row.querySelector('.ri-extra')?.value;
     const montV=Number(row.querySelector('.ri-montant')?.value||0);
     const statV=row.querySelector('.ri-statut')?.value||'MEMBRE';
     const fields={
-      'TABLE_WKS'  : tblV ? Number(tblV) : null,
-      'REPAS1_WKS' : repV||null,
-      'REPAS2_WKS' : null,
-      'DRINK_WKS'  : drkV||null,
-      'MONT1_WKS'  : montV||null,
-      'MONT2_WKS'  : null,
-      'STATUT_WKS' : statV
+      'TABLE_WKS'    : tblV ? Number(tblV) : null,
+      'REPAS1_WKS'   : repV||null,
+      'REPAS2_WKS'   : null,
+      'DRINK_WKS'    : drkV||null,
+      'EXTRA_NBR_WKS': xnbrV ? Number(xnbrV) : null,
+      'MONT1_WKS'    : montV||null,
+      'MONT2_WKS'    : null,
+      'STATUT_WKS'   : statV
     };
     const res=await atPatch(id,fields);
     if(res.error) err++; else ok++;
@@ -2062,18 +2154,20 @@ async function saveRecap(){
 
 function recalcRecap(){
   const rows=document.querySelectorAll('#recap-tbody tr');
-  let totRepas=0,totDrink=0,totMontant=0,nTables=0;
+  let totRepas=0,totDrink=0,totActivite=0,totMontant=0,nTables=0;
   rows.forEach(r=>{
     const tbl=r.querySelector('.ri-table');
     if(tbl&&tbl.value) nTables++;
     totRepas+=Number((r.querySelector('.ri-repas')||{}).value)||0;
     totDrink+=Number((r.querySelector('.ri-drink')||{}).value)||0;
+    totActivite+=Number((r.querySelector('.ri-extra')||{}).value)||0;
     totMontant+=Number((r.querySelector('.ri-montant')||{}).value)||0;
   });
   const nR=document.querySelectorAll('#recap-tbody tr').length;
   document.getElementById('rtot-tables').textContent=nR?nR+' table(s)':'—';
   document.getElementById('rtot-repas').textContent=totRepas;
   document.getElementById('rtot-drink').textContent=totDrink;
+  document.getElementById('rtot-activite').textContent=totActivite;
   document.getElementById('rtot-montant').textContent=totMontant+' €';
 }
 
@@ -2090,7 +2184,7 @@ function generateConfPage(f){
 
   // Données membre
   const ens   = f['Enseigne commerciale']||f['NOM ATTRACTION']||f['ENSEIGNE']||'—';
-  const resp  = f['Responsable']||f['CONTACT']||f['RESPONSABLE']||'—';
+  const resp  = toTitleCase(f['Responsable']||f['CONTACT']||f['RESPONSABLE']||'—');
   const rue   = f['RUE']||f['Rue']||'—';
   const cp    = (f['CP']||f['CODE POSTAL']||'')+(f['CP']||f['CODE POSTAL']?' ':'')+(f['COMMUNE']||f['Localité']||'');
   const numMb = f['N° MEMBRE']||f['Nº de membre']||f['N° membre']||f['N°']||f['﻿N°']||'—';
@@ -2108,6 +2202,8 @@ function generateConfPage(f){
   const mont2  = f['MONT2_WKS'] !==undefined&&f['MONT2_WKS'] !==null ? Number(f['MONT2_WKS'])  : 0;
   const statut = f['STATUT_WKS']||'MEMBRE';
   const mont3  = 0; // drink non stocké séparément
+  const extraNbr = f['EXTRA_NBR_WKS']!==undefined&&f['EXTRA_NBR_WKS']!==null ? Number(f['EXTRA_NBR_WKS']) : 0;
+  const extraLabel = f['EXTRA_LABEL_WKS']||'';
   const totalRepas = repas1+repas2;
   const totalPayer = mont1+mont2+mont3;
 
@@ -2160,7 +2256,7 @@ function generateConfPage(f){
     </thead>
     <tbody>
       <tr>
-        <td rowspan="3" style="text-align:center;font-size:26px;font-weight:900;border:1px solid #c0cce0;padding:8px;">${tableN}</td>
+        <td rowspan="4" style="text-align:center;font-size:26px;font-weight:900;border:1px solid #c0cce0;padding:8px;">${tableN}</td>
         <td style="padding:4px 6px;border:1px solid #c0cce0;font-weight:700;">${ens}</td>
         <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
         <td style="text-align:center;padding:4px 6px;border:1px solid #c0cce0;">${repas1||'—'}</td>
@@ -2181,6 +2277,19 @@ function generateConfPage(f){
         <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
         <td style="text-align:right;padding:4px 6px;border:1px solid #c0cce0;">—</td>
       </tr>
+      ${extraLabel||extraNbr ? `<tr style="background:#f0f6ff;">
+        <td style="padding:4px 6px;border:1px solid #c0cce0;font-style:italic;color:#444;">${extraLabel||'—'}</td>
+        <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
+        <td style="text-align:center;padding:4px 6px;border:1px solid #c0cce0;">${extraNbr||'—'}</td>
+        <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
+        <td style="text-align:right;padding:4px 6px;border:1px solid #c0cce0;">—</td>
+      </tr>` : `<tr style="background:#f0f6ff;">
+        <td style="padding:4px 6px;border:1px solid #c0cce0;font-style:italic;color:#bbb;">—</td>
+        <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
+        <td style="text-align:center;padding:4px 6px;border:1px solid #c0cce0;">—</td>
+        <td style="padding:4px 6px;border:1px solid #c0cce0;"></td>
+        <td style="text-align:right;padding:4px 6px;border:1px solid #c0cce0;">—</td>
+      </tr>`}
       <tr style="background:#fff9c4;font-weight:700;">
         <td colspan="2" style="padding:4px 6px;border:1px solid #999;font-size:11px;">
           Code : ${f['CODE']||'—'} &nbsp;&nbsp; Total drink : ${drink||0}
@@ -2264,17 +2373,156 @@ ${pages}
 }
 
 // ══════════════════════════════════════
-//  INIT
+//  SYSTÈME PIN — AUTHENTIFICATION
+//  ⚠️  Valeurs par défaut (1er déploiement).
+//      MARC peut changer les PINs via l'interface 🔑
 // ══════════════════════════════════════
-loadAll();
+const AGENT_PINS_DEFAULT = {
+  'MARC':    '1111',
+  'MAÏTE':   '2222',
+  'PASCAL':  '3333',
+  'VANESSA': '4444'
+};
+// Charger depuis localStorage si MARC les a déjà modifiés
+let AGENT_PINS = (function(){
+  try{
+    const stored = localStorage.getItem('educpass_pins');
+    if(stored){ const p=JSON.parse(stored); if(p&&p.MARC) return p; }
+  }catch(e){}
+  return Object.assign({}, AGENT_PINS_DEFAULT);
+})();
+
+function _setAgentSession(agent){
+  sessionStorage.setItem('auth_agent', agent);
+  const sel = document.getElementById('f-agent');
+  if(sel) sel.value = agent;
+  const hdr = document.getElementById('header-agent');
+  if(hdr) hdr.textContent = agent;
+  // Bouton gestion PINs visible uniquement pour MARC
+  const btnPinMgr = document.getElementById('btn-pin-mgr');
+  if(btnPinMgr) btnPinMgr.style.display = (agent === 'MARC') ? '' : 'none';
+}
+
+function loginPin(){
+  const agent = document.getElementById('pin-agent').value;
+  const pin   = document.getElementById('pin-code').value;
+  const err   = document.getElementById('pin-error');
+  err.textContent = '';
+  if(!agent){ err.textContent = 'Sélectionnez votre nom.'; return; }
+  if(pin.length !== 4){ err.textContent = 'Le code doit contenir 4 chiffres.'; return; }
+  if(AGENT_PINS[agent] !== pin){
+    err.textContent = '❌ Code incorrect — réessayez.';
+    document.getElementById('pin-code').value = '';
+    document.getElementById('pin-code').focus();
+    return;
+  }
+  // Authentifié ✓
+  document.getElementById('overlay-pin').classList.add('hidden');
+  _setAgentSession(agent);
+  loadAll();
+}
+
+function logoutPin(){
+  if(!confirm('Se déconnecter ?')) return;
+  sessionStorage.removeItem('auth_agent');
+  location.reload();
+}
+
+function showGestionPins(){
+  if(sessionStorage.getItem('auth_agent')!=='MARC') return;
+  document.getElementById('pm-marc').value    = AGENT_PINS['MARC']    || '';
+  document.getElementById('pm-maite').value   = AGENT_PINS['MAÏTE']   || '';
+  document.getElementById('pm-pascal').value  = AGENT_PINS['PASCAL']  || '';
+  document.getElementById('pm-vanessa').value = AGENT_PINS['VANESSA'] || '';
+  document.getElementById('pm-msg').textContent = '';
+  document.getElementById('overlay-pin-mgr').classList.remove('hidden');
+}
+function closeGestionPins(){
+  document.getElementById('overlay-pin-mgr').classList.add('hidden');
+}
+function saveGestionPins(){
+  const pins = {
+    'MARC':    document.getElementById('pm-marc').value.trim(),
+    'MAÏTE':   document.getElementById('pm-maite').value.trim(),
+    'PASCAL':  document.getElementById('pm-pascal').value.trim(),
+    'VANESSA': document.getElementById('pm-vanessa').value.trim(),
+  };
+  for(const [agent, pin] of Object.entries(pins)){
+    if(pin && !/^\d{4}$/.test(pin)){
+      document.getElementById('pm-msg').style.color='#c0392b';
+      document.getElementById('pm-msg').textContent='❌ PIN de '+agent+' invalide — 4 chiffres requis.';
+      return;
+    }
+    if(!pin) pins[agent]=AGENT_PINS[agent]; // garder l'ancien si laissé vide
+  }
+  try{
+    localStorage.setItem('educpass_pins', JSON.stringify(pins));
+    Object.assign(AGENT_PINS, pins);
+    document.getElementById('pm-msg').style.color='#27ae60';
+    document.getElementById('pm-msg').textContent='✅ Codes PIN enregistrés !';
+    setTimeout(closeGestionPins, 1500);
+  }catch(e){
+    document.getElementById('pm-msg').style.color='#c0392b';
+    document.getElementById('pm-msg').textContent='❌ Erreur : '+e.message;
+  }
+}
+
+// ── INIT ──────────────────────────────
+// DOMContentLoaded obligatoire : les divs overlay sont definis apres le script
+document.addEventListener('DOMContentLoaded', function(){
+  const saved = sessionStorage.getItem('auth_agent');
+  if(saved && AGENT_PINS[saved]){
+    // Session encore valide — pas besoin de re-saisir le PIN
+    _setAgentSession(saved);
+    loadAll();
+  } else {
+    // Afficher l'écran de connexion
+    document.getElementById('overlay-pin').classList.remove('hidden');
+  }
+});
 </script>
+<!-- ═══ OVERLAY GESTION PINS (MARC uniquement) ═══ -->
+<div id="overlay-pin-mgr" class="hidden">
+  <div class="pin-mgr-box">
+    <h2>🔑 Gestion des codes PIN</h2>
+    <div class="pin-row"><label>MARC :</label><input type="password" id="pm-marc" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <div class="pin-row"><label>MAÏTE :</label><input type="password" id="pm-maite" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <div class="pin-row"><label>PASCAL :</label><input type="password" id="pm-pascal" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <div class="pin-row"><label>VANESSA :</label><input type="password" id="pm-vanessa" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <div class="pin-mgr-msg" id="pm-msg"></div>
+    <div class="pin-mgr-btns">
+      <button class="btn-cancel-pins" onclick="closeGestionPins()">Annuler</button>
+      <button class="btn-save-pins" onclick="saveGestionPins()">💾 Enregistrer</button>
+    </div>
+  </div>
+</div>
+<!-- ═══ OVERLAY LOGIN PIN ═══ -->
+<div id="overlay-pin" class="hidden">
+  <div class="pin-box">
+    <div class="pin-logo">EDUCPASS</div>
+    <h2>🔐 Accès sécurisé</h2>
+    <label>Agent :</label>
+    <select id="pin-agent">
+      <option value="">— Sélectionnez —</option>
+      <option>MARC</option>
+      <option>MAÏTE</option>
+      <option>PASCAL</option>
+      <option>VANESSA</option>
+    </select>
+    <label>Code PIN (4 chiffres) :</label>
+    <input type="password" id="pin-code" maxlength="4" inputmode="numeric" pattern="[0-9]{4}" placeholder="••••" autocomplete="off" oninput="if(this.value.length===4)loginPin()">
+    <div id="pin-error" class="pin-err"></div>
+    <button class="pin-btn" onclick="loginPin()">Connexion →</button>
+  </div>
+</div>
+
 <!-- ═══ MODAL RECHERCHER/REMPLACER ═══ -->
 <div id="modal-rr" class="modal-rr" onclick="if(event.target===this)closeRR()">
   <div class="modal-rr-box">
     <h3>🔄 Rechercher / Remplacer dans tous les membres</h3>
     <label>Champ à modifier :</label>
     <select id="rr-champ">
-      <option value="AGENT">AGENT</option>
+      <option value="CODE">CODE</option>
       <option value="COTISATION BE">COTISATION BE</option>
       <option value="COTISATION LU">COTISATION LU</option>
       <option value="PROVINCE">PROVINCE</option>
