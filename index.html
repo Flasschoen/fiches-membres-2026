@@ -338,13 +338,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           <div class="fl" style="min-width:110px;">Coupon accepté :</div>
           <div class="fv" style="flex:0 0 90px;">
             <select id="f-coupon" onchange="markDirty()" style="width:70px;">
-              <option value="">—</option><option>OUI</option><option>NON</option>
+              <option value="">—</option><option>1</option><option>0</option>
             </select>
           </div>
           <div class="fl" style="min-width:90px;">VIP accepté :</div>
           <div class="fv">
             <select id="f-vip" onchange="markDirty()" style="width:60px;">
-              <option value="">—</option><option>OUI</option><option>NON</option>
+              <option value="">—</option><option>1</option><option>0</option>
             </select>
           </div>
         </div>
@@ -1480,8 +1480,8 @@ function fillForm(f){
   sv('f-c4',f['CONTACT 4']); sv('f-t4',f['TITRE 4']); sv('f-g4',f['GSM 4']); sv('f-e4',f['EMAIL 4']);
 
   sv('f-lang',  f['LANGUE']||'FR');
-  sv('f-coupon',f['COUPON ACCEPTÉ']);
-  sv('f-vip',   f['VIP ACCEPTÉ']);
+  sv('f-coupon', f['COUPON ACCEPTÉ'] || '0');
+  sv('f-vip',   f['VIP ACCEPTÉ']   || '0');
   sv('f-agent', f['AGENT']);
   sv('f-code',  f['CODE']);
   sv('f-tri1',  f['Clé de TRI 2']);
@@ -1681,7 +1681,9 @@ function collectFields(){
     'RUE':gv('f-rue'), 'CP':gv('f-cp'), 'COMMUNE':gv('f-com'),
     'TÉLÉPHONE':gv('f-tel'), 'FAX':gv('f-fax'), 'EMAIL':gv('f-email'),
     'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
-    'LANGUE':gv('f-lang'), 'COUPON ACCEPTÉ':gv('f-coupon'), 'VIP ACCEPTÉ':gv('f-vip'),
+    'LANGUE':gv('f-lang'),
+    'COUPON ACCEPTÉ': gv('f-coupon') || '0',
+    'VIP ACCEPTÉ':   gv('f-vip')   || '0',
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
     'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
     'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
@@ -2079,8 +2081,15 @@ async function buildRecap(){
     const eb=(b.fields['Enseigne commerciale']||b.fields['NOM ATTRACTION']||'').toLowerCase();
     return ea.localeCompare(eb,'fr');
   });
+  // Déduplication par nom (évite les doublons Airtable)
+  const _seenRec=new Set();
+  const filteredUniq=filtered.filter(m=>{
+    const n=(m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||'').trim().toUpperCase();
+    if(_seenRec.has(n)) return false;
+    _seenRec.add(n); return true;
+  });
   tbody.innerHTML='';
-  if(!filtered.length){
+  if(!filteredUniq.length){
     tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
     document.getElementById('recap-cnt').textContent='';
     recalcRecap();
@@ -2090,7 +2099,7 @@ async function buildRecap(){
   const saveBtn=document.getElementById('recap-save-btn');
   if(saveBtn) saveBtn.style.display='';
 
-  filtered.forEach((rec,i)=>{
+  filteredUniq.forEach((rec,i)=>{
     const f=rec.fields;
     const ens=f['Enseigne commerciale']||f['NOM ATTRACTION']||'—';
     // Valeurs depuis Airtable (sauvegardées via CONFIRMATION)
@@ -2116,7 +2125,7 @@ async function buildRecap(){
       `<td><input type="number" class="ri-montant" min="0" value="${mont}" oninput="recalcRecap()" style="width:74px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:right;box-sizing:border-box;"></td>`;
     tbody.appendChild(tr);
   });
-  document.getElementById('recap-cnt').textContent=filtered.length+' participant(s)';
+  document.getElementById('recap-cnt').textContent=filteredUniq.length+' participant(s)';
   recalcRecap();
 }
 
