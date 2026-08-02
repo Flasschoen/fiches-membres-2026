@@ -1,5 +1,0 @@
-# Ignorer tout sauf index.html et le logo
-*
-!index.html
-!.gitignore
-!New_logo_jpeg.jpg

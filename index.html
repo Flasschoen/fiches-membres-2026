@@ -1484,8 +1484,8 @@ function fillForm(f){
   sv('f-c4',f['CONTACT 4']); sv('f-t4',f['TITRE 4']); sv('f-g4',f['GSM 4']); sv('f-e4',f['EMAIL 4']);
 
   sv('f-lang',  f['LANGUE']||'FR');
-  sv('f-coupon', f['COUPON ACCEPTÉ']===true ? '1' : f['COUPON ACCEPTÉ']===false ? '0' : '');
-  sv('f-vip',   f['VIP ACCEPTÉ']  ===true ? '1' : f['VIP ACCEPTÉ']  ===false ? '0' : '');
+  sv('f-coupon', (function(v){return v===true||v===1?'1':v===false||v===0?'0':'';})(f['COUPON ACCEPTÉ']));
+  sv('f-vip',   (function(v){return v===true||v===1?'1':v===false||v===0?'0':'';})(f['VIP ACCEPTÉ']));
   sv('f-agent', f['AGENT']);
   sv('f-code',  f['CODE']);
   sv('f-tri1',  f['Clé de TRI 2']);
@@ -1523,19 +1523,19 @@ function fillForm(f){
   sv('p-sej27',f['SEJOURS SCOLAIRES 2027']||f['PUB SEJOURS 2027'],true);
 
   // Publications annuelles — page gratuite, page payante, tarif, commentaires
-  sv('p-bx-pg',f['PUB BELUX PAGE GRATUITE']||f['PUB BELUX PAGE']);
+  sv('p-bx-pg',f['PUB BELUX PAGE GRATUITE']!=null?f['PUB BELUX PAGE GRATUITE']:f['PUB BELUX PAGE']);
   sv('p-bx-pp',f['PUB BELUX PAGE PAYANTE']);
   sv('p-bx-t', f['PUB BELUX TARIF']!==undefined ? String(f['PUB BELUX TARIF']) : null);
   sv('p-bx-com',f['PUB BELUX COMMENTAIRES']);
-  sv('p-fr-pg',f['PUB FRANCE PAGE GRATUITE']||f['PUB FRANCE PAGE']);
+  sv('p-fr-pg',f['PUB FRANCE PAGE GRATUITE']!=null?f['PUB FRANCE PAGE GRATUITE']:f['PUB FRANCE PAGE']);
   sv('p-fr-pp',f['PUB FRANCE PAGE PAYANTE']);
   sv('p-fr-t', f['PUB FRANCE TARIF']!==undefined ? String(f['PUB FRANCE TARIF']) : null);
   sv('p-fr-com',f['PUB FRANCE COMMENTAIRES']);
-  sv('p-tp-pg',f['PUB TIPS PAGE GRATUITE']||f['PUB TIPS PAGE']);
+  sv('p-tp-pg',f['PUB TIPS PAGE GRATUITE']!=null?f['PUB TIPS PAGE GRATUITE']:f['PUB TIPS PAGE']);
   sv('p-tp-pp',f['PUB TIPS PAGE PAYANTE']);
   sv('p-tp-t', f['PUB TIPS TARIF']!==undefined ? String(f['PUB TIPS TARIF']) : null);
   sv('p-tp-com',f['PUB TIPS COMMENTAIRES']);
-  sv('p-sej-pg',f['PUB SEJOURS PAGE GRATUITE']||f['PUB SEJOURS PAGE']);
+  sv('p-sej-pg',f['PUB SEJOURS PAGE GRATUITE']!=null?f['PUB SEJOURS PAGE GRATUITE']:f['PUB SEJOURS PAGE']);
   sv('p-sej-pp',f['PUB SEJOURS PAGE PAYANTE']);
   sv('p-sej-t', f['PUB SEJOURS TARIF']!==undefined ? String(f['PUB SEJOURS TARIF']) : null);
   sv('p-sej-com',f['PUB SEJOURS COMMENTAIRES']);
@@ -1686,8 +1686,8 @@ function collectFields(){
     'TÉLÉPHONE':gv('f-tel'), 'FAX':gv('f-fax'), 'EMAIL':gv('f-email'),
     'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
     'LANGUE':gv('f-lang'),
-    'COUPON ACCEPTÉ': gv('f-coupon')==='1' ? true : (gv('f-coupon')==='0' ? false : null),
-    'VIP ACCEPTÉ':   gv('f-vip')==='1'   ? true : (gv('f-vip')==='0'   ? false : null),
+    'COUPON ACCEPTÉ': gv('f-coupon')==='1' ? 1 : (gv('f-coupon')==='0' ? 0 : null),
+    'VIP ACCEPTÉ':   gv('f-vip')==='1'   ? 1 : (gv('f-vip')==='0'   ? 0 : null),
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
     'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
     'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
