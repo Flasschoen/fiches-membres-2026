@@ -361,7 +361,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             </select>
           </div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 1:</div>
-          <div class="fv" style="flex:0 0 155px;padding:2px 2px;"><select id="f-tri1" onchange="markDirty()" style="font-size:11px;border:1px solid #ccc;border-radius:3px;padding:2px 3px;width:153px;"><option value="">—</option><option>Sortie scolaires BELUX</option><option>Sortie scolaire France</option><option>Tip voor trips</option><option>Séjours scolaires</option></select></div>
+          <div class="fv" style="flex:0 0 155px;padding:2px 2px;"><select id="f-tri1" onchange="markDirty()" style="font-size:11px;border:1px solid #ccc;border-radius:3px;padding:2px 3px;width:153px;"><option value="">—</option><option value="1">Sortie scolaires BELUX</option><option value="2">Sortie scolaire France</option><option value="3">Tip voor trips</option><option value="4">Séjours scolaires</option></select></div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 2:</div>
           <div class="fv" style="flex:0 0 30px;padding:2px 2px;"><input type="number" id="f-tri2" min="0" max="99" style="width:26px;" oninput="markDirty()"></div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 3:</div>
@@ -1685,7 +1685,7 @@ function collectFields(){
     'COUPON ACCEPTÉ': gv('f-coupon') || '0',
     'VIP ACCEPTÉ':   gv('f-vip')   || '0',
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
-    'Clé de TRI 2':gv('f-tri1') || null,
+    'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
     'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
     'Clé de TRI 4':gv('f-tri3')!==null&&gv('f-tri3')!=='' ? Number(gv('f-tri3')) : null,
     'PROFS-CONTACTS':gv('f-profs')!==null&&gv('f-profs')!=='' ? Number(gv('f-profs')) : null,
