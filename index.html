@@ -361,7 +361,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
             </select>
           </div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 1:</div>
-          <div class="fv" style="flex:0 0 155px;padding:2px 2px;"><select id="f-tri1" onchange="markDirty()" style="font-size:11px;border:1px solid #ccc;border-radius:3px;padding:2px 3px;width:153px;"><option value="">—</option><option value="1">Sortie scolaires BELUX</option><option value="2">Sortie scolaire France</option><option value="3">Tip voor trips</option><option value="4">Séjours scolaires</option></select></div>
+          <div class="fv" style="flex:0 0 30px;padding:2px 2px;"><input type="number" id="f-tri1" min="0" max="99" style="width:26px;" oninput="markDirty()"></div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 2:</div>
           <div class="fv" style="flex:0 0 30px;padding:2px 2px;"><input type="number" id="f-tri2" min="0" max="99" style="width:26px;" oninput="markDirty()"></div>
           <div class="fl" style="min-width:30px;font-size:10px;">TRI 3:</div>
@@ -828,6 +828,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld1" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
+        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -835,6 +836,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld2" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
+        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -842,6 +844,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld3" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
+        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -849,6 +852,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld4" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
+        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -1864,11 +1868,20 @@ function buildTable(){
       .some(v=>(v||'').toLowerCase().includes(q))) return false;
     for(let i=1;i<=4;i++){
       const fldKey=(document.getElementById(`rch-fld${i}`)||{value:''}).value;
-      const val=(document.getElementById(`rch-val${i}`)||{value:''}).value.toLowerCase();
-      if(!fldKey||!val) continue;
-      const fldName=_fldMap[fldKey]||fldKey;
+      if(!fldKey) continue;
+      let fldName,filterVal;
+      if(fldKey.includes(':')){
+        // Format "TRI1:1" → champ fixe + valeur fixe (ex: Sorties sc. BELUX = TRI1 valeur 1)
+        const parts=fldKey.split(':');
+        fldName=_fldMap[parts[0]]||parts[0];
+        filterVal=parts[1];
+      } else {
+        filterVal=(document.getElementById(`rch-val${i}`)||{value:''}).value.toLowerCase();
+        if(!filterVal) continue;
+        fldName=_fldMap[fldKey]||fldKey;
+      }
       const fv=String(f[fldName]!==undefined&&f[fldName]!==null?f[fldName]:'').toLowerCase();
-      if(!fv.includes(val)) return false;
+      if(!fv.includes(filterVal)) return false;
     }
     return true;
   });
