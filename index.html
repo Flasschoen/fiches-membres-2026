@@ -1215,7 +1215,7 @@ const DOSSIER_BASE = 'C:\\Users\\Marc\\OneDrive - Educpass\\Bureau\\DOSSIER PART
 function copyDossierPath(){
   const m = members.find(x => x.id === curId);
   if(!m){ alert('Aucun membre sélectionné.'); return; }
-  const nom = m.fields['NOM ATTRACTION'] || m.fields['ENSEIGNE'] || '';
+  const nom = m.fields['NOM ATTRACTION'] || m.fields['Enseigne commerciale'] || m.fields['ENSEIGNE'] || '';
   if(!nom){ alert('Nom du membre introuvable.'); return; }
   const path = DOSSIER_BASE + '\\' + nom;
   navigator.clipboard.writeText(path).then(()=>{
@@ -1895,7 +1895,7 @@ function buildTable(){
   };
   const filtered=members.filter(m=>{
     const f=m.fields;
-    if(q&&![f['NOM ATTRACTION'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
+    if(q&&![f['NOM ATTRACTION'],f['Enseigne commerciale'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''),String(f['CODE']||'')]
       .some(v=>(v||'').toLowerCase().includes(q))) return false;
     for(let i=1;i<=4;i++){
@@ -1942,7 +1942,7 @@ function buildTable(){
       return d;
     };
     tr.appendChild(td(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''));
-    tr.appendChild(td(f['ENSEIGNE']||''));
+    tr.appendChild(td(f['Enseigne commerciale']||f['ENSEIGNE']||''));
     tr.appendChild(td(f['NOM ATTRACTION']||''));
     tr.appendChild(td(f['CATÉGORIE']||''));
     tr.appendChild(td(f['COMMUNE']||''));
