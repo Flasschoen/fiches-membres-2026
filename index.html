@@ -1109,9 +1109,8 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
     <table class="recap-table">
       <thead>
         <tr>
-          <th style="width:28px;">N°</th>
-          <th style="text-align:left;">ENSEIGNE</th>
           <th style="width:65px;">N° TABLE</th>
+          <th style="text-align:left;">ENSEIGNE</th>
           <th style="width:65px;">REPAS</th>
           <th style="width:65px;">DRINK</th>
           <th style="width:70px;">ACTIVITÉ</th>
@@ -1120,7 +1119,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
         </tr>
       </thead>
       <tbody id="recap-tbody">
-        <tr><td colspan="8" style="text-align:center;color:#999;padding:14px;">Sélectionnez un code et cliquez sur Afficher</td></tr>
+        <tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Sélectionnez un code et cliquez sur Afficher</td></tr>
       </tbody>
       <tfoot>
         <tr class="rtfoot">
@@ -2108,7 +2107,7 @@ async function buildRecap(){
   });
   tbody.innerHTML='';
   if(!filteredUniq.length){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
     document.getElementById('recap-cnt').textContent='';
     recalcRecap();
     return;
@@ -2130,9 +2129,8 @@ async function buildRecap(){
     const tr=document.createElement('tr');
     tr.setAttribute('data-member-id', rec.id);
     tr.innerHTML=
-      `<td>${i+1}</td>`+
-      `<td style="text-align:left;">${ens}</td>`+
       `<td><input type="number" class="ri-table" min="1" max="99" value="${tbl}" placeholder="—" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+      `<td style="text-align:left;">${ens}</td>`+
       `<td><input type="number" class="ri-repas" min="0" value="${rep}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td><input type="number" class="ri-drink" min="0" value="${drk}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td><input type="number" class="ri-extra" min="0" value="${xnbr}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
