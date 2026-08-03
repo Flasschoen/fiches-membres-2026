@@ -1698,8 +1698,8 @@ function gn(id){
 
 function collectFields(){
   const F={
-    // N° MEMBRE : champ texte de référence Excel
-    'N° MEMBRE': gn('f-num')||null,
+    // N° MEMBRE : champ texte (singleLineText) — envoyer en string, pas en Number
+    'N° MEMBRE': gv('f-num')||null,
     'DATE ENTRÉE': gv('f-entree')||null,
     'NOM ATTRACTION':gv('f-attr'),
     'CATÉGORIE':gv('f-cat'),
@@ -1793,7 +1793,7 @@ function collectFields(){
   const _boolFields=new Set(['COUPON ACCEPTÉ','VIP ACCEPTÉ','SORTIES SCOLAIRES BELUX 2026','SORTIES SCOLAIRES BELUX 2027','SORTIES SCOLAIRES BELUX 2028','SORTIES SCOLAIRES FRANCE 2027','SORTIES SCOLAIRES FRANCE 2028','SORTIES SCOLAIRES FRANCE 2029','TIPS voor SCHOOLTRIPS 2026','TIPS voor SCHOOLTRIPS 2027','TIPS voor SCHOOLTRIPS 2028','SEJOURS SCOLAIRES 2023','SEJOURS SCOLAIRES 2025','SEJOURS SCOLAIRES 2027','NEWS BELUX N3','NEWS BELUX N4','NEWS BELUX N5','NEWS BELUX N6','NEWS BELUX N7','NEWS BELUX N8','NEWS BELUX N9','NEWS FRANCE N3','NEWS FRANCE N4','NEWS FRANCE N5','NEWS FRANCE N6','NEWS FRANCE N7','NEWS FRANCE N8','NEWS FRANCE N9']);
   // Champs texte libres (commentaires) : garder null dans le payload pour effacer le champ dans Airtable.
   // Selon l'API Airtable, null = effacement garanti. "" peut être ignoré selon le type de champ.
-  const _clearableTextFields=new Set(['Clé de TRI 2','Clé de TRI 3','Clé de TRI 4','PUB BELUX COMMENTAIRES','PUB FRANCE COMMENTAIRES','PUB TIPS COMMENTAIRES','PUB SEJOURS COMMENTAIRES']);
+  const _clearableTextFields=new Set(['Clé de TRI 2','Clé de TRI 3','Clé de TRI 4','PUB BELUX COMMENTAIRES','PUB FRANCE COMMENTAIRES','PUB TIPS COMMENTAIRES','PUB SEJOURS COMMENTAIRES','COTISATION BE','COTISATION LU']);
   Object.keys(F).forEach(k=>{
     if(_clearableTextFields.has(k)){
       // Garder null tel quel — ne pas supprimer du payload
@@ -1849,6 +1849,12 @@ async function saveMember(){
     // Capturer COUPON/VIP avant reload (Airtable omet les cases à valeur false de ses réponses)
     const _preCoupon=(document.getElementById('f-coupon')||{}).value||'';
     const _preVip=(document.getElementById('f-vip')||{}).value||'';
+    // Capturer tous les checkboxes (Airtable omet false + legacy fields peuvent interférer au reload)
+    const _cbState={};
+    document.querySelectorAll('input[type=checkbox]').forEach(el=>{if(el.id)_cbState[el.id]=el.checked;});
+    // Capturer COTISATION BE/LU (singleSelect — si vide, doit effacer Airtable)
+    const _cotBe=(document.getElementById('f-cotbe')||{}).value||'';
+    const _cotLu=(document.getElementById('f-cotlu')||{}).value||'';
     clearDirty();
     info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
@@ -1863,6 +1869,16 @@ async function saveMember(){
         const fvip=document.getElementById('f-vip');
         if(_preCoupon && fcoupon && !fcoupon.value) fcoupon.value=_preCoupon;
         if(_preVip && fvip && !fvip.value) fvip.value=_preVip;
+        // Restaurer TOUS les checkboxes (Publications, etc.) — évite que legacy fields remettent les valeurs
+        Object.keys(_cbState).forEach(id=>{
+          const el=document.getElementById(id);
+          if(el&&el.type==='checkbox') el.checked=_cbState[id];
+        });
+        // Restaurer COTISATION BE/LU (null envoyé à Airtable, mais fillForm peut afficher ancienne valeur)
+        const elCotBe=document.getElementById('f-cotbe');
+        const elCotLu=document.getElementById('f-cotlu');
+        if(elCotBe) elCotBe.value=_cotBe;
+        if(elCotLu) elCotLu.value=_cotLu;
       }
       if(!wasExisting){
         showView('recherche');
