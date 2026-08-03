@@ -2092,6 +2092,9 @@ async function buildRecap(){
     return v!==undefined && v!==null && v!=='' && Number(v)===profsNum;
   });
   filtered.sort((a,b)=>{
+    const ta=a.fields['TABLE_WKS']!=null?Number(a.fields['TABLE_WKS']):9999;
+    const tb=b.fields['TABLE_WKS']!=null?Number(b.fields['TABLE_WKS']):9999;
+    if(ta!==tb) return ta-tb;
     const ea=(a.fields['Enseigne commerciale']||a.fields['NOM ATTRACTION']||'').toLowerCase();
     const eb=(b.fields['Enseigne commerciale']||b.fields['NOM ATTRACTION']||'').toLowerCase();
     return ea.localeCompare(eb,'fr');
