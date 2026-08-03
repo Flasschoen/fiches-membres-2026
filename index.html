@@ -1843,6 +1843,9 @@ async function saveMember(){
       info.textContent='⚠️ '+msg; return;
     }
     if(res.error){info.textContent='⚠️ '+res.error.message;return;}
+    // Capturer COUPON/VIP avant reload (Airtable omet les cases à valeur false de ses réponses)
+    const _preCoupon=(document.getElementById('f-coupon')||{}).value||'';
+    const _preVip=(document.getElementById('f-vip')||{}).value||'';
     clearDirty();
     info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
@@ -1850,7 +1853,14 @@ async function saveMember(){
     if(curId){
       document.getElementById('msel').value=curId;
       const saved=members.find(m=>m.id===curId);
-      if(saved) fillForm(saved.fields);
+      if(saved){
+        fillForm(saved.fields);
+        // Restaurer COUPON/VIP si Airtable les a omis (false checkbox = absent de l'API)
+        const fcoupon=document.getElementById('f-coupon');
+        const fvip=document.getElementById('f-vip');
+        if(_preCoupon && fcoupon && !fcoupon.value) fcoupon.value=_preCoupon;
+        if(_preVip && fvip && !fvip.value) fvip.value=_preVip;
+      }
       if(!wasExisting){
         showView('recherche');
         setTimeout(()=>{
@@ -2560,7 +2570,7 @@ function g27Build(){
   const tbody = document.getElementById('g27-tbody');
   if(!tbody) return;
   if(!members || members.length === 0){
-    tbody.innerHTML='<tr><td colspan="9" style="text-align:center;color:#999;padding:24px;">⏳ Chargement des membres…</td></tr>';
+    tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:#999;padding:24px;">⏳ Chargement des membres…</td></tr>';
     return;
   }
   const q = (document.getElementById('g27-search')?.value||'').toLowerCase().trim();
@@ -2606,11 +2616,15 @@ function g27Build(){
     const sj = g27IsChecked(f,'SEJOURS SCOLAIRES 2027');
     const mbe = f['MONTANT BE']!==undefined&&f['MONTANT BE']!==null ? String(f['MONTANT BE']) : '';
     const mlu = f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : '';
+    const cotBe = f['COTISATION BE'] || '';
+    const cotLu = f['COTISATION LU'] || '';
     const hasAny = bx||fr||ti||sj;
     const hasMnt = (mbe!==''&&mbe!=='0')||(mlu!==''&&mlu!=='0');
     const etat = !hasAny ? '⬜' : hasMnt ? '✅' : '⚠️';
 
     const mkOpts=(val)=>AMTS.map(v=>`<option value="${v}" ${val===v?'selected':''}>${v===''?'—':v+' €'}</option>`).join('');
+    const cotBg=(v)=>v==='2027'?'#d4edda':v==='2026'?'#fff9cd':'#fff';
+    const mkCot=(val,field,abbr)=>`<select class="g27-amt" style="width:56px;font-size:11px;background:${cotBg(val)};font-weight:600;" data-id="${m.id}" data-field="${field}" onchange="g27SaveCot(this,'${abbr}')"><option value="" ${val===''?'selected':''}>—</option><option value="2026" ${val==='2026'?'selected':''} style="background:#fff9cd;">2026</option><option value="2027" ${val==='2027'?'selected':''} style="background:#d4edda;">2027</option></select>`;
 
     html+=`<tr id="g27r-${m.id}">
       <td style="color:#999;font-size:10px;">${idx+1}</td>
@@ -2635,11 +2649,19 @@ function g27Build(){
           onchange="g27Toggle(this,'sj')">
         <span class="g27-st" id="g27s-${m.id}-sj"></span>
       </td>
+      <td style="padding:3px 4px;">
+        ${mkCot(cotBe,'COTISATION BE','cbe')}
+        <span class="g27-st" id="g27s-${m.id}-cbe"></span>
+      </td>
       <td>
         <select class="g27-amt" data-id="${m.id}" data-field="MONTANT BE" onchange="g27SaveAmt(this,'mbe')">
           ${mkOpts(mbe)}
         </select>
         <span class="g27-st" id="g27s-${m.id}-mbe"></span>
+      </td>
+      <td style="padding:3px 4px;">
+        ${mkCot(cotLu,'COTISATION LU','clu')}
+        <span class="g27-st" id="g27s-${m.id}-clu"></span>
       </td>
       <td>
         <select class="g27-amt" data-id="${m.id}" data-field="MONTANT LU" onchange="g27SaveAmt(this,'mlu')">
@@ -2650,7 +2672,7 @@ function g27Build(){
       <td style="font-size:15px;" id="g27e-${m.id}">${etat}</td>
     </tr>`;
   });
-  tbody.innerHTML = html || '<tr><td colspan="9" style="text-align:center;color:#999;padding:20px;">Aucun membre trouvé</td></tr>';
+  tbody.innerHTML = html || '<tr><td colspan="11" style="text-align:center;color:#999;padding:20px;">Aucun membre trouvé</td></tr>';
 }
 
 async function g27Toggle(el, abbr){
@@ -2687,6 +2709,25 @@ async function g27SaveAmt(el, abbr){
     const m = members.find(x=>x.id===id);
     if(m) m.fields[field] = numVal;
     g27UpdateEtat(id);
+    setTimeout(()=>{if(sp) sp.textContent='';}, 1500);
+  }
+}
+
+async function g27SaveCot(el, abbr){
+  const id = el.dataset.id, field = el.dataset.field, val = el.value;
+  const sp = document.getElementById(`g27s-${id}-${abbr}`);
+  if(sp) sp.textContent='⏳';
+  el.disabled = true;
+  const res = await atPatch(id, {[field]: val || null});
+  el.disabled = false;
+  if(res.error||res.errors){
+    if(sp) sp.textContent='❌';
+  } else {
+    if(sp) sp.textContent='✅';
+    const m = members.find(x=>x.id===id);
+    if(m) m.fields[field] = val || null;
+    // Mettre à jour couleur du select immédiatement
+    el.style.background = val==='2027'?'#d4edda':val==='2026'?'#fff9cd':'#fff';
     setTimeout(()=>{if(sp) sp.textContent='';}, 1500);
   }
 }
@@ -2771,13 +2812,15 @@ function g27OpenFiche(id){
           <th style="background:#2e75b6;color:#fff;min-width:80px;">FRANCE 2027</th>
           <th style="background:#7d6608;color:#fff;min-width:80px;">TIPS 2027</th>
           <th style="background:#633974;color:#fff;min-width:80px;">SÉJOURS 2027</th>
+          <th style="min-width:70px;background:#4a6741;color:#fff;">COT BE</th>
           <th style="min-width:90px;">MONTANT BE</th>
+          <th style="min-width:70px;background:#4a6741;color:#fff;">COT LU</th>
           <th style="min-width:90px;">MONTANT LU</th>
           <th style="width:35px;">ÉTAT</th>
         </tr>
       </thead>
       <tbody id="g27-tbody">
-        <tr><td colspan="9" style="text-align:center;color:#999;padding:24px;">⏳ Chargement…</td></tr>
+        <tr><td colspan="11" style="text-align:center;color:#999;padding:24px;">⏳ Chargement…</td></tr>
       </tbody>
     </table>
   </div>
