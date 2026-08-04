@@ -459,7 +459,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           </div>
         </div>
       </div>
-      <div style="margin-top:8px;text-align:right;padding-right:6px;">
+      <div style="margin-top:8px;display:flex;align-items:center;justify-content:flex-end;gap:10px;padding-right:6px;">
+        <span id="save-info-bottom" style="font-size:12px;font-weight:700;color:#1a7a3d;"></span>
         <button class="btn btn-save" onclick="saveMember()" style="background:#1a7a3d;color:#fff;font-size:13px;padding:6px 22px;">💾 ENREGISTRER</button>
       </div>
     </div><!-- /left col -->
@@ -1843,7 +1844,9 @@ async function saveMember(){
   document.getElementById('f-majd').value=today;
   const _authAgent=sessionStorage.getItem('auth_agent')||agent;
   document.getElementById('f-majp').value=_authAgent;
-  const info=document.getElementById('save-info');
+  const _si=document.getElementById('save-info');
+  const _sib=document.getElementById('save-info-bottom');
+  const info={get textContent(){return _si?_si.textContent:'';},set textContent(v){if(_si)_si.textContent=v;if(_sib){_sib.textContent=v;_sib.style.color=v.startsWith('✅')?'#1a7a3d':v.startsWith('⚠️')?'#c0392b':'#555';}}};
   info.textContent='⏳ Enregistrement...';
   const fields=collectFields();
   fields['Date de modification']=today;
