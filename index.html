@@ -1389,6 +1389,9 @@ async function loadAll(){
       if(d.records) members.push(...d.records);
       off=d.offset||'';
     } while(off);
+    // Déduplication par ID (protection contre doublons Airtable inter-pages)
+    const _seen=new Set();
+    members=members.filter(m=>{if(_seen.has(m.id))return false;_seen.add(m.id);return true;});
     members.sort((a,b)=>{
       const na=(a.fields['Enseigne commerciale']||a.fields['ENSEIGNE']||a.fields['NOM ATTRACTION']||'').toLowerCase();
       const nb=(b.fields['Enseigne commerciale']||b.fields['ENSEIGNE']||b.fields['NOM ATTRACTION']||'').toLowerCase();
