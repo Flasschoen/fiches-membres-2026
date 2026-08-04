@@ -1862,9 +1862,16 @@ async function saveMember(){
         fillForm(saved.fields);
         // Restaurer l'état complet (ce qui vient d'être enregistré)
         // Évite que fillForm restaure des valeurs obsolètes via legacy fallbacks
+        // Champs avec valeur par défaut : ne pas écraser si la valeur sauvegardée est vide
+        const _defaultFields={'f-tri3':'0'};
         Object.keys(_savedForm).forEach(id=>{
           const el=document.getElementById(id);
-          if(el) (el.type==='checkbox')?(el.checked=_savedForm[id]):(el.value=_savedForm[id]);
+          if(!el) return;
+          if(el.type==='checkbox') el.checked=_savedForm[id];
+          else {
+            const val=_savedForm[id];
+            el.value=(val===''&&_defaultFields[id]!==undefined) ? _defaultFields[id] : val;
+          }
         });
       }
       if(!wasExisting){
