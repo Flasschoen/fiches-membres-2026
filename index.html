@@ -1225,7 +1225,7 @@ TRIMS.forEach((t,i)=>{
 // ══════════════════════════════════════
 //  STATE
 // ══════════════════════════════════════
-let members=[], curId=null, isDirty=false, lastFiltered=[], _autoSelDone=false;
+let members=[], curId=null, isDirty=false, lastFiltered=[], _autoSelDone=false, _loadingAll=false;
 
 // ── Dossier membres (mettre à jour pour Google Drive) ──
 const DOSSIER_BASE = 'C:\\Users\\Marc\\OneDrive - Educpass\\Bureau\\DOSSIER PARTENAIRES 2026';
@@ -1376,6 +1376,8 @@ async function atDelete(id){
 //  LOAD ALL MEMBERS (pagination)
 // ══════════════════════════════════════
 async function loadAll(){
+  if(_loadingAll) return;          // ← verrou anti-doublon
+  _loadingAll=true;
   setSt('⏳ Chargement des membres...');
   members=[];
   let off='';
@@ -1411,6 +1413,8 @@ async function loadAll(){
   } catch(e){
     setSt('⚠️ Erreur connexion Airtable');
     console.error(e);
+  } finally {
+    _loadingAll=false;             // ← déverrouillage
   }
 }
 
