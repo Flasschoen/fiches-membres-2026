@@ -1512,7 +1512,7 @@ function fillForm(f){
   sv('f-code',  f['CODE']);
   sv('f-tri1',  f['Clé de TRI 2']);
   sv('f-tri2',  f['Clé de TRI 3']);
-  sv('f-tri3',  f['Clé de TRI 4']);
+  sv('f-tri3',  f['Clé de TRI 4']!=null ? f['Clé de TRI 4'] : 0);
   sv('f-profs',       f['PROFS-CONTACTS']);
   sv('f-profs-annee', f['ANNEE PROFS-CONTACTS']);
 
