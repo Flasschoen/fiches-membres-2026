@@ -855,7 +855,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld1" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
-        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
+        <option value="G27-BX:1">✅ Sorties sc. BELUX 2027</option><option value="G27-FR:1">✅ Sorties sc. France 2027</option><option value="G27-TI:1">✅ Tips/Trips 2027</option><option value="G27-SEJ:1">✅ Séjours sc. 2027</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -863,7 +863,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld2" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
-        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
+        <option value="G27-BX:1">✅ Sorties sc. BELUX 2027</option><option value="G27-FR:1">✅ Sorties sc. France 2027</option><option value="G27-TI:1">✅ Tips/Trips 2027</option><option value="G27-SEJ:1">✅ Séjours sc. 2027</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -871,7 +871,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld3" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
-        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
+        <option value="G27-BX:1">✅ Sorties sc. BELUX 2027</option><option value="G27-FR:1">✅ Sorties sc. France 2027</option><option value="G27-TI:1">✅ Tips/Trips 2027</option><option value="G27-SEJ:1">✅ Séjours sc. 2027</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -879,7 +879,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
       <select id="rch-fld4" onchange="buildTable()" style="padding:2px 3px;border:1px solid #aaa;border-radius:3px;font-size:11px;color:#1e3a6e;font-weight:700;">
         <option value="">Champ…</option>
         <option value="CODE">Code</option><option value="TRI1">Tri 1</option><option value="TRI2">Tri 2</option><option value="TRI3">Tri 3</option>
-        <option value="TRI1:1">Sorties sc. BELUX</option><option value="TRI1:2">Sorties sc. France</option><option value="TRI1:3">Tip voor trips</option><option value="TRI1:4">Séjours sc.</option>
+        <option value="G27-BX:1">✅ Sorties sc. BELUX 2027</option><option value="G27-FR:1">✅ Sorties sc. France 2027</option><option value="G27-TI:1">✅ Tips/Trips 2027</option><option value="G27-SEJ:1">✅ Séjours sc. 2027</option>
         <option value="PROFS">Profs-Contacts</option><option value="COT-BE">Cotisation BE</option><option value="COT-LU">Cotisation LU</option>
         <option value="CP">Code Postal</option><option value="NUM">N° Membre</option><option value="ENS">Enseigne</option>
         <option value="ECHBE">Échéance BE</option><option value="ECHLU">Échéance LU</option>
@@ -903,6 +903,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <button class="btn" onclick="applyLotTri()" style="background:#c55a11;color:#fff;padding:3px 9px;font-size:11px;">✅ Appliquer</button>
         <span id="lot-tri-info" style="font-size:11px;color:#555;"></span>
       </div>
+      <button class="btn" onclick="exportFiltered()" style="background:#217346;color:#fff;padding:4px 11px;font-size:12px;">📤 Exporter CSV</button>
       <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
     </div>
   </div>
@@ -1923,7 +1924,9 @@ function buildTable(){
   const _fldMap={
     'CODE':'CODE','TRI1':'Clé de TRI 2','TRI2':'Clé de TRI 3','TRI3':'Clé de TRI 4','PROFS':'PROFS-CONTACTS',
     'COT-BE':'COTISATION BE','COT-LU':'COTISATION LU','CP':'CODE POSTAL',
-    'NUM':'Nº de membre','ENS':'ENSEIGNE','ECHBE':'ÉCHÉANCE BE','ECHLU':'ÉCHÉANCE LU'
+    'NUM':'Nº de membre','ENS':'ENSEIGNE','ECHBE':'ÉCHÉANCE BE','ECHLU':'ÉCHÉANCE LU',
+    'G27-BX':'SORTIES SCOLAIRES BELUX 2027','G27-FR':'SORTIES SCOLAIRES FRANCE 2027',
+    'G27-TI':'TIPS voor SCHOOLTRIPS 2027','G27-SEJ':'SEJOURS SCOLAIRES 2027'
   };
   const filtered=members.filter(m=>{
     const f=m.fields;
@@ -1935,9 +1938,14 @@ function buildTable(){
       if(!fldKey) continue;
       let fldName,filterVal;
       if(fldKey.includes(':')){
-        // Format "TRI1:1" → champ fixe + valeur fixe (ex: Sorties sc. BELUX = TRI1 valeur 1)
         const parts=fldKey.split(':');
-        fldName=_fldMap[parts[0]]||parts[0];
+        const shortKey=parts[0];
+        fldName=_fldMap[shortKey]||shortKey;
+        // GESTION 2027 : filtres booléens — utilise g27IsChecked
+        if(shortKey.startsWith('G27-')){
+          if(!g27IsChecked(f,fldName)) return false;
+          continue;
+        }
         filterVal=parts[1];
       } else {
         filterVal=(document.getElementById(`rch-val${i}`)||{value:''}).value.toLowerCase();
@@ -1945,7 +1953,8 @@ function buildTable(){
         fldName=_fldMap[fldKey]||fldKey;
       }
       const fv=String(f[fldName]!==undefined&&f[fldName]!==null?f[fldName]:'').toLowerCase();
-      const _isNum=filterVal!==''&&!isNaN(filterVal)&&filterVal.trim()!=='';
+      // Exact match uniquement si filtre ET valeur stockée sont tous deux numériques purs
+      const _isNum=filterVal!==''&&!isNaN(filterVal)&&filterVal.trim()!==''&&fv!==''&&!isNaN(fv)&&fv.trim()!=='';
       if(_isNum ? fv!==filterVal : !fv.includes(filterVal)) return false;
     }
     return true;
@@ -1995,6 +2004,39 @@ function buildTable(){
   if(loading) loading.style.display='none';
   if(tbl) tbl.style.display='';
   if(cnt) cnt.textContent=filtered.length+' / '+members.length+' membres';
+}
+
+function exportFiltered(){
+  if(!lastFiltered||lastFiltered.length===0){alert('Aucun membre à exporter.');return;}
+  const cols=[
+    ['N°',r=>String(r['N° MEMBRE']||r['Nº de membre']||r['﻿N°']||r['N°']||'')],
+    ['ENSEIGNE',r=>String(r['Enseigne commerciale']||r['ENSEIGNE']||'')],
+    ['NOM ATTRACTION',r=>String(r['NOM ATTRACTION']||'')],
+    ['CATÉGORIE',r=>String(r['CATÉGORIE']||'')],
+    ['COMMUNE',r=>String(r['COMMUNE']||'')],
+    ['PROVINCE',r=>String(r['PROVINCE']||'')],
+    ['CODE',r=>r['CODE']!==undefined&&r['CODE']!==null?String(r['CODE']):''],
+    ['TRI 1',r=>r['Clé de TRI 2']!==undefined&&r['Clé de TRI 2']!==null?String(r['Clé de TRI 2']):''],
+    ['TRI 2',r=>r['Clé de TRI 3']!==undefined&&r['Clé de TRI 3']!==null?String(r['Clé de TRI 3']):''],
+    ['TRI 3',r=>r['Clé de TRI 4']!==undefined&&r['Clé de TRI 4']!==null?String(r['Clé de TRI 4']):''],
+    ['AGENT',r=>String(r['AGENT']||'')],
+    ['LANGUE',r=>String(r['LANGUE']||'')],
+    ['COTISATION BE',r=>String(r['COTISATION BE']||'')],
+    ['ÉCHÉANCE BE',r=>r['ÉCHÉANCE BE']?r['ÉCHÉANCE BE'].substring(0,10):''],
+    ['SS BELUX 2027',r=>g27IsChecked(r,'SORTIES SCOLAIRES BELUX 2027')?'OUI':''],
+    ['SS FRANCE 2027',r=>g27IsChecked(r,'SORTIES SCOLAIRES FRANCE 2027')?'OUI':''],
+    ['TIPS 2027',r=>g27IsChecked(r,'TIPS voor SCHOOLTRIPS 2027')?'OUI':''],
+    ['SÉJOURS 2027',r=>g27IsChecked(r,'SEJOURS SCOLAIRES 2027')?'OUI':'']
+  ];
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const hdr=cols.map(c=>esc(c[0])).join(';');
+  const rows=lastFiltered.map(m=>cols.map(c=>esc(c[1](m.fields))).join(';'));
+  const csv='﻿'+[hdr,...rows].join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download='export_membres_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
 function filterTable(){
