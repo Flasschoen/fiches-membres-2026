@@ -1945,7 +1945,8 @@ function buildTable(){
         fldName=_fldMap[fldKey]||fldKey;
       }
       const fv=String(f[fldName]!==undefined&&f[fldName]!==null?f[fldName]:'').toLowerCase();
-      if(!fv.includes(filterVal)) return false;
+      const _isNum=filterVal!==''&&!isNaN(filterVal)&&filterVal.trim()!=='';
+      if(_isNum ? fv!==filterVal : !fv.includes(filterVal)) return false;
     }
     return true;
   });
