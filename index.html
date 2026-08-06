@@ -222,7 +222,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <button class="btn btn-recherche" onclick="showView('recherche')">🔍 RECHERCHE 2026 →</button>
   <button class="btn btn-nouveau" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
   <button class="btn" onclick="showView('gestion2027')" style="background:#1a7a3d;color:#fff;margin-left:6px;">📊 GESTION 2027</button>
-  <button class="btn" onclick="showRechRemplac()" style="background:#6c3483;color:#fff;margin-left:6px;">🔄 RECHERCHER/REMPLACER</button>
+  <button id="btn-rr" class="btn" onclick="showRechRemplac()" style="background:#6c3483;color:#fff;display:none;margin-left:6px;">🔄 RECHERCHER/REMPLACER</button>
   <button id="btn-del" class="btn" onclick="deleteMember()" style="background:#a93226;color:#fff;display:none;margin-left:6px;">🗑️ SUPPRIMER</button>
   <button id="btn-pin-mgr" class="btn" onclick="showGestionPins()" style="background:#1e3a6e;color:#fff;margin-left:6px;font-size:11px;padding:4px 10px;display:none;" title="Gérer les codes PIN">🔑 PINs</button>
   <button class="btn" onclick="logoutPin()" style="background:#555;color:#fff;margin-left:6px;font-size:11px;padding:4px 10px;" title="Déconnexion">🔒 <span id="header-agent">—</span></button>
@@ -2127,9 +2127,13 @@ function setSt(msg){
 //  SUPPRIMER MEMBRE (réservé à MARC et VANESSA)
 // ══════════════════════════════════════
 const CAN_DELETE = ['MARC','VANESSA'];
+const CAN_RR = ['MARC'];
 function updateDelBtn(){
+  const agent=gv('f-agent');
   const btn=document.getElementById('btn-del');
-  if(btn) btn.style.display=CAN_DELETE.includes(gv('f-agent'))?'':'none';
+  if(btn) btn.style.display=CAN_DELETE.includes(agent)?'':'none';
+  const btnRR=document.getElementById('btn-rr');
+  if(btnRR) btnRR.style.display=CAN_RR.includes(agent)?'':'none';
 }
 async function deleteMember(){
   if(!CAN_DELETE.includes(gv('f-agent'))){alert('Action réservée à MARC ou VANESSA.');return;}
@@ -2189,6 +2193,7 @@ async function applyLotTri(){
 //  RECHERCHER / REMPLACER
 // ══════════════════════════════════════
 function showRechRemplac(){
+  if(!CAN_RR.includes(gv('f-agent'))){alert('Action réservée à MARC.');return;}
   document.getElementById('rr-preview').textContent='';
   document.getElementById('rr-search').value='';
   document.getElementById('rr-replace').value='';
