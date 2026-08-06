@@ -244,7 +244,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 <!-- ACTIONS BAR -->
 <div class="actions-bar">
   <button class="btn btn-save" onclick="saveMember()">💾 Enregistrer</button>
-  <button class="btn btn-cancel" onclick="loadMember()">↩ Annuler</button>
+  <button class="btn btn-cancel" onclick="cancelAndReset()">↩ Annuler</button>
   <button class="btn" onclick="copyDossierPath()" style="background:#217346;color:#fff;margin-left:6px;" title="Copier le chemin Windows du dossier membre">📁 Dossier</button>
   <span id="dossier-msg" style="font-size:11px;color:#217346;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
@@ -260,7 +260,12 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
      VUE : FICHE MEMBRE
 ════════════════════════════════ -->
 <div id="view-fiche" class="view active">
-<div class="main">
+<div id="fiche-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;min-height:300px;">
+  <div style="font-size:52px;margin-bottom:18px;opacity:.35;">📋</div>
+  <div style="font-size:18px;font-weight:700;color:#2e5096;margin-bottom:8px;">Aucun membre sélectionné</div>
+  <div style="font-size:13px;color:#8a97b0;text-align:center;">Utilisez la liste de recherche ci-dessus pour charger une fiche.</div>
+</div>
+<div id="fiche-main" class="main" style="display:none;">
 
   <!-- Date bar -->
   <div style="background:#fff;border:1px solid #c0cce0;padding:5px 10px;display:flex;gap:18px;font-size:11px;align-items:center;margin-bottom:1px;">
@@ -1495,9 +1500,29 @@ async function loadMember(){
     curId=id;
     fillForm(d.fields);
     clearDirty();
+    document.getElementById('fiche-placeholder').style.display='none';
+    document.getElementById('fiche-main').style.display='block';
     showView('fiche');
     setSt('✅ Membre chargé');
   }catch(e){setSt('⚠️ Erreur');console.error(e);}
+}
+
+// ══════════════════════════════════════
+//  ANNULER — ferme la fiche, reset recherche
+// ══════════════════════════════════════
+function cancelAndReset(){
+  if(isDirty){
+    if(!confirm('Des modifications non sauvegardées seront perdues. Annuler quand même ?')) return;
+  }
+  curId=null;
+  isDirty=false;
+  document.getElementById('msel').value='';
+  document.getElementById('srch').value='';
+  filterSelect();
+  document.getElementById('name-bar').textContent='— SÉLECTIONNEZ UN MEMBRE —';
+  document.getElementById('fiche-placeholder').style.display='flex';
+  document.getElementById('fiche-main').style.display='none';
+  setSt(members.length ? members.length+' membres disponibles' : '');
 }
 
 // ══════════════════════════════════════
