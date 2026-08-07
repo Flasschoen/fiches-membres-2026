@@ -1152,6 +1152,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
       <input type="number" id="recap-profs" min="0" placeholder="—" style="font-size:12px;padding:4px 8px;border:1px solid #aaa;border-radius:3px;width:70px;text-align:center;">
       <button class="btn" onclick="buildRecap()" style="background:#1e3a6e;color:#fff;padding:4px 14px;">🔍 Afficher</button>
       <button class="btn" id="recap-save-btn" onclick="saveRecap()" style="background:#1a7a3d;color:#fff;padding:4px 14px;display:none;">💾 Sauvegarder</button>
+      <button class="btn" id="recap-export-btn" onclick="exportRecap()" style="background:#217346;color:#fff;padding:4px 14px;display:none;">📤 Exporter CSV</button>
       <span id="recap-cnt" style="font-size:12px;color:#555;"></span>
       <span id="recap-save-info" style="font-size:12px;font-weight:700;"></span>
     </div>
@@ -2064,6 +2065,32 @@ function buildTable(){
   if(cnt) cnt.textContent=filtered.length+' / '+members.length+' membres';
 }
 
+function exportRecap(){
+  const rows=document.querySelectorAll('#recap-tbody tr[data-member-id]');
+  if(!rows.length){alert('Aucune ligne à exporter. Cliquez d\'abord sur Afficher.');return;}
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const profsVal=document.getElementById('recap-profs')?.value||'';
+  const hdr=['N° TABLE','ENSEIGNE','REPAS','DRINK','ACTIVITÉ','STATUT','MONTANT (€)'].map(esc).join(';');
+  const dataRows=[];
+  rows.forEach(row=>{
+    const tbl  =row.querySelector('.ri-table')?.value||'';
+    const ens  =row.querySelector('td:nth-child(2)')?.textContent||'';
+    const repas=row.querySelector('.ri-repas')?.value||'0';
+    const drink=row.querySelector('.ri-drink')?.value||'0';
+    const activ=row.querySelector('.ri-extra')?.value||'0';
+    const stat =row.querySelector('.ri-statut')?.value||'';
+    const mont =row.querySelector('.ri-montant')?.value||'0';
+    dataRows.push([tbl,ens,repas,drink,activ,stat,mont].map(esc).join(';'));
+  });
+  const csv='﻿'+[hdr,...dataRows].join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='recap_workshop_profs'+profsVal+'_'+new Date().toISOString().slice(0,10)+'.csv';
+  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+}
+
 function exportFiltered(){
   if(!lastFiltered||lastFiltered.length===0){alert('Aucun membre à exporter.');return;}
   const cols=[
@@ -2327,9 +2354,11 @@ async function buildRecap(){
     recalcRecap();
     return;
   }
-  // Afficher bouton Sauvegarder
+  // Afficher boutons Sauvegarder et Exporter
   const saveBtn=document.getElementById('recap-save-btn');
   if(saveBtn) saveBtn.style.display='';
+  const expBtn=document.getElementById('recap-export-btn');
+  if(expBtn) expBtn.style.display='';
 
   filteredUniq.forEach((rec,i)=>{
     const f=rec.fields;
