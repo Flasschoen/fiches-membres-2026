@@ -911,6 +911,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <span id="lot-tri-info" style="font-size:11px;color:#555;"></span>
       </div>
       <button class="btn" onclick="exportFiltered()" style="background:#217346;color:#fff;padding:4px 11px;font-size:12px;">📤 Exporter CSV</button>
+      <button class="btn" id="btn-export-sel" onclick="exportSelected()" style="background:#7b2d8b;color:#fff;padding:4px 11px;font-size:12px;display:none;">📋 Exporter sélection (<span id="sel-count">0</span>)</button>
       <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
     </div>
   </div>
@@ -919,6 +920,7 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <table class="rt" id="rch-tbl" style="display:none;">
       <thead>
         <tr>
+          <th style="width:30px;text-align:center;padding:2px;"><input type="checkbox" id="sel-all" onclick="toggleSelAll(this)" title="Tout sélectionner" style="width:15px;height:15px;cursor:pointer;accent-color:#7b2d8b;"></th>
           <th>N°</th>
           <th>ENSEIGNE</th>
           <th>ATTRACTION / MUSÉE</th>
@@ -2018,6 +2020,12 @@ function buildTable(){
     }
     return true;
   });
+  // Réinitialiser la sélection à chaque nouvelle recherche
+  const _selAll=document.getElementById('sel-all');
+  if(_selAll) _selAll.checked=false;
+  const _btnSel=document.getElementById('btn-export-sel');
+  if(_btnSel) _btnSel.style.display='none';
+
   filtered.forEach(m=>{
     const f=m.fields;
     const tr=document.createElement('tr');
@@ -2042,6 +2050,18 @@ function buildTable(){
       if(right) d.style.textAlign='right';
       return d;
     };
+    // Checkbox de sélection
+    const tdSel=document.createElement('td');
+    tdSel.style.cssText='text-align:center;width:30px;padding:2px;';
+    tdSel.onclick=e=>e.stopPropagation();
+    const chk=document.createElement('input');
+    chk.type='checkbox';
+    chk.className='row-sel';
+    chk.dataset.memberId=m.id;
+    chk.style.cssText='width:15px;height:15px;cursor:pointer;accent-color:#7b2d8b;';
+    chk.onclick=e=>{e.stopPropagation();updateSelCount();};
+    tdSel.appendChild(chk);
+    tr.appendChild(tdSel);
     tr.appendChild(td(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''));
     tr.appendChild(td(f['Enseigne commerciale']||f['ENSEIGNE']||''));
     tr.appendChild(td(f['NOM ATTRACTION']||''));
@@ -2063,6 +2083,70 @@ function buildTable(){
   if(loading) loading.style.display='none';
   if(tbl) tbl.style.display='';
   if(cnt) cnt.textContent=filtered.length+' / '+members.length+' membres';
+}
+
+function toggleSelAll(cb){
+  document.querySelectorAll('#rch-tbody .row-sel').forEach(c=>c.checked=cb.checked);
+  updateSelCount();
+}
+
+function updateSelCount(){
+  const checked=document.querySelectorAll('#rch-tbody .row-sel:checked');
+  const all=document.querySelectorAll('#rch-tbody .row-sel');
+  const n=checked.length;
+  const btn=document.getElementById('btn-export-sel');
+  const cnt=document.getElementById('sel-count');
+  if(btn) btn.style.display=n>0?'':'none';
+  if(cnt) cnt.textContent=n;
+  const selAll=document.getElementById('sel-all');
+  if(selAll){selAll.indeterminate=n>0&&n<all.length;selAll.checked=all.length>0&&n===all.length;}
+}
+
+async function exportSelected(){
+  const checked=document.querySelectorAll('#rch-tbody .row-sel:checked');
+  const n=checked.length;
+  if(!n){alert('Aucune fiche sélectionnée.');return;}
+  if(!confirm('Exporter '+n+' fiche'+(n>1?'s':'')+' membre'+(n>1?'s':'')+' ?\n\nUne boîte de dialogue vous permettra de choisir l\'emplacement de sauvegarde.\n(Naviguez vers le Bureau pour y stocker le fichier.)')) return;
+  const ids=new Set([...checked].map(c=>c.dataset.memberId));
+  const sel=lastFiltered.filter(m=>ids.has(m.id));
+  const cols=[
+    ['N°',r=>String(r['N° MEMBRE']||r['Nº de membre']||r['﻿N°']||r['N°']||'')],
+    ['ENSEIGNE',r=>String(r['Enseigne commerciale']||r['ENSEIGNE']||'')],
+    ['NOM ATTRACTION',r=>String(r['NOM ATTRACTION']||'')],
+    ['CATÉGORIE',r=>String(r['CATÉGORIE']||'')],
+    ['COMMUNE',r=>String(r['COMMUNE']||'')],
+    ['PROVINCE',r=>String(r['PROVINCE']||'')],
+    ['CODE',r=>String(r['CODE']!==undefined&&r['CODE']!==null?r['CODE']:'')],
+    ['AGENT',r=>String(r['AGENT']||'')],
+    ['LANGUE',r=>String(r['LANGUE']||'')],
+    ['COTIS. BE',r=>String(r['COTISATION BE']||'')],
+    ['ÉCHÉANCE BE',r=>r['ÉCHÉANCE BE']?r['ÉCHÉANCE BE'].substring(0,10):''],
+  ];
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const hdr=cols.map(c=>esc(c[0])).join(';');
+  const rows=sel.map(m=>cols.map(c=>esc(c[1](m.fields))).join(';'));
+  const csv='﻿'+[hdr,...rows].join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const fname='fiches_membres_'+new Date().toISOString().slice(0,10)+'_'+n+'sel.csv';
+  if(window.showSaveFilePicker){
+    try{
+      const fh=await window.showSaveFilePicker({
+        suggestedName:fname,
+        types:[{description:'Fichier CSV',accept:{'text/csv':['.csv']}}],
+        startIn:'desktop'
+      });
+      const w=await fh.createWritable();
+      await w.write(blob);
+      await w.close();
+      return;
+    }catch(e){if(e.name==='AbortError')return;}
+  }
+  // Fallback download standard
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  URL.revokeObjectURL(url);
 }
 
 function exportRecap(){
