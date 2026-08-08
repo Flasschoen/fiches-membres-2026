@@ -1257,10 +1257,28 @@ function copyDossierPath(){
 
 function copyPlanningPath(){
   const path = 'C:\\Users\\Marc\\Educpass\\ADMINISTRATION - Documents\\PLANNING';
-  navigator.clipboard.writeText(path).then(()=>{
+  const _showOk=()=>{
     const msg = document.getElementById('planning-msg');
     if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
-  }).catch(()=>{ prompt('Copiez ce chemin :', path); });
+    setSt('✅ Chemin PLANNING copié — collez dans l\'explorateur (Ctrl+V)');
+    setTimeout(()=>setSt(members.length?`✅ ${members.length} membres chargés`:''),4000);
+  };
+  if(navigator.clipboard&&navigator.clipboard.writeText){
+    navigator.clipboard.writeText(path).then(_showOk).catch(()=>{
+      // Fallback sans clipboard API
+      const ta=document.createElement('textarea');
+      ta.value=path; ta.style.position='fixed'; ta.style.opacity='0';
+      document.body.appendChild(ta); ta.focus(); ta.select();
+      try{ document.execCommand('copy'); _showOk(); }catch(e){}
+      document.body.removeChild(ta);
+    });
+  } else {
+    const ta=document.createElement('textarea');
+    ta.value=path; ta.style.position='fixed'; ta.style.opacity='0';
+    document.body.appendChild(ta); ta.focus(); ta.select();
+    try{ document.execCommand('copy'); _showOk(); }catch(e){}
+    document.body.removeChild(ta);
+  }
 }
 
 
@@ -2126,8 +2144,8 @@ function updateSelCount(){
 async function exportSelected(){
   const checked=document.querySelectorAll('#rch-tbody .row-sel:checked');
   const n=checked.length;
-  if(!n){alert('Aucune fiche sélectionnée.');return;}
-  if(!confirm('Exporter '+n+' fiche'+(n>1?'s':'')+' membre'+(n>1?'s':'')+' ?\n\nUne boîte de dialogue vous permettra de choisir l\'emplacement de sauvegarde.\n(Naviguez vers le Bureau pour y stocker le fichier.)')) return;
+  if(!n){ setSt('⚠️ Aucune fiche sélectionnée'); setTimeout(()=>setSt(members.length?`✅ ${members.length} membres chargés`:''),3000); return; }
+  // Pas de confirm() — bloqué par Chrome. La dialog showSaveFilePicker sert de confirmation.
   const ids=new Set([...checked].map(c=>c.dataset.memberId));
   const sel=lastFiltered.filter(m=>ids.has(m.id));
   const cols=[
@@ -2196,8 +2214,12 @@ function exportRecap(){
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
 }
 
-function exportFiltered(){
-  if(!lastFiltered||lastFiltered.length===0){alert('Aucun membre à exporter.');return;}
+async function exportFiltered(){
+  if(!lastFiltered||lastFiltered.length===0){
+    setSt('⚠️ Aucun membre à exporter — chargez la liste d\'abord');
+    setTimeout(()=>setSt(members.length?`✅ ${members.length} membres chargés`:''),4000);
+    return;
+  }
   const cols=[
     ['N°',r=>String(r['N° MEMBRE']||r['Nº de membre']||r['﻿N°']||r['N°']||'')],
     ['ENSEIGNE',r=>String(r['Enseigne commerciale']||r['ENSEIGNE']||'')],
@@ -2223,10 +2245,29 @@ function exportFiltered(){
   const rows=lastFiltered.map(m=>cols.map(c=>esc(c[1](m.fields))).join(';'));
   const csv='﻿'+[hdr,...rows].join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const fname='export_membres_'+new Date().toISOString().slice(0,10)+'_'+lastFiltered.length+'m.csv';
+  if(window.showSaveFilePicker){
+    try{
+      const fh=await window.showSaveFilePicker({
+        suggestedName:fname,
+        types:[{description:'Fichier CSV',accept:{'text/csv':['.csv']}}],
+        startIn:'desktop'
+      });
+      const w=await fh.createWritable();
+      await w.write(blob);
+      await w.close();
+      setSt(`✅ Export ${lastFiltered.length} membres enregistré`);
+      setTimeout(()=>setSt(`✅ ${members.length} membres chargés`),3000);
+      return;
+    }catch(e){if(e.name==='AbortError')return;}
+  }
+  // Fallback download standard
   const url=URL.createObjectURL(blob);
   const a=document.createElement('a');
-  a.href=url;a.download='export_membres_'+new Date().toISOString().slice(0,10)+'.csv';
+  a.href=url;a.download=fname;
   document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  setSt(`✅ Export ${lastFiltered.length} membres — voir Téléchargements`);
+  setTimeout(()=>setSt(`✅ ${members.length} membres chargés`),4000);
 }
 
 function filterTable(){
