@@ -252,6 +252,8 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
     <option value="">— OBLIGATOIRE —</option>
     <option>MARC</option><option>MAÏTE</option><option>PASCAL</option><option>VANESSA</option>
   </select>
+  <button class="btn" onclick="copyPlanningPath()" style="background:#d35400;color:#fff;margin-left:10px;" title="Copier le chemin du dossier PLANNING">📁 PLANNING</button>
+  <span id="planning-msg" style="font-size:11px;color:#d35400;font-weight:700;margin-left:6px;display:none;">✅ Chemin copié !</span>
   <span id="dirty-indicator" style="margin-left:10px;color:#c55a11;font-weight:700;font-size:12px;display:none;">● Non sauvegardé</span>
   <span class="save-info" id="save-info"></span>
 </div>
@@ -1253,6 +1255,14 @@ function copyDossierPath(){
   }).catch(()=>{ prompt('Copiez ce chemin :', path); });
 }
 
+function copyPlanningPath(){
+  const path = 'C:\\Users\\Marc\\Educpass\\ADMINISTRATION - Documents\\PLANNING';
+  navigator.clipboard.writeText(path).then(()=>{
+    const msg = document.getElementById('planning-msg');
+    if(msg){ msg.style.display='inline'; setTimeout(()=>msg.style.display='none', 3000); }
+  }).catch(()=>{ prompt('Copiez ce chemin :', path); });
+}
+
 
 // ══════════════════════════════════════
 //  DIRTY TRACKING
@@ -1432,18 +1442,19 @@ async function loadAll(){
         await loadMember();
       }
     }
-    // ── Détection automatique des doublons d'Enseigne commerciale ────────────
+    // ── Détection automatique des doublons par N° membre ────────────────────
     {
       const _ensMap=new Map();
       members.forEach(m=>{
-        const k=(m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||'').toUpperCase().trim();
+        const k=String(m.fields['N° MEMBRE']||m.fields['Nº de membre']||m.fields['﻿N°']||m.fields['N°']||'').trim();
+        if(!k) return;
         if(!k) return;
         if(!_ensMap.has(k)) _ensMap.set(k,[]);
         _ensMap.get(k).push(m.id);
       });
       const _dups=[..._ensMap.entries()].filter(([,ids])=>ids.length>1);
       if(_dups.length>0){
-        console.warn('[DOUBLONS] Enseigne commerciale identique sur plusieurs records :',
+        console.warn('[DOUBLONS] N° membre identique sur plusieurs records :',
           _dups.map(([k,ids])=>k+' → '+ids.join(', ')));
         const st=document.getElementById('status');
         st.textContent=`⚠️ ${members.length} membres — ${_dups.length} doublon(s) détecté(s) ! (voir console F12)`;
