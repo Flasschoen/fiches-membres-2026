@@ -1440,6 +1440,13 @@ async function loadAll(){
       if(_m){
         document.getElementById('msel').value=_m.id;
         await loadMember();
+      } else {
+        // ── Restauration depuis sessionStorage (refresh de page) ────────────
+        const _ssId=sessionStorage.getItem('lastMemberId');
+        if(_ssId && members.find(m=>m.id===_ssId)){
+          document.getElementById('msel').value=_ssId;
+          await loadMember();
+        }
       }
     }
     // ── Détection automatique des doublons par N° membre ────────────────────
@@ -1518,6 +1525,8 @@ async function loadMember(){
     document.getElementById('fiche-main').style.display='block';
     showView('fiche');
     setSt('✅ Membre chargé');
+    // Sauvegarder pour restauration après refresh
+    try{ sessionStorage.setItem('lastMemberId', curId); }catch(e){}
   }catch(e){setSt('⚠️ Erreur');console.error(e);}
 }
 
@@ -1530,6 +1539,7 @@ function cancelAndReset(){
   }
   curId=null;
   isDirty=false;
+  try{ sessionStorage.removeItem('lastMemberId'); }catch(e){}
   document.getElementById('msel').value='';
   document.getElementById('srch').value='';
   filterSelect();
