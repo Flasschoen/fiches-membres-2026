@@ -1481,7 +1481,7 @@ function buildSelect(){
   members.forEach(m=>{
     const o=document.createElement('option');
     o.value=m.id;
-    o.textContent=m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||m.id;
+    o.textContent=m.fields['ENSEIGNE']||m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||m.id;
     sel.appendChild(o);
   });
   if(cur) sel.value=cur;
@@ -1492,11 +1492,12 @@ function filterSelect(){
   const sel=document.getElementById('msel');
   sel.innerHTML='<option value="">— Choisir un membre —</option>';
   members.filter(m=>{
-    const n=(m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||'').toLowerCase();
-    return !q||n.includes(q)||String(m.fields['Nº de membre']||'').includes(q);
+    const ens=(m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||'').toLowerCase();
+    const enscom=(m.fields['Enseigne commerciale']||'').toLowerCase();
+    return !q||ens.includes(q)||enscom.includes(q)||String(m.fields['Nº de membre']||'').includes(q);
   }).forEach(m=>{
     const o=document.createElement('option');
-    o.value=m.id; o.textContent=m.fields['Enseigne commerciale']||m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||m.id;
+    o.value=m.id; o.textContent=m.fields['ENSEIGNE']||m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||m.id;
     sel.appendChild(o);
   });
 }
