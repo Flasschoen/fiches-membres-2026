@@ -189,24 +189,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .pin-mgr-box .pin-mgr-msg{text-align:center;font-size:12px;min-height:16px;margin-top:6px;}
 .pin-box .pin-err{color:#c0392b;font-size:12px;min-height:18px;margin-bottom:6px;}
 
-/* ── GESTION 2027 ── */
-.g27-wrap{padding:8px 12px;overflow-x:auto;}
-.g27-filter-bar{display:flex;gap:6px;align-items:center;padding:8px 12px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;flex-wrap:wrap;}
-.g27-filter-bar .btn-f{padding:4px 10px;font-size:11px;border:1px solid #2e75b6;background:#fff;color:#2e75b6;border-radius:3px;cursor:pointer;font-weight:600;}
-.g27-filter-bar .btn-f.active{background:#2e75b6;color:#fff;}
-.g27-filter-bar .btn-f:hover:not(.active){background:#e8f0fe;}
-.g27-progress{font-size:12px;color:#555;}
-.g27-table{width:100%;border-collapse:collapse;font-size:12px;min-width:750px;}
-.g27-table th{background:#1e3a6e;color:#fff;padding:6px 8px;text-align:center;border:1px solid #4472c4;white-space:nowrap;font-size:11px;}
-.g27-table td{padding:4px 6px;border:1px solid #c0cce0;text-align:center;vertical-align:middle;}
-.g27-table tr:nth-child(even) td{background:#f8f9fc;}
-.g27-table tr:nth-child(odd) td{background:#fff;}
-.g27-table tr:hover td{background:#e8f0fe!important;}
-.g27-table td.g27-nom{text-align:left;font-weight:600;color:#1e3a6e;padding-left:10px;cursor:pointer;}
-.g27-table td.g27-nom:hover{text-decoration:underline;}
-.g27-cb{width:18px;height:18px;cursor:pointer;accent-color:#217346;}
-.g27-st{font-size:11px;min-width:16px;display:inline-block;vertical-align:middle;}
-.g27-amt{width:68px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;background:#fff;}
 </style>
 </head>
 <body>
@@ -221,7 +203,6 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
   <button class="btn btn-workshop" onclick="showView('confirmation')">⚡ CONFIRMATION WORKSHOP</button>
   <button class="btn btn-recherche" onclick="showView('recherche')">🔍 RECHERCHE 2026 →</button>
   <button class="btn btn-nouveau" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
-  <button class="btn" onclick="showView('gestion2027')" style="background:#1a7a3d;color:#fff;margin-left:6px;">📊 GESTION 2027</button>
   <button id="btn-rr" class="btn" onclick="showRechRemplac()" style="background:#6c3483;color:#fff;display:none;margin-left:6px;">🔄 RECHERCHER/REMPLACER</button>
   <button id="btn-del" class="btn" onclick="deleteMember()" style="background:#a93226;color:#fff;display:none;margin-left:6px;">🗑️ SUPPRIMER</button>
   <button id="btn-pin-mgr" class="btn" onclick="showGestionPins()" style="background:#1e3a6e;color:#fff;margin-left:6px;font-size:11px;padding:4px 10px;display:none;" title="Gérer les codes PIN">🔑 PINs</button>
@@ -1523,6 +1504,8 @@ function filterSelect(){
 // ══════════════════════════════════════
 //  LOAD SINGLE MEMBER
 // ══════════════════════════════════════
+let _memberLoading = false;
+
 async function loadMember(){
   const id=document.getElementById('msel').value;
   if(!id) return;
@@ -1532,6 +1515,9 @@ async function loadMember(){
       return;
     }
   }
+  _memberLoading = true;
+  const _btnsSave = document.querySelectorAll('.btn-save');
+  _btnsSave.forEach(b=>b.disabled=true);
   setSt('⏳ Chargement...');
   try{
     const d=await atGet('/'+id);
@@ -1545,6 +1531,10 @@ async function loadMember(){
     // Sauvegarder pour restauration après refresh
     try{ sessionStorage.setItem('lastMemberId', curId); }catch(e){}
   }catch(e){setSt('⚠️ Erreur');console.error(e);}
+  finally{
+    _memberLoading = false;
+    _btnsSave.forEach(b=>b.disabled=false);
+  }
 }
 
 // ══════════════════════════════════════
@@ -1929,6 +1919,7 @@ function collectFields(){
 //  SAVE MEMBER
 // ══════════════════════════════════════
 async function saveMember(){
+  if(_memberLoading){ setSt('⏳ Chargement en cours, réessayez dans un instant'); return; }
   const agent=gv('f-agent');
   if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
   const today=new Date().toISOString().split('T')[0];
@@ -2040,11 +2031,7 @@ function buildTable(){
         const parts=fldKey.split(':');
         const shortKey=parts[0];
         fldName=_fldMap[shortKey]||shortKey;
-        // GESTION 2027 : filtres booléens — utilise g27IsChecked
-        if(shortKey.startsWith('G27-')){
-          if(!g27IsChecked(f,fldName)) return false;
-          continue;
-        }
+
         filterVal=parts[1];
       } else {
         filterVal=(document.getElementById(`rch-val${i}`)||{value:''}).value.toLowerCase();
@@ -2234,10 +2221,7 @@ async function exportFiltered(){
     ['LANGUE',r=>String(r['LANGUE']||'')],
     ['COTISATION BE',r=>String(r['COTISATION BE']||'')],
     ['ÉCHÉANCE BE',r=>r['ÉCHÉANCE BE']?r['ÉCHÉANCE BE'].substring(0,10):''],
-    ['SS BELUX 2027',r=>g27IsChecked(r,'SORTIES SCOLAIRES BELUX 2027')?'OUI':''],
-    ['SS FRANCE 2027',r=>g27IsChecked(r,'SORTIES SCOLAIRES FRANCE 2027')?'OUI':''],
-    ['TIPS 2027',r=>g27IsChecked(r,'TIPS voor SCHOOLTRIPS 2027')?'OUI':''],
-    ['SÉJOURS 2027',r=>g27IsChecked(r,'SEJOURS SCOLAIRES 2027')?'OUI':'']
+
   ];
   const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
   const hdr=cols.map(c=>esc(c[0])).join(';');
@@ -2299,7 +2283,6 @@ function showView(v){
       },350);
     }
   }
-  if(v==='gestion2027') g27Build();
   if(v==='confirmation'){
     calcConfTotal();
     // Pré-remplir le PROFS-CONTACTS du récap avec la valeur de la FICHE
@@ -2895,219 +2878,6 @@ document.addEventListener('DOMContentLoaded', function(){
   }
 });
 
-// ══════════════════════════════════════
-//  GESTION 2027
-// ══════════════════════════════════════
-let _g27Filter = 'tous';
-
-function g27SetFilter(f, btn){
-  _g27Filter = f;
-  document.querySelectorAll('.g27-filter-bar .btn-f').forEach(b=>b.classList.remove('active'));
-  if(btn) btn.classList.add('active');
-  g27Build();
-}
-
-async function g27Refresh(){
-  document.getElementById('g27-progress').textContent = '⏳ Chargement…';
-  await loadAll();
-  g27Build();
-}
-
-function g27IsChecked(fields, key){
-  const v = fields[key];
-  if(v === true || v === 1) return true;
-  if(typeof v === 'string') return v.toLowerCase().trim() === 'oui' || v === '1' || v.toLowerCase() === 'true';
-  return false;
-}
-
-function g27EscHtml(s){
-  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function g27Build(){
-  const tbody = document.getElementById('g27-tbody');
-  if(!tbody) return;
-  if(!members || members.length === 0){
-    tbody.innerHTML='<tr><td colspan="11" style="text-align:center;color:#999;padding:24px;">⏳ Chargement des membres…</td></tr>';
-    return;
-  }
-  const q = (document.getElementById('g27-search')?.value||'').toLowerCase().trim();
-
-  let filtered = members.filter(m => {
-    const f = m.fields;
-    const nom = ((f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'')).toLowerCase();
-    if(q && !nom.includes(q)) return false;
-    const bx = g27IsChecked(f,'SORTIES SCOLAIRES BELUX 2027');
-    const fr = g27IsChecked(f,'SORTIES SCOLAIRES FRANCE 2027');
-    const ti = g27IsChecked(f,'TIPS voor SCHOOLTRIPS 2027');
-    const sj = g27IsChecked(f,'SEJOURS SCOLAIRES 2027');
-    if(_g27Filter==='belux') return bx;
-    if(_g27Filter==='france') return fr;
-    if(_g27Filter==='tips') return ti;
-    if(_g27Filter==='sejours') return sj;
-    if(_g27Filter==='todo') return !bx && !fr && !ti && !sj;
-    return true;
-  });
-
-  filtered.sort((a,b)=>{
-    const na=(a.fields['NOM ATTRACTION']||a.fields['Enseigne commerciale']||'').toUpperCase();
-    const nb=(b.fields['NOM ATTRACTION']||b.fields['Enseigne commerciale']||'').toUpperCase();
-    return na.localeCompare(nb,'fr');
-  });
-
-  // Stats
-  const withAny = members.filter(m=>{
-    const f=m.fields;
-    return g27IsChecked(f,'SORTIES SCOLAIRES BELUX 2027')||g27IsChecked(f,'SORTIES SCOLAIRES FRANCE 2027')||
-           g27IsChecked(f,'TIPS voor SCHOOLTRIPS 2027')||g27IsChecked(f,'SEJOURS SCOLAIRES 2027');
-  }).length;
-  document.getElementById('g27-progress').textContent = `${withAny}/${members.length} membres avec ≥1 édition — ${filtered.length} affichés`;
-
-  const AMTS = ['','0','150','160','350','360'];
-  let html='';
-  filtered.forEach((m, idx)=>{
-    const f = m.fields;
-    const nom = f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'—';
-    const bx = g27IsChecked(f,'SORTIES SCOLAIRES BELUX 2027');
-    const fr = g27IsChecked(f,'SORTIES SCOLAIRES FRANCE 2027');
-    const ti = g27IsChecked(f,'TIPS voor SCHOOLTRIPS 2027');
-    const sj = g27IsChecked(f,'SEJOURS SCOLAIRES 2027');
-    const mbe = f['MONTANT BE']!==undefined&&f['MONTANT BE']!==null ? String(f['MONTANT BE']) : '';
-    const mlu = f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : '';
-    const cotBe = f['COTISATION BE'] || '';
-    const cotLu = f['COTISATION LU'] || '';
-    const hasAny = bx||fr||ti||sj;
-    const hasMnt = (mbe!==''&&mbe!=='0')||(mlu!==''&&mlu!=='0');
-    const etat = !hasAny ? '⬜' : hasMnt ? '✅' : '⚠️';
-
-    const mkOpts=(val)=>AMTS.map(v=>`<option value="${v}" ${val===v?'selected':''}>${v===''?'—':v+' €'}</option>`).join('');
-    const cotBg=(v)=>v==='2027'?'#d4edda':v==='2026'?'#fff9cd':'#fff';
-    const mkCot=(val,field,abbr)=>`<select class="g27-amt" style="width:56px;font-size:11px;background:${cotBg(val)};font-weight:600;" data-id="${m.id}" data-field="${field}" onchange="g27SaveCot(this,'${abbr}')"><option value="" ${val===''?'selected':''}>—</option><option value="2026" ${val==='2026'?'selected':''} style="background:#fff9cd;">2026</option><option value="2027" ${val==='2027'?'selected':''} style="background:#d4edda;">2027</option></select>`;
-
-    html+=`<tr id="g27r-${m.id}">
-      <td style="color:#999;font-size:10px;">${idx+1}</td>
-      <td class="g27-nom" onclick="g27OpenFiche('${m.id}')" title="Ouvrir la fiche">${g27EscHtml(nom)}</td>
-      <td style="background:${bx?'#fffde7':''};">
-        <input type="checkbox" class="g27-cb" ${bx?'checked':''} data-id="${m.id}" data-field="SORTIES SCOLAIRES BELUX 2027"
-          onchange="g27Toggle(this,'bx')">
-        <span class="g27-st" id="g27s-${m.id}-bx"></span>
-      </td>
-      <td style="background:${fr?'#ebf3fa':''};">
-        <input type="checkbox" class="g27-cb" ${fr?'checked':''} data-id="${m.id}" data-field="SORTIES SCOLAIRES FRANCE 2027"
-          onchange="g27Toggle(this,'fr')">
-        <span class="g27-st" id="g27s-${m.id}-fr"></span>
-      </td>
-      <td style="background:${ti?'#fff9e6':''};">
-        <input type="checkbox" class="g27-cb" ${ti?'checked':''} data-id="${m.id}" data-field="TIPS voor SCHOOLTRIPS 2027"
-          onchange="g27Toggle(this,'ti')">
-        <span class="g27-st" id="g27s-${m.id}-ti"></span>
-      </td>
-      <td style="background:${sj?'#f3e6f8':''};">
-        <input type="checkbox" class="g27-cb" ${sj?'checked':''} data-id="${m.id}" data-field="SEJOURS SCOLAIRES 2027"
-          onchange="g27Toggle(this,'sj')">
-        <span class="g27-st" id="g27s-${m.id}-sj"></span>
-      </td>
-      <td style="padding:3px 4px;">
-        ${mkCot(cotBe,'COTISATION BE','cbe')}
-        <span class="g27-st" id="g27s-${m.id}-cbe"></span>
-      </td>
-      <td>
-        <select class="g27-amt" data-id="${m.id}" data-field="MONTANT BE" onchange="g27SaveAmt(this,'mbe')">
-          ${mkOpts(mbe)}
-        </select>
-        <span class="g27-st" id="g27s-${m.id}-mbe"></span>
-      </td>
-      <td style="padding:3px 4px;">
-        ${mkCot(cotLu,'COTISATION LU','clu')}
-        <span class="g27-st" id="g27s-${m.id}-clu"></span>
-      </td>
-      <td>
-        <select class="g27-amt" data-id="${m.id}" data-field="MONTANT LU" onchange="g27SaveAmt(this,'mlu')">
-          ${mkOpts(mlu)}
-        </select>
-        <span class="g27-st" id="g27s-${m.id}-mlu"></span>
-      </td>
-      <td style="font-size:15px;" id="g27e-${m.id}">${etat}</td>
-    </tr>`;
-  });
-  tbody.innerHTML = html || '<tr><td colspan="11" style="text-align:center;color:#999;padding:20px;">Aucun membre trouvé</td></tr>';
-}
-
-async function g27Toggle(el, abbr){
-  const id = el.dataset.id, field = el.dataset.field, checked = el.checked;
-  const sp = document.getElementById(`g27s-${id}-${abbr}`);
-  if(sp) sp.textContent='⏳';
-  el.disabled = true;
-  const res = await atPatch(id, {[field]: checked});
-  el.disabled = false;
-  if(res.error||res.errors){
-    if(sp) sp.textContent='❌';
-    el.checked = !checked;
-  } else {
-    if(sp) sp.textContent='✅';
-    const m = members.find(x=>x.id===id);
-    if(m) m.fields[field] = checked;
-    g27UpdateEtat(id);
-    setTimeout(()=>{if(sp) sp.textContent='';}, 1500);
-  }
-}
-
-async function g27SaveAmt(el, abbr){
-  const id = el.dataset.id, field = el.dataset.field, val = el.value;
-  const sp = document.getElementById(`g27s-${id}-${abbr}`);
-  if(sp) sp.textContent='⏳';
-  el.disabled = true;
-  const numVal = val==='' ? null : Number(val);
-  const res = await atPatch(id, {[field]: numVal});
-  el.disabled = false;
-  if(res.error||res.errors){
-    if(sp) sp.textContent='❌';
-  } else {
-    if(sp) sp.textContent='✅';
-    const m = members.find(x=>x.id===id);
-    if(m) m.fields[field] = numVal;
-    g27UpdateEtat(id);
-    setTimeout(()=>{if(sp) sp.textContent='';}, 1500);
-  }
-}
-
-async function g27SaveCot(el, abbr){
-  const id = el.dataset.id, field = el.dataset.field, val = el.value;
-  const sp = document.getElementById(`g27s-${id}-${abbr}`);
-  if(sp) sp.textContent='⏳';
-  el.disabled = true;
-  const res = await atPatch(id, {[field]: val || null});
-  el.disabled = false;
-  if(res.error||res.errors){
-    if(sp) sp.textContent='❌';
-  } else {
-    if(sp) sp.textContent='✅';
-    const m = members.find(x=>x.id===id);
-    if(m) m.fields[field] = val || null;
-    // Mettre à jour couleur du select immédiatement
-    el.style.background = val==='2027'?'#d4edda':val==='2026'?'#fff9cd':'#fff';
-    setTimeout(()=>{if(sp) sp.textContent='';}, 1500);
-  }
-}
-
-function g27UpdateEtat(id){
-  const m = members.find(x=>x.id===id);
-  if(!m) return;
-  const f = m.fields;
-  const hasAny = g27IsChecked(f,'SORTIES SCOLAIRES BELUX 2027')||g27IsChecked(f,'SORTIES SCOLAIRES FRANCE 2027')||
-                 g27IsChecked(f,'TIPS voor SCHOOLTRIPS 2027')||g27IsChecked(f,'SEJOURS SCOLAIRES 2027');
-  const mbe = f['MONTANT BE']!==undefined&&f['MONTANT BE']!==null ? String(f['MONTANT BE']) : '';
-  const mlu = f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : '';
-  const hasMnt = (mbe!==''&&mbe!=='0')||(mlu!==''&&mlu!=='0');
-  const etat = !hasAny ? '⬜' : hasMnt ? '✅' : '⚠️';
-  const el = document.getElementById(`g27e-${id}`);
-  if(el) el.textContent = etat;
-}
-
-function g27OpenFiche(id){
-  document.getElementById('msel').value = id;
-  loadMember();
-}
 </script>
 <!-- ═══ OVERLAY GESTION PINS (MARC uniquement) ═══ -->
 <div id="overlay-pin-mgr" class="hidden">
@@ -3144,45 +2914,6 @@ function g27OpenFiche(id){
   </div>
 </div>
 
-<!-- ════════════════════════════════
-     VUE : GESTION 2027
-════════════════════════════════ -->
-<div id="view-gestion2027" class="view">
-  <div class="g27-filter-bar">
-    <button class="btn btn-back" onclick="showView('fiche')">← Retour</button>
-    <button class="btn-f active" onclick="g27SetFilter('tous',this)">Tous</button>
-    <button class="btn-f" onclick="g27SetFilter('belux',this)" style="border-color:#c8a400;color:#8a6f00;">BELUX</button>
-    <button class="btn-f" onclick="g27SetFilter('france',this)" style="border-color:#2e75b6;color:#2e75b6;">FRANCE</button>
-    <button class="btn-f" onclick="g27SetFilter('tips',this)" style="border-color:#7d6608;color:#7d6608;">TIPS</button>
-    <button class="btn-f" onclick="g27SetFilter('sejours',this)" style="border-color:#633974;color:#633974;">SÉJOURS</button>
-    <button class="btn-f" onclick="g27SetFilter('todo',this)" style="border-color:#c0392b;color:#c0392b;">⚠️ Non commencés</button>
-    <input type="text" id="g27-search" placeholder="🔍 Filtrer par nom…" oninput="g27Build()" style="padding:4px 8px;border:1px solid #aaa;border-radius:3px;font-size:12px;width:175px;">
-    <span class="g27-progress" id="g27-progress"></span>
-    <button class="btn" onclick="g27Refresh()" style="background:#2980b9;color:#fff;margin-left:auto;font-size:11px;">🔄 Actualiser</button>
-  </div>
-  <div class="g27-wrap">
-    <table class="g27-table">
-      <thead>
-        <tr>
-          <th style="width:30px;">#</th>
-          <th style="text-align:left;min-width:200px;">NOM ATTRACTION</th>
-          <th style="background:#c8a400;color:#fff;min-width:80px;">BELUX 2027</th>
-          <th style="background:#2e75b6;color:#fff;min-width:80px;">FRANCE 2027</th>
-          <th style="background:#7d6608;color:#fff;min-width:80px;">TIPS 2027</th>
-          <th style="background:#633974;color:#fff;min-width:80px;">SÉJOURS 2027</th>
-          <th style="min-width:70px;background:#4a6741;color:#fff;">COT BE</th>
-          <th style="min-width:90px;">MONTANT BE</th>
-          <th style="min-width:70px;background:#4a6741;color:#fff;">COT LU</th>
-          <th style="min-width:90px;">MONTANT LU</th>
-          <th style="width:35px;">ÉTAT</th>
-        </tr>
-      </thead>
-      <tbody id="g27-tbody">
-        <tr><td colspan="11" style="text-align:center;color:#999;padding:24px;">⏳ Chargement…</td></tr>
-      </tbody>
-    </table>
-  </div>
-</div>
 
 <!-- ═══ MODAL RECHERCHER/REMPLACER ═══ -->
 <div id="modal-rr" class="modal-rr" onclick="if(event.target===this)closeRR()">
