@@ -471,15 +471,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           <table class="pub-ft">
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
-              <td><select id="p-bx-pg" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-bx-pg" class="sel-page" oninput="markDirty();calcPubTot('bx')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
               <td><input type="number" id="p-bx-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
-              <td><select id="p-bx-pp" class="sel-page" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-bx-pp" class="sel-page" oninput="markDirty();calcPubTot('bx')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-bx-t" class="sel-tarif" onchange="markDirty();calcPubTot('bx')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td><input type="number" id="p-bx-t" class="sel-tarif" oninput="markDirty();calcPubTot('bx')" step="1" min="0" placeholder="0"></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -505,15 +505,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           <table class="pub-ft">
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
-              <td><select id="p-fr-pg" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-fr-pg" class="sel-page" oninput="markDirty();calcPubTot('fr')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
               <td><input type="number" id="p-fr-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
-              <td><select id="p-fr-pp" class="sel-page" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-fr-pp" class="sel-page" oninput="markDirty();calcPubTot('fr')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-fr-t" class="sel-tarif" onchange="markDirty();calcPubTot('fr')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td><input type="number" id="p-fr-t" class="sel-tarif" oninput="markDirty();calcPubTot('fr')" step="1" min="0" placeholder="0"></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -539,15 +539,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           <table class="pub-ft">
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
-              <td><select id="p-tp-pg" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-tp-pg" class="sel-page" oninput="markDirty();calcPubTot('tp')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
               <td><input type="number" id="p-tp-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
-              <td><select id="p-tp-pp" class="sel-page" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-tp-pp" class="sel-page" oninput="markDirty();calcPubTot('tp')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-tp-t" class="sel-tarif" onchange="markDirty();calcPubTot('tp')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td><input type="number" id="p-tp-t" class="sel-tarif" oninput="markDirty();calcPubTot('tp')" step="1" min="0" placeholder="0"></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
@@ -573,15 +573,15 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
           <table class="pub-ft">
             <tr>
               <td class="pub-lbl">Page gratuite :</td>
-              <td><select id="p-sej-pg" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-sej-pg" class="sel-page" oninput="markDirty();calcPubTot('sej')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl" style="color:#c55a11;font-weight:700;">Crédit :</td>
               <td><input type="number" id="p-sej-cred" style="width:52px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty();calcGrandTotal()" placeholder=""> €</td>
             </tr>
             <tr>
               <td class="pub-lbl">Page payante :</td>
-              <td><select id="p-sej-pp" class="sel-page" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>0.25</option><option>0.5</option><option>0.75</option><option>1</option><option>1.5</option><option>2</option></select></td>
+              <td><input type="number" id="p-sej-pp" class="sel-page" oninput="markDirty();calcPubTot('sej')" step="0.25" min="0" max="4" placeholder="0"></td>
               <td class="pub-lbl">TARIF :</td>
-              <td><select id="p-sej-t" class="sel-tarif" onchange="markDirty();calcPubTot('sej')"><option value="">—</option><option>0</option><option>690</option><option>1290</option><option>1990</option><option>2390</option><option>2590</option><option>4990</option></select></td>
+              <td><input type="number" id="p-sej-t" class="sel-tarif" oninput="markDirty();calcPubTot('sej')" step="1" min="0" placeholder="0"></td>
             </tr>
             <tr style="background:#f0fff0;">
               <td class="pub-lbl" style="color:#217346;font-weight:700;">TOTAUX PAGE :</td>
