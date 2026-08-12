@@ -1981,27 +1981,34 @@ async function saveMember(){
     clearDirty();
     info.textContent='✅ Sauvegardé';
     setTimeout(()=>info.textContent='',3000);
-    await loadAll();
-    if(curId){
-      document.getElementById('msel').value=curId;
-      const saved=members.find(m=>m.id===curId);
-      if(saved){
-        fillForm(saved.fields);
-        // Restaurer l'état complet (ce qui vient d'être enregistré)
-        // Évite que fillForm restaure des valeurs obsolètes via legacy fallbacks
-        // Champs avec valeur par défaut : ne pas écraser si la valeur sauvegardée est vide
-        const _defaultFields={'f-tri1':'0','f-tri2':'0','f-tri3':'0'};
-        Object.keys(_savedForm).forEach(id=>{
-          const el=document.getElementById(id);
-          if(!el) return;
-          if(el.type==='checkbox') el.checked=_savedForm[id];
-          else {
-            const val=_savedForm[id];
-            el.value=(val===''&&_defaultFields[id]!==undefined) ? _defaultFields[id] : val;
-          }
-        });
-      }
-      if(!wasExisting){
+    const _defaultFields={'f-tri1':'0','f-tri2':'0','f-tri3':'0'};
+    if(wasExisting && curId){
+      // ── Optimisation : recharge uniquement ce membre (évite loadAll lent sur 146 membres) ──
+      const freshRec=await atGet('/'+curId);
+      const _idx=members.findIndex(m=>m.id===curId);
+      if(_idx>=0) members[_idx]=freshRec;
+      fillForm(freshRec.fields);
+      Object.keys(_savedForm).forEach(id=>{
+        const el=document.getElementById(id);
+        if(!el) return;
+        if(el.type==='checkbox') el.checked=_savedForm[id];
+        else { const val=_savedForm[id]; el.value=(val===''&&_defaultFields[id]!==undefined)?_defaultFields[id]:val; }
+      });
+    } else {
+      // Nouveau membre : recharge complète pour mettre à jour le dropdown
+      await loadAll();
+      if(curId){
+        document.getElementById('msel').value=curId;
+        const saved=members.find(m=>m.id===curId);
+        if(saved){
+          fillForm(saved.fields);
+          Object.keys(_savedForm).forEach(id=>{
+            const el=document.getElementById(id);
+            if(!el) return;
+            if(el.type==='checkbox') el.checked=_savedForm[id];
+            else { const val=_savedForm[id]; el.value=(val===''&&_defaultFields[id]!==undefined)?_defaultFields[id]:val; }
+          });
+        }
         showView('recherche');
         setTimeout(()=>{
           const row=document.querySelector('#rch-tbody tr[data-id="'+curId+'"]');
