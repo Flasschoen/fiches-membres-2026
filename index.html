@@ -1355,9 +1355,6 @@ function calcGrandTotal(){
 function markDirty(){
   isDirty=true;
   document.getElementById('dirty-indicator').style.display='';
-  const sp=document.getElementById('sync-pending');
-  if(sp) sp.style.display='block';
-  // Auto-update date de modification to today
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('f-modif').value=today;
 }
@@ -1631,8 +1628,8 @@ function fillForm(f){
   sv('f-c4',f['CONTACT 4']); sv('f-t4',f['TITRE 4']); sv('f-g4',f['GSM 4']); sv('f-e4',f['EMAIL 4']);
 
   sv('f-lang',  f['LANGUE']||'FR');
-  sv('f-coupon', (function(v){return v===true||v===1?'1':v===false||v===0?'0':'';})(f['COUPON ACCEPTÉ']));
-  sv('f-vip',   (function(v){return v===true||v===1?'1':v===false||v===0?'0':'';})(f['VIP ACCEPTÉ']));
+  sv('f-coupon', (function(v){return v===true||v===1||v==='1'?'1':v===false||v===0||v==='0'?'0':'';})(f['COUPON ACCEPTÉ']));
+  sv('f-vip',   (function(v){return v===true||v===1||v==='1'?'1':v===false||v===0||v==='0'?'0':'';})(f['VIP ACCEPTÉ']));
   sv('f-agent', f['AGENT']);
   sv('f-code',  f['CODE']);
   sv('f-tri1',  f['Clé de TRI 2']||'0');
@@ -1833,8 +1830,8 @@ function collectFields(){
     'TÉLÉPHONE':gv('f-tel'), 'FAX':gv('f-fax'), 'EMAIL':gv('f-email'),
     'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
     'LANGUE':gv('f-lang'),
-    'COUPON ACCEPTÉ': gv('f-coupon')==='1' ? true : (gv('f-coupon')==='0' ? false : null),
-    'VIP ACCEPTÉ':   gv('f-vip')==='1'   ? true : (gv('f-vip')==='0'   ? false : null),
+    'COUPON ACCEPTÉ': gv('f-coupon') || null,
+    'VIP ACCEPTÉ':   gv('f-vip')   || null,
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
     'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
     'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
@@ -1937,6 +1934,8 @@ async function saveMember(){
   if(_memberLoading){ setSt('⏳ Chargement en cours, réessayez dans un instant'); return; }
   const agent=gv('f-agent');
   if(!agent){alert('AGENT obligatoire avant de sauvegarder !');return;}
+  const _sp=document.getElementById('sync-pending');
+  if(_sp) _sp.style.display='block';
   const today=new Date().toISOString().split('T')[0];
   document.getElementById('f-modif').value=today;
   // Auto-remplir SUIVI : date et agent connecté
@@ -2013,6 +2012,7 @@ async function saveMember(){
       }
     }
   }catch(e){info.textContent='⚠️ Erreur réseau';console.error(e);}
+  finally{const _sp2=document.getElementById('sync-pending');if(_sp2)_sp2.style.display='none';}
 }
 
 // ════════════════════════════════�
@@ -2976,8 +2976,8 @@ document.addEventListener('DOMContentLoaded', function(){
   pointer-events:none;
   animation:syncPulse 1.4s ease-in-out infinite;
 ">
-  <div style="font-size:22px;font-weight:900;letter-spacing:1px;">⏳ Synchronisation en attente</div>
-  <div style="font-size:13px;margin-top:6px;opacity:0.9;">Cliquez sur <strong>Enregistrer</strong> pour sauvegarder les modifications</div>
+  <div style="font-size:22px;font-weight:900;letter-spacing:1px;">⏳ Synchronisation en cours...</div>
+  <div style="font-size:13px;margin-top:6px;opacity:0.9;">Veuillez patienter — sauvegarde Airtable en cours</div>
 </div>
 <style>
 @keyframes syncPulse{
