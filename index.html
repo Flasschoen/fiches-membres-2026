@@ -30,7 +30,8 @@ body{background:#dce3ef;min-height:100vh;}
 .search-bar label{font-size:12px;font-weight:700;color:#1e3a6e;white-space:nowrap;}
 .search-bar input[type=text]{padding:5px 8px;border:1px solid #aaa;border-radius:3px;font-size:13px;width:180px;}
 .search-bar select{padding:5px 8px;border:1px solid #aaa;border-radius:3px;font-size:13px;width:340px;}
-.status-msg{font-size:11px;color:#555;flex:1;text-align:right;}
+.status-msg{font-size:14px;color:#555;flex:1;text-align:right;font-weight:600;}
+@keyframes ficheLoadPulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.82;transform:scale(.97);}}
 
 /* ── ACTIONS BAR ── */
 .actions-bar{display:flex;align-items:center;gap:8px;padding:7px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;}
@@ -242,6 +243,13 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
      VUE : FICHE MEMBRE
 ════════════════════════════════ -->
 <div id="view-fiche" class="view active">
+<div id="fiche-loading" style="display:none;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;min-height:300px;">
+  <div style="background:#e8f0fe;border:2px solid #2e5096;border-radius:14px;padding:38px 72px;text-align:center;box-shadow:0 4px 20px rgba(46,80,150,0.14);animation:ficheLoadPulse 1.6s ease-in-out infinite;">
+    <div style="font-size:42px;margin-bottom:14px;">⏳</div>
+    <div style="font-size:17px;font-weight:700;color:#2e5096;letter-spacing:.3px;">Téléchargement en cours…</div>
+    <div style="font-size:12px;color:#8a97b0;margin-top:6px;">Connexion à Airtable</div>
+  </div>
+</div>
 <div id="fiche-placeholder" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:80px 20px;min-height:300px;">
   <div style="font-size:52px;margin-bottom:18px;opacity:.35;">📋</div>
   <div style="font-size:18px;font-weight:700;color:#2e5096;margin-bottom:8px;">Aucun membre sélectionné</div>
@@ -1531,18 +1539,26 @@ async function loadMember(){
   const _btnsSave = document.querySelectorAll('.btn-save');
   _btnsSave.forEach(b=>b.disabled=true);
   setSt('⏳ Chargement...');
+  document.getElementById('fiche-placeholder').style.display='none';
+  document.getElementById('fiche-main').style.display='none';
+  document.getElementById('fiche-loading').style.display='flex';
   try{
     const d=await atGet('/'+id);
     curId=id;
     fillForm(d.fields);
     clearDirty();
-    document.getElementById('fiche-placeholder').style.display='none';
+    document.getElementById('fiche-loading').style.display='none';
     document.getElementById('fiche-main').style.display='block';
     showView('fiche');
     setSt('✅ Membre chargé');
     // Sauvegarder pour restauration après refresh
     try{ sessionStorage.setItem('lastMemberId', curId); }catch(e){}
-  }catch(e){setSt('⚠️ Erreur');console.error(e);}
+  }catch(e){
+    document.getElementById('fiche-loading').style.display='none';
+    document.getElementById('fiche-placeholder').style.display='flex';
+    setSt('⚠️ Erreur');
+    console.error(e);
+  }
   finally{
     _memberLoading = false;
     _btnsSave.forEach(b=>b.disabled=false);
@@ -1563,6 +1579,7 @@ function cancelAndReset(){
   document.getElementById('srch').value='';
   filterSelect();
   document.getElementById('name-bar').textContent='— SÉLECTIONNEZ UN MEMBRE —';
+  document.getElementById('fiche-loading').style.display='none';
   document.getElementById('fiche-placeholder').style.display='flex';
   document.getElementById('fiche-main').style.display='none';
   setSt(members.length ? members.length+' membres disponibles' : '');
