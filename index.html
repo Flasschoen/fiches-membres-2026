@@ -1368,6 +1368,15 @@ window.addEventListener('beforeunload',e=>{
 });
 
 // ══════════════════════════════════════
+//  UTILS
+// ══════════════════════════════════════
+function nq(s){
+  // Normalise pour la recherche : supprime les accents, minuscules
+  // écomusée → ecomusee, ÉCOMUSÉE → ecomusee, etc.
+  return (s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+}
+
+// ══════════════════════════════════════
 //  API HELPERS
 // ══════════════════════════════════════
 const hdrs={'Authorization':'Bearer '+TK};
@@ -1488,13 +1497,14 @@ function buildSelect(){
 }
 
 function filterSelect(){
-  const q=document.getElementById('srch').value.toLowerCase();
+  const q=nq(document.getElementById('srch').value);
   const sel=document.getElementById('msel');
   sel.innerHTML='<option value="">— Choisir un membre —</option>';
   members.filter(m=>{
-    const ens=(m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||'').toLowerCase();
-    const enscom=(m.fields['Enseigne commerciale']||'').toLowerCase();
-    return !q||ens.includes(q)||enscom.includes(q)||String(m.fields['Nº de membre']||'').includes(q);
+    const ens=nq(m.fields['ENSEIGNE']||m.fields['NOM ATTRACTION']||'');
+    const enscom=nq(m.fields['Enseigne commerciale']||'');
+    const num=String(m.fields['N° MEMBRE']||m.fields['Nº de membre']||'');
+    return !q||ens.includes(q)||enscom.includes(q)||num.includes(q);
   }).forEach(m=>{
     const o=document.createElement('option');
     o.value=m.id; o.textContent=m.fields['ENSEIGNE']||m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||m.id;
@@ -2011,7 +2021,7 @@ function buildTable(){
   const loading=document.getElementById('rch-loading');
   const cnt=document.getElementById('rch-cnt');
   tbody.innerHTML='';
-  const q=(document.getElementById('rch-f')||{value:''}).value.toLowerCase();
+  const q=nq((document.getElementById('rch-f')||{value:''}).value);
   const _fldMap={
     'CODE':'CODE','TRI1':'Clé de TRI 2','TRI2':'Clé de TRI 3','TRI3':'Clé de TRI 4','PROFS':'PROFS-CONTACTS',
     'COT-BE':'COTISATION BE','COT-LU':'COTISATION LU','CP':'CODE POSTAL',
@@ -2023,7 +2033,7 @@ function buildTable(){
     const f=m.fields;
     if(q&&![f['NOM ATTRACTION'],f['Enseigne commerciale'],f['ENSEIGNE'],f['COMMUNE'],f['AGENT'],
             String(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''),String(f['CODE']||'')]
-      .some(v=>(v||'').toLowerCase().includes(q))) return false;
+      .some(v=>nq(v||'').includes(q))) return false;
     for(let i=1;i<=4;i++){
       const fldKey=(document.getElementById(`rch-fld${i}`)||{value:''}).value;
       if(!fldKey) continue;
