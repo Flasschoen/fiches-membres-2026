@@ -1847,8 +1847,8 @@ function collectFields(){
     'TÉLÉPHONE':gv('f-tel'), 'FAX':gv('f-fax'), 'EMAIL':gv('f-email'),
     'SITE INTERNET':gv('f-site'), 'N° TVA':gv('f-tva'), 'PROVINCE':gv('f-prov'),
     'LANGUE':gv('f-lang'),
-    'COUPON ACCEPTÉ': gv('f-coupon')==='1' ? true : gv('f-coupon')==='0' ? false : null,
-    'VIP ACCEPTÉ':   gv('f-vip')==='1'   ? true : gv('f-vip')==='0'   ? false : null,
+    'COUPON ACCEPTÉ': gv('f-coupon')==='1' ? 1 : gv('f-coupon')==='0' ? 0 : null,
+    'VIP ACCEPTÉ':   gv('f-vip')==='1'   ? 1 : gv('f-vip')==='0'   ? 0 : null,
     'AGENT':gv('f-agent'), 'CODE':gv('f-code') ? Number(gv('f-code')) : null,
     'Clé de TRI 2':gv('f-tri1')!==null&&gv('f-tri1')!=='' ? Number(gv('f-tri1')) : null,
     'Clé de TRI 3':gv('f-tri2')!==null&&gv('f-tri2')!=='' ? Number(gv('f-tri2')) : null,
@@ -1929,7 +1929,7 @@ function collectFields(){
   });
   // Remove null/empty/false
   // false gardé seulement pour les booléens Airtable confirmés
-  const _boolFields=new Set(['COUPON ACCEPTÉ','VIP ACCEPTÉ','SORTIES SCOLAIRES BELUX 2026','SORTIES SCOLAIRES BELUX 2027','SORTIES SCOLAIRES BELUX 2028','SORTIES SCOLAIRES FRANCE 2027','SORTIES SCOLAIRES FRANCE 2028','SORTIES SCOLAIRES FRANCE 2029','TIPS voor SCHOOLTRIPS 2026','TIPS voor SCHOOLTRIPS 2027','TIPS voor SCHOOLTRIPS 2028','SEJOURS SCOLAIRES 2023','SEJOURS SCOLAIRES 2025','SEJOURS SCOLAIRES 2027','NEWS BELUX N3','NEWS BELUX N4','NEWS BELUX N5','NEWS BELUX N6','NEWS BELUX N7','NEWS BELUX N8','NEWS BELUX N9','NEWS FRANCE N3','NEWS FRANCE N4','NEWS FRANCE N5','NEWS FRANCE N6','NEWS FRANCE N7','NEWS FRANCE N8','NEWS FRANCE N9']);
+  const _boolFields=new Set(['SORTIES SCOLAIRES BELUX 2026','SORTIES SCOLAIRES BELUX 2027','SORTIES SCOLAIRES BELUX 2028','SORTIES SCOLAIRES FRANCE 2027','SORTIES SCOLAIRES FRANCE 2028','SORTIES SCOLAIRES FRANCE 2029','TIPS voor SCHOOLTRIPS 2026','TIPS voor SCHOOLTRIPS 2027','TIPS voor SCHOOLTRIPS 2028','SEJOURS SCOLAIRES 2023','SEJOURS SCOLAIRES 2025','SEJOURS SCOLAIRES 2027','NEWS BELUX N3','NEWS BELUX N4','NEWS BELUX N5','NEWS BELUX N6','NEWS BELUX N7','NEWS BELUX N8','NEWS BELUX N9','NEWS FRANCE N3','NEWS FRANCE N4','NEWS FRANCE N5','NEWS FRANCE N6','NEWS FRANCE N7','NEWS FRANCE N8','NEWS FRANCE N9']);
   // Seuls les champs critiques ne sont JAMAIS envoyés en null (évite effacement accidentel)
   // Tous les autres champs null = effacement voulu par l'utilisateur → envoyé à Airtable
   const _protectedFields=new Set(['NOM ATTRACTION','DATE ENTRÉE']);
