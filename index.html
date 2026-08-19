@@ -1258,9 +1258,12 @@ function showBothNews(idx){
 function pickNews(zone,idx){
   const p=zone==='bx'?'nbx':'nfr';
   const d=id=>document.getElementById(id)?.textContent||'—';
-  document.getElementById('disp-'+p+'-pages').textContent=d('tot-'+p+'-pages-'+idx);
-  document.getElementById('disp-'+p+'-tot').textContent  =d('tot-'+p+'-tot-'+idx);
-  document.getElementById('disp-'+p+'-cred').textContent =d('tot-'+p+'-cred-'+idx);
+  const elP=document.getElementById('disp-'+p+'-pages');
+  const elT=document.getElementById('disp-'+p+'-tot');
+  const elC=document.getElementById('disp-'+p+'-cred');
+  if(elP) elP.textContent=d('tot-'+p+'-pages-'+idx);
+  if(elT) elT.textContent=d('tot-'+p+'-tot-'+idx);
+  if(elC) elC.textContent=d('tot-'+p+'-cred-'+idx);
 }
 function refreshNewsDisplay(){
   pickNews('bx',document.getElementById('sel-nbx')?.value||'0');
