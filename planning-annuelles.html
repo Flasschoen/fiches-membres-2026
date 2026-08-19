@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Planning Brochures Annuelles 2027</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5}
+
+/* ── PIN ── */
+#pin-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);display:flex;align-items:center;justify-content:center;z-index:1000}
+#pin-box{background:#fff;padding:36px 44px;border-radius:12px;text-align:center;min-width:300px;box-shadow:0 8px 32px rgba(0,0,0,.3)}
+#pin-box h2{color:#1E3A6E;margin-bottom:6px;font-size:18px}
+#pin-box p{color:#666;margin-bottom:18px;font-size:13px}
+#pin-input{font-size:28px;letter-spacing:10px;width:130px;text-align:center;border:2px solid #ccc;border-radius:8px;padding:8px 12px;margin-bottom:14px;outline:none}
+#pin-input:focus{border-color:#1E3A6E}
+#pin-btn{background:#1E3A6E;color:#fff;border:none;padding:10px 32px;border-radius:6px;cursor:pointer;font-size:14px;font-weight:bold}
+#pin-btn:hover{background:#2a4f9a}
+#pin-err{color:#c0392b;margin-top:10px;font-size:13px;min-height:18px}
+#pin-tries{color:#888;margin-top:6px;font-size:11px}
+
+/* ── HEADER ── */
+#header{background:#1E3A6E;color:#fff;padding:10px 18px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+#header h1{font-size:15px;font-weight:bold}
+#header-right{display:flex;align-items:center;gap:10px}
+#agent-badge{background:#FFD966;color:#1E3A6E;padding:4px 14px;border-radius:20px;font-weight:bold;font-size:12px}
+#refresh-btn{background:#27ae60;color:#fff;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold}
+#refresh-btn:hover{background:#219a52}
+
+/* ── TABS ── */
+#tabs{display:flex;background:#d5dbe8;border-bottom:3px solid #1E3A6E;padding:0 18px;overflow-x:auto}
+.tab{padding:8px 20px;cursor:pointer;font-weight:bold;font-size:12px;border-radius:5px 5px 0 0;margin-right:3px;margin-top:5px;color:#555;white-space:nowrap}
+.tab.active{background:#1E3A6E;color:#fff}
+.tab:not(.active):hover{background:#bbc4d6}
+
+/* ── CONTENT ── */
+#content{padding:10px 14px;overflow-x:auto}
+#content h2{color:#1E3A6E;font-size:13px;padding:6px 0 8px;font-weight:bold}
+
+/* ── TABLE ── */
+table{border-collapse:collapse;font-size:11px;width:100%;min-width:1100px}
+th{background:#1E3A6E;color:#fff;padding:5px 4px;text-align:center;border:1px solid #2a5090;white-space:nowrap;position:sticky;top:56px;z-index:5}
+th.pub-hdr{color:#1E3A6E}
+th.sv-textes{background:#FFC000;color:#000}
+th.sv-epreuve{background:#70AD47;color:#000}
+th.sv-coupon{background:#00B0F0;color:#000}
+th.sv-rem{background:#595959;color:#fff}
+td{border:1px solid #ddd;padding:3px 4px;vertical-align:middle}
+tr:nth-child(even) td{background:#f7f7f7}
+tr:nth-child(odd) td{background:#fff}
+td.num{text-align:center}
+td.right{text-align:right}
+td.nm{font-weight:bold;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td.pub{background:#FFFDE7}
+td.suivi{padding:2px}
+td.suivi input,td.suivi select{width:100%;font-size:10px;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:#fefde8}
+td.suivi select{background:#fefde8}
+tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;border-color:#2a5090}
+
+/* ── STATUS ── */
+#status{position:fixed;bottom:0;left:0;right:0;background:#1E3A6E;color:#adc8ff;padding:3px 12px;font-size:11px;text-align:right}
+</style>
+</head>
+<body>
+
+<!-- PIN -->
+<div id="pin-overlay">
+  <div id="pin-box">
+    <h2>🔒 Planning Brochures Annuelles</h2>
+    <p>Entrez votre code PIN (4 chiffres)</p>
+    <input id="pin-input" type="password" maxlength="4" inputmode="numeric" autocomplete="off" placeholder="••••"><br>
+    <button id="pin-btn" onclick="checkPin()">Connexion</button>
+    <div id="pin-err"></div>
+    <div id="pin-tries" style="margin-top:8px;font-size:11px;color:#aaa">Tentative 1 / 3</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" style="display:none">
+  <div id="header">
+    <h1>📋 Planning Brochures Annuelles 2027</h1>
+    <div id="header-right">
+      <span id="agent-badge"></span>
+      <button id="refresh-btn" onclick="loadData()">↺ Mettre à jour</button>
+    </div>
+  </div>
+  <div id="tabs"></div>
+  <div id="content"><p style="padding:20px;color:#888">Chargement…</p></div>
+</div>
+
+<div id="status">Prêt</div>
+
+<script>
+// ── CONFIG ────────────────────────────────────────────────────────────────
+const TK       = "pat2HkJhQsqj6clFJ.a1fb4a3a4d51f8f7e57d4eca2a0c633051bd89b80b90c2edbf66e93ed5657bcd";
+const BASE     = "appixzcrs5T5kRQ36";
+const TABLE_ID = "tblMiiIYVibfpe0L3";
+const SF       = "SUIVI_ANNUELLES";   // champ JSON SUIVI dans Airtable
+
+const AGENTS = {"1111":"MARC","4444":"VANESSA","3333":"ANTOINE"};
+const EDITIONS = [
+  {id:"belux",   label:"Belux 2027",    title:"SORTIES SCOLAIRES Belux 2027",
+   hdrBg:"#FFD966",hdrTx:"#1E3A6E", cb:"SORTIES SCOLAIRES BELUX 2027",
+   pg:"PUB BELUX PAGE GRATUITE",pp:"PUB BELUX PAGE PAYANTE",
+   tar:"PUB BELUX TARIF",crd:"PUB BELUX CREDIT"},
+  {id:"france",  label:"France 2027",   title:"SORTIES SCOLAIRES France 2027",
+   hdrBg:"#BDD7EE",hdrTx:"#1E3A6E", cb:"SORTIES SCOLAIRES FRANCE 2027",
+   pg:"PUB FRANCE PAGE GRATUITE",pp:"PUB FRANCE PAGE PAYANTE",
+   tar:"PUB FRANCE TARIF",crd:"PUB FRANCE CREDIT"},
+  {id:"tips",    label:"TIPS 2027",     title:"TIPS voor SCHOOLTRIPS 2027",
+   hdrBg:"#C9A227",hdrTx:"#FFFFFF", cb:"TIPS voor SCHOOLTRIPS 2027",
+   pg:"PUB TIPS PAGE GRATUITE",pp:"PUB TIPS PAGE PAYANTE",
+   tar:"PUB TIPS TARIF",crd:"PUB TIPS CREDIT"},
+  {id:"sejours", label:"Séjours 2027",  title:"SÉJOURS SCOLAIRES 2027",
+   hdrBg:"#7030A0",hdrTx:"#FFFFFF", cb:"SEJOURS SCOLAIRES 2027",
+   pg:"PUB SEJOURS PAGE GRATUITE",pp:"PUB SEJOURS PAGE PAYANTE",
+   tar:"PUB SEJOURS TARIF",crd:"PUB SEJOURS CREDIT"},
+];
+const SEL = {
+  textes_recu:   ["—","Reçu","Non reçu"],
+  epreuves_recu: ["—","Reçu","Bon à tirer","Corrections"],
+  coupons_recu:  ["—","Reçu","Retourné"],
+};
+
+let agent="", edIdx=0, records=[];
+
+// ── PIN ────────────────────────────────────────────────────────────────────
+let pinTries=0;
+document.getElementById("pin-input").addEventListener("keydown",e=>{if(e.key==="Enter")checkPin();});
+
+function checkPin(){
+  const v=document.getElementById("pin-input").value.trim();
+  document.getElementById("pin-err").textContent="";
+  if(v.length!==4||!/^\d{4}$/.test(v)){
+    document.getElementById("pin-err").textContent="Code invalide — 4 chiffres requis";
+    return;
+  }
+  if(AGENTS[v]){
+    agent=AGENTS[v];
+    document.getElementById("pin-overlay").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("agent-badge").textContent="Agent : "+agent;
+    buildTabs(); loadData();
+  } else {
+    pinTries++;
+    document.getElementById("pin-tries").textContent=`Tentative ${Math.min(pinTries+1,3)} / 3`;
+    if(pinTries>=3){
+      document.getElementById("pin-err").textContent="3 tentatives échouées — rechargez la page";
+      document.getElementById("pin-btn").disabled=true;
+      document.getElementById("pin-input").disabled=true;
+    } else {
+      document.getElementById("pin-err").textContent=`Code incorrect — tentative ${pinTries}/3`;
+      document.getElementById("pin-input").value="";
+    }
+  }
+}
+
+// ── TABS ────────────────────────────────────────────────────────────────────
+function buildTabs(){
+  document.getElementById("tabs").innerHTML=
+    EDITIONS.map((e,i)=>`<div class="tab${i===0?" active":""}" onclick="switchTab(${i})">${e.label}</div>`).join("");
+}
+function switchTab(i){
+  edIdx=i;
+  document.querySelectorAll(".tab").forEach((t,j)=>t.classList.toggle("active",i===j));
+  buildTable();
+}
+
+// ── API ─────────────────────────────────────────────────────────────────────
+function headers(){return{Authorization:"Bearer "+TK,"Content-Type":"application/json"};}
+
+async function loadData(){
+  status("⟳ Chargement depuis Airtable…");
+  records=[];
+  let offset=null;
+  do{
+    const url=`https://api.airtable.com/v0/${BASE}/${TABLE_ID}?pageSize=100`+(offset?`&offset=${offset}`:"");
+    const d=await fetch(url,{headers:headers()}).then(r=>r.json());
+    records.push(...(d.records||[]));
+    offset=d.offset||null;
+  }while(offset);
+  status(`✅ ${records.length} membres chargés — ${new Date().toLocaleTimeString()}`);
+  buildTable();
+}
+
+const timers={};
+async function saveSuivi(recId,edLabel,key,val){
+  const rec=records.find(r=>r.id===recId);
+  if(!rec)return;
+  let all={};
+  try{all=JSON.parse(rec.fields[SF]||"{}");}catch{}
+  if(!all[edLabel])all[edLabel]={};
+  all[edLabel][key]=val;
+  rec.fields[SF]=JSON.stringify(all);
+  status("💾 Sauvegarde…");
+  try{
+    await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{
+      method:"PATCH",headers:headers(),
+      body:JSON.stringify({fields:{[SF]:JSON.stringify(all)}})
+    });
+    status("✅ Sauvegardé — "+new Date().toLocaleTimeString());
+  }catch(e){status("❌ Erreur sauvegarde : "+e.message);}
+}
+function dbSave(recId,edLabel,key,val){
+  clearTimeout(timers[recId+edLabel+key]);
+  timers[recId+edLabel+key]=setTimeout(()=>saveSuivi(recId,edLabel,key,val),600);
+}
+
+// ── HELPERS ────────────────────────────────────────────────────────────────
+function isChk(f,k){const v=f[k];if(v==null)return false;if(typeof v==="boolean")return v;return["OUI","TRUE","1","YES"].includes(String(v).trim().toUpperCase());}
+function num(v){if(v==null||v==="")return"";const n=parseFloat(v);return isNaN(n)?"":n===Math.floor(n)?n:n;}
+function cpn(f){const v=f["COUPON ACCEPTÉ"];if(v==null)return"";if(v===true)return"1";if(v===false)return"0";const s=String(v).toUpperCase();return["1","OUI","TRUE","YES"].includes(s)?"1":["0","NON","FALSE","NO"].includes(s)?"0":"";}
+function vip(f){const v=f["VIP ACCEPTÉ"];if(v==null)return"";if(v===true)return"1";if(v===false)return"0";const s=String(v).toUpperCase();return["1","OUI","TRUE","YES"].includes(s)?"1":["0","NON","FALSE","NO"].includes(s)?"0":"";}
+function nrm(s){return(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase();}
+function sv(rec,edLabel){try{return JSON.parse(rec.fields[SF]||"{}")[edLabel]||{};}catch{return{};}}
+
+function selHtml(rid,edLabel,key,cur,opts){
+  return`<select onchange="dbSave('${rid}','${edLabel}','${key}',this.value)">`+
+    opts.map(o=>`<option${(cur||"—")===o?" selected":""}>${o}</option>`).join("")+"</select>";
+}
+function dateHtml(rid,edLabel,key,cur){
+  return`<input type="date" value="${cur||""}" onchange="dbSave('${rid}','${edLabel}','${key}',this.value)">`;
+}
+function txtHtml(rid,edLabel,key,cur){
+  return`<input type="text" value="${(cur||"").replace(/"/g,"&quot;")}" placeholder="Remarques…" onchange="dbSave('${rid}','${edLabel}','${key}',this.value)">`;
+}
+
+// ── TABLE ───────────────────────────────────────────────────────────────────
+function buildTable(){
+  const ed=EDITIONS[edIdx];
+  const label=ed.label;
+  const seen=new Set();
+  const members=records.filter(r=>{
+    if(!isChk(r.fields,ed.cb))return false;
+    const nm=nrm(r.fields["Enseigne commerciale"]||r.fields["NOM ATTRACTION"]||"");
+    if(seen.has(nm))return false;seen.add(nm);return true;
+  }).sort((a,b)=>nrm(a.fields["Enseigne commerciale"]||a.fields["NOM ATTRACTION"]||"")
+                  .localeCompare(nrm(b.fields["Enseigne commerciale"]||b.fields["NOM ATTRACTION"]||"")));
+
+  let tGrat=0,tPay=0,tPrix=0,tCrd=0;
+  const rows=members.map((rec,idx)=>{
+    const f=rec.fields;
+    const nom=f["Enseigne commerciale"]||f["NOM ATTRACTION"]||"—";
+    const cotBe=f["COTISATION BE"]==="2027"?num(f["MONTANT BE"]):0;
+    const cotLu=f["COTISATION LU"]==="2027"?num(f["MONTANT LU"]):0;
+    const grat=num(f[ed.pg]),pay=num(f[ed.pp]),tar=num(f[ed.tar]),crd=num(f[ed.crd]);
+    if(grat!=="")tGrat+=parseFloat(grat)||0;
+    if(pay!=="") tPay +=parseFloat(pay)||0;
+    if(tar!=="") tPrix+=parseFloat(tar)||0;
+    if(crd!=="") tCrd +=parseFloat(crd)||0;
+    const s=sv(rec,label);const rid=rec.id;
+    return`<tr>
+      <td class="num">${idx+1}</td>
+      <td class="nm" title="${nom}">${nom}</td>
+      <td class="num">${cpn(f)}</td>
+      <td class="right">${cotBe}</td>
+      <td class="right">${cotLu}</td>
+      <td class="num pub">${grat}</td>
+      <td class="num pub">${pay}</td>
+      <td class="num pub">${vip(f)}</td>
+      <td class="right pub">${tar}</td>
+      <td class="right pub">${crd}</td>
+      <td class="suivi">${dateHtml(rid,label,"textes_env",s.textes_env)}</td>
+      <td class="suivi">${selHtml(rid,label,"textes_recu",s.textes_recu,SEL.textes_recu)}</td>
+      <td class="suivi">${dateHtml(rid,label,"epreuves_env",s.epreuves_env)}</td>
+      <td class="suivi">${selHtml(rid,label,"epreuves_recu",s.epreuves_recu,SEL.epreuves_recu)}</td>
+      <td class="suivi">${dateHtml(rid,label,"coupons_env",s.coupons_env)}</td>
+      <td class="suivi">${selHtml(rid,label,"coupons_recu",s.coupons_recu,SEL.coupons_recu)}</td>
+      <td class="suivi">${txtHtml(rid,label,"remarques",s.remarques)}</td>
+    </tr>`;
+  }).join("");
+
+  const fmtN=n=>n?n.toLocaleString("fr-BE"):"";
+  document.getElementById("content").innerHTML=`
+  <h2>${ed.title} &nbsp;—&nbsp; Généré le ${new Date().toLocaleDateString("fr-BE")}</h2>
+  <table>
+    <thead>
+      <tr>
+        <th rowspan="2" style="width:30px">N°</th>
+        <th rowspan="2" style="min-width:150px">ANNONCEURS</th>
+        <th rowspan="2">COUPON</th>
+        <th rowspan="2">COT.BE</th>
+        <th rowspan="2">COT.LU</th>
+        <th colspan="5" class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">${ed.title}</th>
+        <th colspan="2" class="sv-textes">TEXTES</th>
+        <th colspan="2" class="sv-epreuve">ÉPREUVES</th>
+        <th colspan="2" class="sv-coupon">COUPONS</th>
+        <th class="sv-rem" rowspan="2" style="min-width:120px">REMARQUES</th>
+      </tr>
+      <tr>
+        <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Gratuit</th>
+        <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Payant</th>
+        <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">VIP</th>
+        <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Prix €</th>
+        <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Crédit €</th>
+        <th class="sv-textes">Env.</th><th class="sv-textes">Reçu</th>
+        <th class="sv-epreuve">Env.</th><th class="sv-epreuve">Reçu</th>
+        <th class="sv-coupon">Env.</th><th class="sv-coupon">Reçu</th>
+      </tr>
+    </thead>
+    <tbody>${rows||'<tr><td colspan="17" style="text-align:center;padding:20px;color:#888">Aucun annonceur pour cette édition</td></tr>'}</tbody>
+    <tfoot>
+      <tr>
+        <td colspan="5">TOTAL : ${members.length} annonceur${members.length>1?"s":""}</td>
+        <td class="num">${fmtN(tGrat)}</td>
+        <td class="num">${fmtN(tPay)}</td>
+        <td></td>
+        <td class="right">${fmtN(tPrix)}</td>
+        <td class="right">${fmtN(tCrd)}</td>
+        <td colspan="7"></td>
+      </tr>
+    </tfoot>
+  </table>`;
+}
+
+function status(msg){document.getElementById("status").textContent=msg;}
+document.getElementById("pin-input").focus();
+</script>
+</body>
+</html>
