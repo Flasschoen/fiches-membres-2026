@@ -119,6 +119,7 @@ const EDITIONS = [
 ];
 const SEL = {
   textes_recu:   ["—","Reçu","Non reçu"],
+  photos_recu:   ["—","Reçu","Non reçu"],
   epreuves_recu: ["—","Reçu","Bon à tirer","Corrections"],
   coupons_recu:  ["—","Reçu","Retourné"],
 };
@@ -263,6 +264,8 @@ function buildTable(){
       <td class="right pub">${crd}</td>
       <td class="suivi">${dateHtml(rid,label,"textes_env",s.textes_env)}</td>
       <td class="suivi">${selHtml(rid,label,"textes_recu",s.textes_recu,SEL.textes_recu)}</td>
+      <td class="suivi">${dateHtml(rid,label,"photos_env",s.photos_env)}</td>
+      <td class="suivi">${selHtml(rid,label,"photos_recu",s.photos_recu,SEL.photos_recu)}</td>
       <td class="suivi">${dateHtml(rid,label,"epreuves_env",s.epreuves_env)}</td>
       <td class="suivi">${selHtml(rid,label,"epreuves_recu",s.epreuves_recu,SEL.epreuves_recu)}</td>
       <td class="suivi">${dateHtml(rid,label,"coupons_env",s.coupons_env)}</td>
@@ -283,9 +286,9 @@ function buildTable(){
         <th rowspan="2">COT.BE</th>
         <th rowspan="2">COT.LU</th>
         <th colspan="5" class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">${ed.title}</th>
-        <th colspan="2" class="sv-textes">TEXTES</th>
+        <th colspan="4" class="sv-textes">TEXTES + PHOTOS</th>
         <th colspan="2" class="sv-epreuve">ÉPREUVES</th>
-        <th colspan="2" class="sv-coupon">COUPONS</th>
+        <th colspan="2" class="sv-coupon">COUPON-ECLAIREUR</th>
         <th class="sv-rem" rowspan="2" style="min-width:120px">REMARQUES</th>
       </tr>
       <tr>
@@ -294,12 +297,13 @@ function buildTable(){
         <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">VIP</th>
         <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Prix €</th>
         <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Crédit €</th>
-        <th class="sv-textes">Env.</th><th class="sv-textes">Reçu</th>
+        <th class="sv-textes">Textes Env.</th><th class="sv-textes">Textes Reçu</th>
+        <th class="sv-textes">Photos Env.</th><th class="sv-textes">Photos Reçu</th>
         <th class="sv-epreuve">Env.</th><th class="sv-epreuve">Reçu</th>
         <th class="sv-coupon">Env.</th><th class="sv-coupon">Reçu</th>
       </tr>
     </thead>
-    <tbody>${rows||'<tr><td colspan="17" style="text-align:center;padding:20px;color:#888">Aucun annonceur pour cette édition</td></tr>'}</tbody>
+    <tbody>${rows||'<tr><td colspan="19" style="text-align:center;padding:20px;color:#888">Aucun annonceur pour cette édition</td></tr>'}</tbody>
     <tfoot>
       <tr>
         <td colspan="5">TOTAL : ${members.length} annonceur${members.length>1?"s":""}</td>
@@ -308,7 +312,7 @@ function buildTable(){
         <td></td>
         <td class="right">${fmtN(tPrix)}</td>
         <td class="right">${fmtN(tCrd)}</td>
-        <td colspan="7"></td>
+        <td colspan="9"></td>
       </tr>
     </tfoot>
   </table>`;
