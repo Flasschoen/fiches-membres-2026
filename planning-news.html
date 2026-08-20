@@ -54,7 +54,7 @@ tfoot td{font-weight:bold;border-color:#555}
 
 #status{position:fixed;bottom:0;left:0;right:0;background:#6E3FA3;color:#d9c4f5;padding:3px 12px;font-size:11px;text-align:right}
 /* ── LOADING DIALOG ── */
-#loading-dialog{border:3px solid #6E3FA3;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#6E3FA3;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff}
+#loading-dialog{border:3px solid #6E3FA3;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#6E3FA3;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff;margin:auto}
 #loading-dialog::backdrop{background:rgba(0,0,0,.50)}
 </style>
 </head>
@@ -78,6 +78,7 @@ tfoot td{font-weight:bold;border-color:#555}
     <h1>📋 Planning News Trimestrielles</h1>
     <div id="header-right">
       <span id="agent-badge"></span>
+      <button id="save-btn" onclick="saveAll()" style="background:#e67e22;color:#fff;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-right:4px">💾 Enregistrer</button>
       <button id="refresh-btn" onclick="loadData()">↺ Mettre à jour</button>
     </div>
   </div>
@@ -185,6 +186,37 @@ async function loadData(){
 }
 
 const timers={};
+const pending={};
+
+async function saveAll(){
+  const items=Object.values(pending);
+  Object.keys(timers).forEach(k=>{clearTimeout(timers[k]);delete timers[k];});
+  Object.keys(pending).forEach(k=>delete pending[k]);
+  if(!items.length){status("✅ Tout est déjà enregistré");return;}
+  const merge={};
+  for(const {recId,svKey,key,val} of items){
+    const rec=records.find(r=>r.id===recId);if(!rec)continue;
+    if(!merge[recId]){try{merge[recId]=JSON.parse(rec.fields[SF]||"{}");}catch{merge[recId]={};}}
+    if(!merge[recId][svKey])merge[recId][svKey]={};
+    merge[recId][svKey][key]=val;
+  }
+  const ids=Object.keys(merge);
+  if(!ids.length){status("✅ Rien à enregistrer");return;}
+  showOv(`💾 Enregistrement de ${ids.length} fiche(s)…`);
+  await new Promise(r=>setTimeout(r,60));
+  let ok=0,err=0;
+  for(const recId of ids){
+    const rec=records.find(r=>r.id===recId);if(!rec)continue;
+    rec.fields[SF]=JSON.stringify(merge[recId]);
+    try{
+      await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{method:"PATCH",headers:hdrs(),body:JSON.stringify({fields:{[SF]:JSON.stringify(merge[recId])}})});
+      ok++;
+    }catch{err++;}
+  }
+  hideOv();
+  status(`✅ ${ok} enregistré(s)${err?` — ❌ ${err} erreur(s)`:""}  — ${new Date().toLocaleTimeString()}`);
+}
+
 async function saveSuivi(recId,svKey,key,val){
   const rec=records.find(r=>r.id===recId);if(!rec)return;
   let all={};try{all=JSON.parse(rec.fields[SF]||"{}");}catch{}
@@ -202,8 +234,10 @@ async function saveSuivi(recId,svKey,key,val){
   }catch(e){hideOv();status("❌ Erreur : "+e.message);}
 }
 function db(recId,svKey,key,val){
-  const k=recId+svKey+key;clearTimeout(timers[k]);
-  timers[k]=setTimeout(()=>saveSuivi(recId,svKey,key,val),600);
+  const tk=recId+svKey+key;
+  pending[tk]={recId,svKey,key,val};
+  clearTimeout(timers[tk]);
+  timers[tk]=setTimeout(()=>{delete pending[tk];saveSuivi(recId,svKey,key,val);},600);
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────────

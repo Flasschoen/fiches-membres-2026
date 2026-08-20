@@ -61,7 +61,7 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
 /* ── STATUS ── */
 #status{position:fixed;bottom:0;left:0;right:0;background:#1E3A6E;color:#adc8ff;padding:3px 12px;font-size:11px;text-align:right}
 /* ── LOADING DIALOG ── */
-#loading-dialog{border:3px solid #1E3A6E;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#1E3A6E;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff}
+#loading-dialog{border:3px solid #1E3A6E;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#1E3A6E;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff;margin:auto}
 #loading-dialog::backdrop{background:rgba(0,0,0,.50)}
 </style>
 </head>
@@ -85,6 +85,7 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
     <h1>📋 Planning Brochures Annuelles 2027</h1>
     <div id="header-right">
       <span id="agent-badge"></span>
+      <button id="save-btn" onclick="saveAll()" style="background:#e67e22;color:#fff;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-right:4px">💾 Enregistrer</button>
       <button id="refresh-btn" onclick="loadData()">↺ Mettre à jour</button>
     </div>
   </div>
@@ -193,6 +194,37 @@ async function loadData(){
 }
 
 const timers={};
+const pending={}; // recId+edLabel+key → {recId,edLabel,key,val}
+
+async function saveAll(){
+  const items=Object.values(pending);
+  Object.keys(timers).forEach(k=>{clearTimeout(timers[k]);delete timers[k];});
+  Object.keys(pending).forEach(k=>delete pending[k]);
+  if(!items.length){status("✅ Tout est déjà enregistré");return;}
+  const merge={};
+  for(const {recId,edLabel,key,val} of items){
+    const rec=records.find(r=>r.id===recId);if(!rec)continue;
+    if(!merge[recId]){try{merge[recId]=JSON.parse(rec.fields[SF]||"{}");}catch{merge[recId]={};}}
+    if(!merge[recId][edLabel])merge[recId][edLabel]={};
+    merge[recId][edLabel][key]=val;
+  }
+  const ids=Object.keys(merge);
+  if(!ids.length){status("✅ Rien à enregistrer");return;}
+  showOv(`💾 Enregistrement de ${ids.length} fiche(s)…`);
+  await new Promise(r=>setTimeout(r,60));
+  let ok=0,err=0;
+  for(const recId of ids){
+    const rec=records.find(r=>r.id===recId);if(!rec)continue;
+    rec.fields[SF]=JSON.stringify(merge[recId]);
+    try{
+      await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{method:"PATCH",headers:headers(),body:JSON.stringify({fields:{[SF]:JSON.stringify(merge[recId])}})});
+      ok++;
+    }catch{err++;}
+  }
+  hideOv();
+  status(`✅ ${ok} enregistré(s)${err?` — ❌ ${err} erreur(s)`:""}  — ${new Date().toLocaleTimeString()}`);
+}
+
 async function saveSuivi(recId,edLabel,key,val){
   const rec=records.find(r=>r.id===recId);
   if(!rec)return;
@@ -214,8 +246,10 @@ async function saveSuivi(recId,edLabel,key,val){
   }catch(e){hideOv();status("❌ Erreur sauvegarde : "+e.message);}
 }
 function dbSave(recId,edLabel,key,val){
-  clearTimeout(timers[recId+edLabel+key]);
-  timers[recId+edLabel+key]=setTimeout(()=>saveSuivi(recId,edLabel,key,val),600);
+  const tk=recId+edLabel+key;
+  pending[tk]={recId,edLabel,key,val};
+  clearTimeout(timers[tk]);
+  timers[tk]=setTimeout(()=>{delete pending[tk];saveSuivi(recId,edLabel,key,val);},600);
 }
 
 // ── HELPERS ────────────────────────────────────────────────────────────────
