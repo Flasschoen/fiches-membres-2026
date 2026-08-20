@@ -336,8 +336,7 @@ function buildSection(ed, section){
     <tfoot>
       <tr style="background:${hdrBg}!important">
         <td colspan="3" style="background:${hdrBg};color:#fff">TOTAL : ${members.length} annonceur${members.length>1?"s":""}</td>
-        <td class="num" style="background:${hdrBg};color:#fff">${fN(tNbr)}</td>
-        <td class="num" style="background:${hdrBg};color:#fff">${tPages>0?tPages.toLocaleString("fr-BE",{maximumFractionDigits:2}):""}</td>
+        <td colspan="2" style="background:${hdrBg};color:#fff;text-align:center;font-weight:bold">TOTAL PAGES = ${tPages>0?tPages.toLocaleString("fr-BE",{maximumFractionDigits:2}):"0"}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tPrix)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tCrd)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tTot)}</td>
