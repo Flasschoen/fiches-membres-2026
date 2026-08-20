@@ -177,6 +177,7 @@ function headers(){return{Authorization:"Bearer "+TK,"Content-Type":"application
 
 async function loadData(){
   showOv("⟳ Chargement depuis Airtable…");
+  await new Promise(r=>setTimeout(r,60)); // force repaint avant fetch
   status("⟳ Chargement depuis Airtable…");
   records=[];
   let offset=null;
@@ -201,6 +202,7 @@ async function saveSuivi(recId,edLabel,key,val){
   all[edLabel][key]=val;
   rec.fields[SF]=JSON.stringify(all);
   showOv("💾 Sauvegarde en cours…");
+  await new Promise(r=>setTimeout(r,60)); // force repaint avant fetch
   status("💾 Sauvegarde…");
   try{
     await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{
