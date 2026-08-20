@@ -254,6 +254,17 @@ function fracDec(fmt){
 }
 function getSv(rec,svKey){try{return JSON.parse(rec.fields[SF]||"{}")[svKey]||{};}catch{return{};}}
 
+function okHtml(rid,svKey,cur){
+  const val=cur||"—";
+  const bg=val==="OUI"?"#c6efce":val==="NON"?"#ffc7ce":"#fefde8";
+  const tc=val==="OUI"?"#276221":val==="NON"?"#9c0006":"#555";
+  return`<select style="width:100%;font-size:11px;font-weight:bold;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:${bg};color:${tc};text-align:center"
+    onchange="const b=this.value==='OUI'?'#c6efce':this.value==='NON'?'#ffc7ce':'#fefde8';const c=this.value==='OUI'?'#276221':this.value==='NON'?'#9c0006':'#555';this.style.background=b;this.style.color=c;db('${rid}','${svKey}','ok',this.value)">
+    <option${val==="—"?" selected":""}>—</option>
+    <option${val==="OUI"?" selected":""}>OUI</option>
+    <option${val==="NON"?" selected":""}>NON</option>
+  </select>`;
+}
 function selHtml(rid,svKey,k,cur,opts){
   return`<select onchange="db('${rid}','${svKey}','${k}',this.value)">`+
     opts.map(o=>`<option${(cur||"—")===o?" selected":""}>${o}</option>`).join("")+"</select>";
@@ -305,9 +316,8 @@ function buildSection(ed, section){
       <td class="suivi">${selHtml(rid,svKey,"textes_recu",s.textes_recu,SEL.textes_recu)}</td>
       <td class="suivi">${dateHtml(rid,svKey,"epreuves_env",s.epreuves_env)}</td>
       <td class="suivi">${selHtml(rid,svKey,"epreuves_recu",s.epreuves_recu,SEL.epreuves_recu)}</td>
-      <td class="suivi">${dateHtml(rid,svKey,"coupons_env",s.coupons_env)}</td>
-      <td class="suivi">${selHtml(rid,svKey,"coupons_recu",s.coupons_recu,SEL.coupons_recu)}</td>
       <td class="suivi">${txtHtml(rid,svKey,"remarques",s.remarques)}</td>
+      <td class="suivi">${okHtml(rid,svKey,s.ok)}</td>
     </tr>`;
   }).join("");
   const fN=n=>n?n.toLocaleString("fr-BE"):"";
@@ -324,13 +334,12 @@ function buildSection(ed, section){
         <th rowspan="2" style="background:${hdrBg}">Total</th>
         <th colspan="2" class="sv-textes">TEXTES + PHOTOS</th>
         <th colspan="2" class="sv-epreuve">ÉPREUVES</th>
-        <th colspan="2" class="sv-coupon">COUPONS</th>
-        <th class="sv-rem" rowspan="2" style="min-width:110px">REMARQUES</th>
+        <th class="sv-rem" rowspan="2" style="min-width:180px">REMARQUES</th>
+        <th rowspan="2" style="background:#1a6b1a;color:#fff;width:60px;font-size:11px">OK</th>
       </tr>
       <tr>
         <th class="sv-textes">Env.</th><th class="sv-textes">Reçu</th>
         <th class="sv-epreuve">Env.</th><th class="sv-epreuve">Reçu</th>
-        <th class="sv-coupon">Env.</th><th class="sv-coupon">Reçu</th>
       </tr>
     </thead>
     <tbody>${rows}</tbody>
@@ -341,7 +350,7 @@ function buildSection(ed, section){
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tPrix)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tCrd)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tTot)}</td>
-        <td colspan="7" style="background:${hdrBg}"></td>
+        <td colspan="6" style="background:${hdrBg}"></td>
       </tr>
     </tfoot>
   </table>`;
