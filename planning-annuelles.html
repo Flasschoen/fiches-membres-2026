@@ -60,9 +60,9 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
 
 /* ── STATUS ── */
 #status{position:fixed;bottom:0;left:0;right:0;background:#1E3A6E;color:#adc8ff;padding:3px 12px;font-size:11px;text-align:right}
-/* ── MSG OVERLAY ── */
-#msg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.50);z-index:5000;align-items:center;justify-content:center}
-#msg-box{background:#fff;border:3px solid #1E3A6E;border-radius:14px;padding:36px 60px;font-size:18px;font-weight:bold;color:#1E3A6E;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:320px;line-height:1.6}
+/* ── LOADING DIALOG ── */
+#loading-dialog{border:3px solid #1E3A6E;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#1E3A6E;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff}
+#loading-dialog::backdrop{background:rgba(0,0,0,.50)}
 </style>
 </head>
 <body>
@@ -92,7 +92,7 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
   <div id="content"><p style="padding:20px;color:#888">Chargement…</p></div>
 </div>
 
-<div id="msg-overlay"><div id="msg-box"></div></div>
+<dialog id="loading-dialog"><span id="msg-box"></span></dialog>
 <div id="status">Prêt</div>
 
 <script>
@@ -330,11 +330,12 @@ function buildTable(){
 
 function status(msg){document.getElementById("status").textContent=msg;}
 function showOv(msg){
-  const bx=document.getElementById("msg-box");
-  bx.innerHTML=msg;
-  document.getElementById("msg-overlay").style.display="flex";
+  document.getElementById("msg-box").textContent=msg;
+  try{document.getElementById("loading-dialog").showModal();}catch(e){}
 }
-function hideOv(){document.getElementById("msg-overlay").style.display="none";}
+function hideOv(){
+  try{document.getElementById("loading-dialog").close();}catch(e){}
+}
 document.getElementById("pin-input").focus();
 </script>
 </body>
