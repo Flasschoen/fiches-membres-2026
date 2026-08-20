@@ -244,6 +244,13 @@ function db(recId,svKey,key,val){
 function isChk(f,k){const v=f[k];if(v==null)return false;if(typeof v==="boolean")return v;return["OUI","TRUE","1","YES"].includes(String(v).trim().toUpperCase());}
 function num(v){if(v==null||v==="")return"";const n=parseFloat(v);return isNaN(n)?"":n;}
 function nrm(s){return(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toUpperCase();}
+function fracDec(fmt){
+  if(!fmt)return 0;
+  const s=String(fmt).replace(/pub/gi,"").trim();
+  const m=s.match(/(\d+)\s*\/\s*(\d+)/);
+  if(m)return parseInt(m[1])/parseInt(m[2]);
+  const n=parseFloat(s);return isNaN(n)?0:n;
+}
 function getSv(rec,svKey){try{return JSON.parse(rec.fields[SF]||"{}")[svKey]||{};}catch{return{};}}
 
 function selHtml(rid,svKey,k,cur,opts){
@@ -272,13 +279,14 @@ function buildSection(ed, section){
 
   if(!members.length)return`<p style="color:#aaa;font-style:italic;padding:4px 0 12px">Aucun annonceur ${section}</p>`;
 
-  let tNbr=0,tPrix=0,tCrd=0,tTot=0;
+  let tNbr=0,tPages=0,tPrix=0,tCrd=0,tTot=0;
   const rows=members.map((rec,idx)=>{
     const f=rec.fields;
     const nom=f["Enseigne commerciale"]||f["NOM ATTRACTION"]||"—";
     const chk=isChk(f,cbField)?"✓":"";
     const nbr=num(f[nbrF]),fmt=f[fmtF]||"",prix=num(f[prixF]),crd=num(f[crdF]),tot=num(f[totF]);
     if(nbr!=="")tNbr+=parseFloat(nbr)||0;
+    tPages+=(parseFloat(nbr)||0)*fracDec(fmt);
     if(prix!=="")tPrix+=parseFloat(prix)||0;
     if(crd!=="")tCrd+=parseFloat(crd)||0;
     if(tot!=="")tTot+=parseFloat(tot)||0;
@@ -329,7 +337,7 @@ function buildSection(ed, section){
       <tr style="background:${hdrBg}!important">
         <td colspan="3" style="background:${hdrBg};color:#fff">TOTAL : ${members.length} annonceur${members.length>1?"s":""}</td>
         <td class="num" style="background:${hdrBg};color:#fff">${fN(tNbr)}</td>
-        <td style="background:${hdrBg}"></td>
+        <td class="num" style="background:${hdrBg};color:#fff">${tPages>0?tPages.toLocaleString("fr-BE",{maximumFractionDigits:2}):""}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tPrix)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tCrd)}</td>
         <td class="right" style="background:${hdrBg};color:#fff">${fN(tTot)}</td>
