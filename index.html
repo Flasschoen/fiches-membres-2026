@@ -1151,7 +1151,7 @@ const TRIMS=[
   {n:'N°11', p:'MARS 28', label:'N°11 - Mars 2028', bx:'NEWS BELUX N9', fr:'NEWS FRANCE N9'},
 ];
 const tb=document.getElementById('trim-body');
-const _fmtOpts=`<option value="">—</option><option>1/4 rédac</option><option>1/4 pub</option><option>1/2 rédac</option><option>1/2 pub</option><option>1/1 rédac</option><option>1/1 pub</option>`;
+const _fmtOpts=`<option value="">—</option><option>1/4 maternel</option><option>1/4 primaire</option><option>1/4 secondaire</option><option>1/4 special</option><option>1/4 sejours</option><option>1/4 animation</option><option>1/4 rédac</option><option>1/2 maternel</option><option>1/2 primaire</option><option>1/2 secondaire</option><option>1/2 special</option><option>1/2 sejours</option><option>1/2 animation</option><option>1/2 rédac</option><option>1 p. mat</option><option>1 p. prim</option><option>1 p. sec</option><option>1 p. spec</option><option>1 p. sejours</option><option>1 p. animation</option>`;
 const _inp=(id,w,type='text')=>`<input type="${type}" id="${id}" style="width:${w}px;font-size:10px;" oninput="markDirty()">`;
 TRIMS.forEach((t,i)=>{
   tb.innerHTML+=`<tr>
@@ -1159,13 +1159,13 @@ TRIMS.forEach((t,i)=>{
     <td class="pl">${t.p}</td>
     <td><input type="checkbox" id="tr-bx${i}" onchange="markDirty();calcGrandTotal()"></td>
     <td><input type="number" id="tr-bxn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
-    <td><select id="tr-bxf${i}" style="width:78px;font-size:10px;" onchange="markDirty();calcTrimTot('bx',${i});calcGrandTotal()">${_fmtOpts}</select></td>
+    <td><select id="tr-bxf${i}" style="width:96px;font-size:10px;background:#fffde7;" onchange="markDirty();calcTrimTot('bx',${i});calcGrandTotal()">${_fmtOpts}</select></td>
     <td><input type="number" id="tr-bxp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('bx',${i});calcGrandTotal()"></td>
     <td><input type="number" id="tr-bxc${i}" style="width:36px;font-size:10px;background:#fff8e7;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td><input type="number" id="tr-bxt${i}" style="width:40px;font-size:10px;background:#e8f5e9;" readonly></td>
     <td style="background:#f3e5f5"><input type="checkbox" id="tr-fr${i}" onchange="markDirty();calcGrandTotal()"></td>
     <td style="background:#f3e5f5"><input type="number" id="tr-frn${i}" style="width:26px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
-    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:78px;font-size:10px;" onchange="markDirty();calcTrimTot('fr',${i});calcGrandTotal()">${_fmtOpts}</select></td>
+    <td style="background:#f3e5f5"><select id="tr-frf${i}" style="width:96px;font-size:10px;background:#fffde7;" onchange="markDirty();calcTrimTot('fr',${i});calcGrandTotal()">${_fmtOpts}</select></td>
     <td style="background:#f3e5f5"><input type="number" id="tr-frp${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcTrimTot('fr',${i});calcGrandTotal()"></td>
     <td style="background:#ead5f0"><input type="number" id="tr-frc${i}" style="width:36px;font-size:10px;" oninput="markDirty();calcGrandTotal()" placeholder=""></td>
     <td style="background:#f3e5f5"><input type="number" id="tr-frt${i}" style="width:40px;font-size:10px;background:#f9e8ff;" readonly></td>
