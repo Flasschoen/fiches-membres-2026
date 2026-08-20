@@ -49,10 +49,13 @@ td.num{text-align:center}
 td.right{text-align:right}
 td.nm{font-weight:bold;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 td.suivi{padding:2px}
-td.suivi input,td.suivi select{width:100%;font-size:10px;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:#fefde8}
+td.suivi input,td.suivi select{width:100%;font-size:10px;font-weight:bold;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:#fefde8}
 tfoot td{font-weight:bold;border-color:#555}
 
 #status{position:fixed;bottom:0;left:0;right:0;background:#6E3FA3;color:#d9c4f5;padding:3px 12px;font-size:11px;text-align:right}
+/* ── MSG OVERLAY ── */
+#msg-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.50);z-index:5000;align-items:center;justify-content:center}
+#msg-box{background:#fff;border:3px solid #6E3FA3;border-radius:14px;padding:36px 60px;font-size:18px;font-weight:bold;color:#6E3FA3;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:320px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -82,6 +85,7 @@ tfoot td{font-weight:bold;border-color:#555}
   <div id="content"><p style="padding:20px;color:#888">Chargement…</p></div>
 </div>
 
+<div id="msg-overlay"><div id="msg-box"></div></div>
 <div id="status">Prêt</div>
 
 <script>
@@ -124,8 +128,8 @@ const EDITIONS = [
 ];
 
 const SEL={
-  textes_recu:  ["—","Reçu","Non reçu"],
-  epreuves_recu:["—","Reçu","Bon à tirer","Corrections"],
+  textes_recu:  ["—","Demandé","Reçu","Non reçu"],
+  epreuves_recu:["—","Envoyé","Reçu","Bon à tirer","Correction à faire","OK"],
   coupons_recu: ["—","Reçu","Retourné"],
 };
 
@@ -269,7 +273,7 @@ function buildSection(ed, section){
         <th rowspan="2" style="background:${hdrBg}">Prix</th>
         <th rowspan="2" style="background:${hdrBg}">Crédit</th>
         <th rowspan="2" style="background:${hdrBg}">Total</th>
-        <th colspan="2" class="sv-textes">TEXTES</th>
+        <th colspan="2" class="sv-textes">TEXTES + PHOTOS</th>
         <th colspan="2" class="sv-epreuve">ÉPREUVES</th>
         <th colspan="2" class="sv-coupon">COUPONS</th>
         <th class="sv-rem" rowspan="2" style="min-width:110px">REMARQUES</th>
@@ -308,7 +312,16 @@ function buildTable(){
     ${france}`;
 }
 
-function status(msg){document.getElementById("status").textContent=msg;}
+function status(msg){
+  document.getElementById("status").textContent=msg;
+  const ov=document.getElementById("msg-overlay");
+  const bx=document.getElementById("msg-box");
+  if(msg.startsWith("⟳")||msg.startsWith("💾")){
+    bx.textContent=msg; ov.style.display="flex";
+  } else {
+    ov.style.display="none";
+  }
+}
 document.getElementById("pin-input").focus();
 </script>
 </body>
