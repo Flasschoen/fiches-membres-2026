@@ -170,6 +170,7 @@ function switchTab(i){
 // ── API ────────────────────────────────────────────────────────────────────────
 function hdrs(){return{Authorization:"Bearer "+TK,"Content-Type":"application/json"};}
 async function loadData(){
+  showOv("⟳ Chargement depuis Airtable…");
   status("⟳ Chargement depuis Airtable…");
   records=[];let offset=null;
   do{
@@ -177,6 +178,7 @@ async function loadData(){
     const d=await fetch(url,{headers:hdrs()}).then(r=>r.json());
     records.push(...(d.records||[]));offset=d.offset||null;
   }while(offset);
+  hideOv();
   status(`✅ ${records.length} membres chargés — ${new Date().toLocaleTimeString()}`);
   buildTable();
 }
@@ -187,13 +189,15 @@ async function saveSuivi(recId,svKey,key,val){
   let all={};try{all=JSON.parse(rec.fields[SF]||"{}");}catch{}
   if(!all[svKey])all[svKey]={};
   all[svKey][key]=val;rec.fields[SF]=JSON.stringify(all);
+  showOv("💾 Sauvegarde en cours…");
   status("💾 Sauvegarde…");
   try{
     await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{
       method:"PATCH",headers:hdrs(),body:JSON.stringify({fields:{[SF]:JSON.stringify(all)}})
     });
+    hideOv();
     status("✅ Sauvegardé — "+new Date().toLocaleTimeString());
-  }catch(e){status("❌ Erreur : "+e.message);}
+  }catch(e){hideOv();status("❌ Erreur : "+e.message);}
 }
 function db(recId,svKey,key,val){
   const k=recId+svKey+key;clearTimeout(timers[k]);
@@ -312,16 +316,13 @@ function buildTable(){
     ${france}`;
 }
 
-function status(msg){
-  document.getElementById("status").textContent=msg;
-  const ov=document.getElementById("msg-overlay");
+function status(msg){document.getElementById("status").textContent=msg;}
+function showOv(msg){
   const bx=document.getElementById("msg-box");
-  if(msg.startsWith("⟳")||msg.startsWith("💾")){
-    bx.textContent=msg; ov.style.display="flex";
-  } else {
-    ov.style.display="none";
-  }
+  bx.innerHTML=msg;
+  document.getElementById("msg-overlay").style.display="flex";
 }
+function hideOv(){document.getElementById("msg-overlay").style.display="none";}
 document.getElementById("pin-input").focus();
 </script>
 </body>

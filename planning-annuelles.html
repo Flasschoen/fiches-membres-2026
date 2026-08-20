@@ -176,6 +176,7 @@ function switchTab(i){
 function headers(){return{Authorization:"Bearer "+TK,"Content-Type":"application/json"};}
 
 async function loadData(){
+  showOv("⟳ Chargement depuis Airtable…");
   status("⟳ Chargement depuis Airtable…");
   records=[];
   let offset=null;
@@ -185,6 +186,7 @@ async function loadData(){
     records.push(...(d.records||[]));
     offset=d.offset||null;
   }while(offset);
+  hideOv();
   status(`✅ ${records.length} membres chargés — ${new Date().toLocaleTimeString()}`);
   buildTable();
 }
@@ -198,14 +200,16 @@ async function saveSuivi(recId,edLabel,key,val){
   if(!all[edLabel])all[edLabel]={};
   all[edLabel][key]=val;
   rec.fields[SF]=JSON.stringify(all);
+  showOv("💾 Sauvegarde en cours…");
   status("💾 Sauvegarde…");
   try{
     await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{
       method:"PATCH",headers:headers(),
       body:JSON.stringify({fields:{[SF]:JSON.stringify(all)}})
     });
+    hideOv();
     status("✅ Sauvegardé — "+new Date().toLocaleTimeString());
-  }catch(e){status("❌ Erreur sauvegarde : "+e.message);}
+  }catch(e){hideOv();status("❌ Erreur sauvegarde : "+e.message);}
 }
 function dbSave(recId,edLabel,key,val){
   clearTimeout(timers[recId+edLabel+key]);
@@ -322,16 +326,13 @@ function buildTable(){
   </table>`;
 }
 
-function status(msg){
-  document.getElementById("status").textContent=msg;
-  const ov=document.getElementById("msg-overlay");
+function status(msg){document.getElementById("status").textContent=msg;}
+function showOv(msg){
   const bx=document.getElementById("msg-box");
-  if(msg.startsWith("⟳")||msg.startsWith("💾")){
-    bx.textContent=msg; ov.style.display="flex";
-  } else {
-    ov.style.display="none";
-  }
+  bx.innerHTML=msg;
+  document.getElementById("msg-overlay").style.display="flex";
 }
+function hideOv(){document.getElementById("msg-overlay").style.display="none";}
 document.getElementById("pin-input").focus();
 </script>
 </body>
