@@ -3271,17 +3271,18 @@ function factBuildPubLines(){
     const pg = parseFloat(document.getElementById('p-'+cat.pfx+'-pg')?.value)||0;
     const pp = parseFloat(document.getElementById('p-'+cat.pfx+'-pp')?.value)||0;
     const tarif = parseFloat(document.getElementById('p-'+cat.pfx+'-t')?.value)||0;
-    const credit = parseFloat(document.getElementById('p-'+cat.pfx+'-cred')?.value)||0;
-    const montant = (pg+pp)*tarif - credit;
+    // Le champ Crédit n'est PAS pris en compte dans la facturation : il est purement
+    // interne (repère de planning pour l'équipe), sans lien avec le montant réellement dû.
+    const montant = (pg+pp)*tarif;
     if(montant>0) lines.push({ date:today, libelle:cat.label+' ('+factPageFrac(pg+pp)+') — insertion publicitaire', qte:1, prixUnit:montant });
   });
   TRIMS.forEach((t,i)=>{
     ['bx','fr'].forEach(zone=>{
       const nbr = parseFloat(document.getElementById('tr-'+zone+'n'+i)?.value)||0;
       const prix = parseFloat(document.getElementById('tr-'+zone+'p'+i)?.value)||0;
-      const credit = parseFloat(document.getElementById('tr-'+zone+'c'+i)?.value)||0;
       const format = document.getElementById('tr-'+zone+'f'+i)?.value||'';
-      const montant = nbr*prix - credit;
+      // Idem : le Crédit trimestriel n'est pas pris en compte dans la facturation.
+      const montant = nbr*prix;
       if(montant>0) lines.push({ date:today, libelle:t.label+' — '+(zone==='bx'?'BELUX':'FRANCE')+(format?' ('+format+')':'')+' — insertion publicitaire', qte:1, prixUnit:montant });
     });
   });
