@@ -179,6 +179,11 @@ table.fact-table td{padding:5px;border:1px solid #ccc;text-align:center;}
 .recap-table input[type=number]{width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;}
 @media print{.recap-zone{box-shadow:none;margin:0;padding:10mm 15mm;page-break-before:always;}}
 
+/* ── CHARGEMENT (message "en cours" affiché en grand, centré — cf. site Profs) ── */
+#overlay-loading{position:fixed;inset:0;background:rgba(20,30,50,.35);display:flex;align-items:center;justify-content:center;z-index:9998;pointer-events:none;}
+#overlay-loading.hidden{display:none;}
+.loading-box{background:#fff;border-radius:10px;padding:26px 40px;box-shadow:0 4px 28px rgba(0,0,0,.3);font-size:19px;font-weight:700;color:#1e3a6e;text-align:center;min-width:320px;}
+
 /* ── LOGIN PIN ── */
 #overlay-pin{position:fixed;inset:0;background:rgba(10,20,50,.82);z-index:99999;display:flex;align-items:center;justify-content:center;}
 #overlay-pin.hidden{display:none;}
@@ -208,6 +213,7 @@ table.fact-table td{padding:5px;border:1px solid #ccc;text-align:center;}
 </style>
 </head>
 <body>
+<div id="overlay-loading" class="hidden"><div class="loading-box" id="loading-msg"></div></div>
 <div id="app">
 
 <!-- ════════════════════════════════
@@ -2376,9 +2382,23 @@ function newMember(){
   updateFactureButtons();
 }
 
+// Les messages "en cours" (chargement, recherche...) s'affichent aussi en grand
+// dans un rectangle centré (demande de Marc, 2026-08-22, même traitement que le
+// site Profs) — les autres messages (erreurs, succès, indications) restent
+// uniquement dans la petite barre de statut comme avant.
 function setSt(msg){
   const el=document.getElementById('status');
   if(el) el.textContent=msg;
+  const box=document.getElementById('overlay-loading');
+  if(box){
+    const isLoading = !!msg && (msg.indexOf('⏳')===0 || msg.indexOf('🔎')===0);
+    if(isLoading){
+      document.getElementById('loading-msg').textContent = msg;
+      box.classList.remove('hidden');
+    } else {
+      box.classList.add('hidden');
+    }
+  }
 }
 
 // ══════════════════════════════════════
