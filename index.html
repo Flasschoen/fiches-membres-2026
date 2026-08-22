@@ -173,7 +173,12 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 .fact-cgv{font-size:9.5px;margin-top:18px;line-height:1.5;color:#333;}
 .fact-footer{font-size:10px;font-weight:700;text-align:center;border-top:2px solid #999;padding-top:8px;margin-top:18px;background:#f2f2f2;}
 .btn-fact{background:#7b2d8b;color:#fff;}
-@media print{#view-facture>.hdr-bar{display:none;} .fact-doc{box-shadow:none;margin:0;padding:12mm;max-width:none;}}
+.fact-editable{outline:1px dashed #e08a2c;background:#fff8ec;cursor:text;}
+.fact-editable:focus{outline:2px solid #2d6b8b;background:#eef7fb;}
+.fact-del-btn{background:#c0392b;color:#fff;border:none;border-radius:3px;width:20px;height:20px;font-size:11px;cursor:pointer;line-height:1;}
+.fact-del-btn:disabled{opacity:.3;cursor:not-allowed;}
+.fact-addline-btn{background:#2d6b8b;color:#fff;border:none;padding:5px 14px;border-radius:4px;cursor:pointer;font-size:12.5px;}
+@media print{#view-facture>.hdr-bar{display:none;} .fact-doc{box-shadow:none;margin:0;padding:12mm;max-width:none;} .fact-noprint{display:none !important;}}
 
 /* ── RECAP WORKSHOP ── */
 .recap-zone{max-width:820px;margin:20px auto;padding:20px 40px;background:#fff;box-shadow:0 3px 12px rgba(0,0,0,.18);}
@@ -2865,6 +2870,7 @@ const FACT_ENTITES = {
 
 let _factType=null;   // 'BE' ou 'LU' — défini au clic sur le bouton de la fiche
 let _factNumero=null; // numéro définitif une fois la facture générée (sinon null = aperçu)
+let _factLines=[];    // lignes modifiables de la facture (date, libellé, quantité, prix unité) — voir factOnLineInput/factAddLine/factRemoveLine (2026-08-22)
 
 function factEsc(s){
   return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -2913,6 +2919,92 @@ function updateFactureButtons(){
   if(btnLU) btnLU.style.display = gv('f-cotlu') ? '' : 'none';
 }
 
+// Formate un nombre pour édition (contenteditable) en style FR : "150,00"
+function factNumEditStr(n){
+  return (Number(n)||0).toFixed(2).replace('.',',');
+}
+// Convertit un texte tapé par l'utilisateur ("150,00", "150.00 €", "3"...) en nombre.
+function factParseNum(s){
+  const cleaned = String(s||'').replace(/[€\s]/g,'').replace(',','.').replace(/[^0-9.\-]/g,'');
+  const v = parseFloat(cleaned);
+  return isNaN(v) ? 0 : v;
+}
+// Calcule le bloc TVA (libellé, montant, total à payer, mention légale) à partir du total HTVA des lignes.
+function factComputeTvaBlock(montantHT){
+  const cfg = FACT_ENTITES[_factType];
+  if(_factType==='BE'){
+    const tva = gv('f-tva')||'';
+    const info = factTvaInfo(tva);
+    if(info.taux===21){
+      const tvaAmt = montantHT*0.21;
+      return { tvaLabel:'TVA 21 %', tvaAmountStr:factEUR(tvaAmt), totalAPayer:montantHT+tvaAmt, mentionBox:info.mention };
+    }
+    return { tvaLabel:'TVA 0 % (intracom.)', tvaAmountStr:'-', totalAPayer:montantHT, mentionBox:info.mention };
+  }
+  return { tvaLabel:'TVA 0 %', tvaAmountStr:'-', totalAPayer:montantHT, mentionBox:cfg.mentionTVA };
+}
+// Recalcule uniquement les cellules totales (sans tout re-générer) pendant la frappe, pour ne pas perdre le focus.
+function factRecalcAggregate(){
+  const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
+  const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
+  const set = (id,txt)=>{ const el=document.getElementById(id); if(el) el.textContent = txt; };
+  set('fact-total-htva', factEUR(montantHT));
+  set('fact-tva-label', tvaLabel);
+  set('fact-tva-amount', tvaAmountStr);
+  set('fact-mention-box', mentionBox);
+  set('fact-total-apayer', factEUR(totalAPayer));
+}
+// Appelé sur chaque frappe dans une case modifiable (date/libellé/quantité/prix unité).
+function factOnLineInput(el){
+  const row = el.closest('tr');
+  if(!row) return;
+  const idx = Number(row.dataset.idx);
+  if(!_factLines[idx]) return;
+  const field = el.dataset.field;
+  if(field==='qte') _factLines[idx].qte = factParseNum(el.textContent);
+  else if(field==='prix') _factLines[idx].prixUnit = factParseNum(el.textContent);
+  else if(field==='date') _factLines[idx].date = el.textContent.trim();
+  else if(field==='libelle') _factLines[idx].libelle = el.textContent.trim();
+
+  const lineTotal = (Number(_factLines[idx].qte)||0)*(Number(_factLines[idx].prixUnit)||0);
+  const totalCell = row.querySelector('.fact-line-total');
+  if(totalCell) totalCell.textContent = factEUR(lineTotal);
+  factRecalcAggregate();
+}
+// Ajoute une ligne vide (aperçu uniquement — la facture n'est pas encore générée).
+function factAddLine(){
+  _factLines.push({ date: factDateFR(factTodayISO()), libelle:'', qte:1, prixUnit:0 });
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(_factNumero);
+}
+// Supprime une ligne (aperçu uniquement) — au moins une ligne doit rester.
+function factRemoveLine(idx){
+  if(_factLines.length<=1) return;
+  _factLines.splice(idx,1);
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(_factNumero);
+}
+function factLineRowsHtml(editable){
+  return _factLines.map((l,i)=>{
+    const lineTotal = (Number(l.qte)||0)*(Number(l.prixUnit)||0);
+    if(!editable){
+      return `<tr>
+        <td>${factEsc(l.date)}</td>
+        <td style="text-align:left;">${factEsc(l.libelle)}</td>
+        <td>${factEsc(l.qte)}</td>
+        <td>${factEUR(Number(l.prixUnit)||0)}</td>
+        <td class="fact-line-total">${factEUR(lineTotal)}</td>
+      </tr>`;
+    }
+    return `<tr class="fact-line-row" data-idx="${i}">
+      <td class="fact-editable" contenteditable="true" data-field="date" oninput="factOnLineInput(this)">${factEsc(l.date)}</td>
+      <td class="fact-editable" style="text-align:left;" contenteditable="true" data-field="libelle" oninput="factOnLineInput(this)">${factEsc(l.libelle)}</td>
+      <td class="fact-editable" contenteditable="true" data-field="qte" oninput="factOnLineInput(this)">${factEsc(l.qte)}</td>
+      <td class="fact-editable" contenteditable="true" data-field="prix" oninput="factOnLineInput(this)">${factNumEditStr(l.prixUnit)}</td>
+      <td class="fact-line-total">${factEUR(lineTotal)}</td>
+      <td class="fact-noprint" style="border:none;padding:2px;"><button type="button" class="fact-del-btn" onclick="factRemoveLine(${i})" title="Supprimer la ligne"${_factLines.length<=1?' disabled':''}>✕</button></td>
+    </tr>`;
+  }).join('');
+}
+
 function factBuildDoc(numero){
   const cfg=FACT_ENTITES[_factType];
   const nom = gv('f-attr')||gv('f-ens')||'—';
@@ -2922,35 +3014,16 @@ function factBuildDoc(numero){
   const cp = gv('f-cp')||'';
   const com = gv('f-com')||'';
   const tva = gv('f-tva')||'';
-  const annee = _factType==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
-  const montant = Number((_factType==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
   const echIso = _factType==='BE' ? gv('f-echbe') : gv('f-echlu');
   const echFr = factDateFR(echIso);
   const todayISO = factTodayISO();
   const todayFr = factDateFR(todayISO);
   const echeancePaieFr = factDateFR(factAddDaysISO(todayISO,15));
   const numeroTxt = numero || '(aperçu — n° attribué à la génération)';
+  const editable = (numero===null);
 
-  let tvaLabel, tvaAmountStr, totalAPayer, mentionBox;
-  if(_factType==='BE'){
-    const info = factTvaInfo(tva);
-    if(info.taux===21){
-      const tvaAmt = montant*0.21;
-      tvaLabel = 'TVA 21 %';
-      tvaAmountStr = factEUR(tvaAmt);
-      totalAPayer = montant + tvaAmt;
-    } else {
-      tvaLabel = 'TVA 0 % (intracom.)';
-      tvaAmountStr = '-';
-      totalAPayer = montant;
-    }
-    mentionBox = info.mention;
-  } else {
-    tvaLabel = 'TVA 0 %';
-    tvaAmountStr = '-';
-    totalAPayer = montant;
-    mentionBox = cfg.mentionTVA;
-  }
+  const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
+  const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
 
   return `
   <div class="fact-doc" id="fact-doc">
@@ -2981,17 +3054,18 @@ function factBuildDoc(numero){
     </table>
     <div style="font-size:11px;font-style:italic;margin:12px 0 5px;">Doit pour ce qui suit :</div>
     <table class="fact-table">
-      <thead><tr><th style="width:90px;">DATE</th><th>LIBELLÉ</th><th style="width:80px;">QUANTITÉ</th><th style="width:90px;">PRIX UNITÉ</th><th style="width:90px;">TOTAL</th></tr></thead>
+      <thead><tr><th style="width:90px;">DATE</th><th>LIBELLÉ</th><th style="width:80px;">QUANTITÉ</th><th style="width:90px;">PRIX UNITÉ</th><th style="width:90px;">TOTAL</th>${editable?'<th class="fact-noprint" style="width:26px;"></th>':''}</tr></thead>
       <tbody>
-        <tr><td>${todayFr}</td><td style="text-align:left;">Cotisation membre ${cfg.label}${annee?' '+factEsc(annee):''}</td><td>1</td><td>${factEUR(montant)}</td><td>${factEUR(montant)}</td></tr>
-        <tr class="fact-total-row"><td colspan="4" style="text-align:right;">TOTAL HTVA =</td><td>${factEUR(montant)}</td></tr>
+        ${factLineRowsHtml(editable)}
+        <tr class="fact-total-row"><td colspan="4" style="text-align:right;">TOTAL HTVA =</td><td id="fact-total-htva">${factEUR(montantHT)}</td>${editable?'<td class="fact-noprint"></td>':''}</tr>
         <tr>
-          <td colspan="3" rowspan="2" style="text-align:left;font-size:9.5px;vertical-align:top;color:#333;">${factEsc(mentionBox)}</td>
-          <td style="text-align:right;">${tvaLabel}</td><td>${tvaAmountStr}</td>
+          <td colspan="3" rowspan="2" style="text-align:left;font-size:9.5px;vertical-align:top;color:#333;" id="fact-mention-box">${factEsc(mentionBox)}</td>
+          <td style="text-align:right;" id="fact-tva-label">${tvaLabel}</td><td id="fact-tva-amount">${tvaAmountStr}</td>${editable?'<td class="fact-noprint" rowspan="2"></td>':''}
         </tr>
-        <tr class="fact-apayer"><td style="text-align:right;">A PAYER =</td><td>${factEUR(totalAPayer)}</td></tr>
+        <tr class="fact-apayer"><td style="text-align:right;">A PAYER =</td><td id="fact-total-apayer">${factEUR(totalAPayer)}</td></tr>
       </tbody>
     </table>
+    ${editable?'<div class="fact-noprint" style="margin-top:6px;"><button type="button" class="fact-addline-btn" onclick="factAddLine()">+ Ajouter une ligne</button></div>':''}
     <div style="text-align:right;font-size:13px;margin-top:6px;">Échéance : <b>${echeancePaieFr}</b></div>
     <div style="margin-top:18px;font-size:13px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
     <div class="fact-iban">IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</div>
@@ -3012,6 +3086,15 @@ function openFacture(type){
   if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
   _factType=type;
   _factNumero=null;
+  const cfg = FACT_ENTITES[type];
+  const annee = type==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
+  const montantInit = Number((type==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
+  _factLines = [{
+    date: factDateFR(factTodayISO()),
+    libelle: 'Cotisation membre ' + cfg.label + (annee?(' '+annee):''),
+    qte: 1,
+    prixUnit: montantInit
+  }];
   document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
   document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — vérifiez les données puis cliquez sur "Générer la facture".';
   document.getElementById('btn-fact-generer').style.display='';
@@ -3144,7 +3227,7 @@ const FACT_PEPPOL_EP_ID = 'BE0875741536';
 const FACT_PEPPOL_BCE_SCHEME = '0208';
 const FACT_PEPPOL_BCE_ID = '0875741536';
 
-function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO){
+function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO, lines){
   const montantStr = Number(montant||0).toFixed(2);
   const info = factTvaInfo(tva);
   const tvaAmt = info.taux===21 ? montant*0.21 : 0;
@@ -3152,6 +3235,26 @@ function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO,
   const totalTTC = (montant + tvaAmt).toFixed(2);
   const taxCatId = info.taux===21 ? 'S' : 'K'; // S = taux standard, K = exonération intracommunautaire (UNCL5305)
   const ibanClean = (cfg.iban||'').replace(/[ .]/g,'');
+  // Une ligne par case du tableau de la facture (date/libellé/quantité/prix unité modifiables — 2026-08-22).
+  const linesArr = (lines && lines.length) ? lines : [{libelle:'Cotisation membre '+cfg.label, qte:1, prixUnit:montant}];
+  const invoiceLinesXml = linesArr.map((l,i)=>{
+    const qte = Number(l.qte)||0;
+    const prix = Number(l.prixUnit)||0;
+    const lineAmt = (qte*prix).toFixed(2);
+    return `  <cac:InvoiceLine>
+    <cbc:ID>${i+1}</cbc:ID>
+    <cbc:InvoicedQuantity unitCode="C62">${qte}</cbc:InvoicedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">${lineAmt}</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>${factEsc(l.libelle||('Cotisation membre '+cfg.label))}</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>${taxCatId}</cbc:ID><cbc:Percent>${info.taux}</cbc:Percent>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="EUR">${prix.toFixed(2)}</cbc:PriceAmount></cac:Price>
+  </cac:InvoiceLine>`;
+  }).join('\n');
 
   return `<?xml version="1.0" encoding="UTF-8"?>
 <Invoice xmlns="urn:oasis:names:specification:ubl:schema:xsd:Invoice-2"
@@ -3209,23 +3312,11 @@ function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO,
     <cbc:TaxInclusiveAmount currencyID="EUR">${totalTTC}</cbc:TaxInclusiveAmount>
     <cbc:PayableAmount currencyID="EUR">${totalTTC}</cbc:PayableAmount>
   </cac:LegalMonetaryTotal>
-  <cac:InvoiceLine>
-    <cbc:ID>1</cbc:ID>
-    <cbc:InvoicedQuantity unitCode="C62">1</cbc:InvoicedQuantity>
-    <cbc:LineExtensionAmount currencyID="EUR">${montantStr}</cbc:LineExtensionAmount>
-    <cac:Item>
-      <cbc:Name>Cotisation membre ${factEsc(cfg.label)}</cbc:Name>
-      <cac:ClassifiedTaxCategory>
-        <cbc:ID>${taxCatId}</cbc:ID><cbc:Percent>${info.taux}</cbc:Percent>
-        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
-      </cac:ClassifiedTaxCategory>
-    </cac:Item>
-    <cac:Price><cbc:PriceAmount currencyID="EUR">${montantStr}</cbc:PriceAmount></cac:Price>
-  </cac:InvoiceLine>
+${invoiceLinesXml}
 </Invoice>`;
 }
 
-async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva){
+async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva, lines){
   const msgEl = document.getElementById('fact-save-msg');
   const fileBase = factNumFile(numero) + '_' + factSanitizeName(nom);
 
@@ -3241,7 +3332,7 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
 
   let ublText = null;
   if(_factType==='BE'){
-    try{ ublText = factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO); }
+    try{ ublText = factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO, lines); }
     catch(e){ console.error(e); }
   }
 
@@ -3288,7 +3379,7 @@ async function genererFacture(){
     const numero = cfg.formatNum(next);
     _factNumero = numero;
 
-    const montant = Number((_factType==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
+    const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
     const annee = _factType==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
     const todayISO = factTodayISO();
     const echISO = factAddDaysISO(todayISO,15);
@@ -3319,7 +3410,7 @@ async function genererFacture(){
     document.getElementById('fact-save-msg').style.color='#c55a11';
     document.getElementById('fact-save-msg').textContent = '💾 Enregistrement des fichiers comptables en cours...';
     try{
-      await factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva);
+      await factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva, _factLines.slice());
     }catch(e){
       console.error(e);
       document.getElementById('fact-save-msg').style.color='#c0392b';
