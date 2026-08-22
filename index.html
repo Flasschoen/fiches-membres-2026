@@ -2861,11 +2861,11 @@ const FACT_ENTITES = {
     label:'BE',
     site:'be',
     siegeVille:'Stoumont',
-    ligneStatut:'EDUCPASS  —  Roanne Coo, Grand route 5  —  4987 STOUMONT  —  TVA BE 0875.741.536',
+    ligneStatut:'EDUCPASS a.s.b.l.  —  Roanne Coo, Grand route 5  —  4987 STOUMONT  —  TVA BE 0875.741.536',
     iban:'BE73 7512-0205-3060',
     bic:'AXABBE22 (Crelan)',
     mentionTVA:'TVA non applicable.',
-    footer:'EDUCPASS  -  Roanne Coo, Grand route 5  -  4987 STOUMONT  -  TVA BE 0875.741.536',
+    footer:'EDUCPASS a.s.b.l.  -  Roanne Coo, Grand route 5  -  4987 STOUMONT  -  TVA BE 0875.741.536',
     tribunaux:'de Belgique',
     ctrField:'Dernier N° BE',
     formatNum:n=>'BE-26/'+String(n).padStart(3,'0'),
@@ -3247,6 +3247,23 @@ const FACT_PUB_ANNUELLES = [
   {pfx:'tp',  label:'Publication annuelle TIPS'},
   {pfx:'sej', label:'Publication annuelle SÉJOURS'}
 ];
+// Convertit un nombre de pages (multiple de 0,25 : 0.25/0.5/0.75/1/1.25/...) en texte
+// lisible façon "1/4 page", "1/2 page", "1 page", "1 1/4 page", "2 pages"... (demande
+// de Marc, 2026-08-22 suite) — utilisé dans le libellé des lignes de Facture Publicité.
+function factPageFrac(n){
+  n = Number(n)||0;
+  if(n<=0) return '0 page';
+  const whole = Math.floor(n);
+  const fracVal = Math.round((n-whole)*4)/4;
+  const fracMap = {0:'', 0.25:'1/4', 0.5:'1/2', 0.75:'3/4'};
+  const fracStr = fracMap[fracVal] || '';
+  const plural = n>1;
+  let txt = '';
+  if(whole>0) txt += whole+' ';
+  if(fracStr) txt += fracStr+' ';
+  txt += 'page'+(plural?'s':'');
+  return txt.trim();
+}
 function factBuildPubLines(){
   const lines=[];
   const today = factDateFR(factTodayISO());
@@ -3256,15 +3273,16 @@ function factBuildPubLines(){
     const tarif = parseFloat(document.getElementById('p-'+cat.pfx+'-t')?.value)||0;
     const credit = parseFloat(document.getElementById('p-'+cat.pfx+'-cred')?.value)||0;
     const montant = (pg+pp)*tarif - credit;
-    if(montant>0) lines.push({ date:today, libelle:cat.label+' — insertion publicitaire', qte:1, prixUnit:montant });
+    if(montant>0) lines.push({ date:today, libelle:cat.label+' ('+factPageFrac(pg+pp)+') — insertion publicitaire', qte:1, prixUnit:montant });
   });
   TRIMS.forEach((t,i)=>{
     ['bx','fr'].forEach(zone=>{
       const nbr = parseFloat(document.getElementById('tr-'+zone+'n'+i)?.value)||0;
       const prix = parseFloat(document.getElementById('tr-'+zone+'p'+i)?.value)||0;
       const credit = parseFloat(document.getElementById('tr-'+zone+'c'+i)?.value)||0;
+      const format = document.getElementById('tr-'+zone+'f'+i)?.value||'';
       const montant = nbr*prix - credit;
-      if(montant>0) lines.push({ date:today, libelle:t.label+' — '+(zone==='bx'?'BELUX':'FRANCE')+' — insertion publicitaire', qte:1, prixUnit:montant });
+      if(montant>0) lines.push({ date:today, libelle:t.label+' — '+(zone==='bx'?'BELUX':'FRANCE')+(format?' ('+format+')':'')+' — insertion publicitaire', qte:1, prixUnit:montant });
     });
   });
   if(lines.length===0) lines.push({ date:today, libelle:'', qte:1, prixUnit:0 });
