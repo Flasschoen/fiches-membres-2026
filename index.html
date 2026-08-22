@@ -3047,6 +3047,7 @@ function factBuildDoc(numero){
   const concerneTxt = isNC
     ? 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '')
     : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
+  const enseigneTxt = gv('f-ens')||'';
 
   return `
   <div class="fact-doc" id="fact-doc">
@@ -3072,7 +3073,7 @@ function factBuildDoc(numero){
     <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
       <tr>
         <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">${isNC?'NOTE DE CRÉDIT n°':'FACTURE n°'} : ${factEsc(numeroTxt)}</td>
-        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>${concerneTxt}</b></td>
+        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>${concerneTxt}</b>${enseigneTxt?`<br><b>${factEsc(enseigneTxt)}</b>`:''}</td>
       </tr>
     </table>
     <div style="font-size:11px;font-style:italic;margin:12px 0 5px;">Doit pour ce qui suit :</div>
