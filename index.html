@@ -155,6 +155,16 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .modal-rr-box .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
 @media print{.conf-doc{padding:10mm 15mm !important;} #view-confirmation>.hdr-bar{display:none;}}
 
+/* ── NOTES DE CRÉDIT (2026-08-22) ── */
+.modal-nc-box{background:#fff;border-radius:8px;padding:24px;min-width:480px;max-width:720px;max-height:80vh;overflow-y:auto;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+.modal-nc-box h3{margin:0 0 14px;color:#1e3a6e;font-size:14px;}
+table.nc-table{width:100%;border-collapse:collapse;font-size:12.5px;}
+table.nc-table th{background:#404040;color:#fff;padding:6px;text-align:left;}
+table.nc-table td{padding:6px;border-bottom:1px solid #ddd;}
+table.nc-table tr:hover{background:#f5f5f5;}
+.nc-btn-crediter{background:#a94442;color:#fff;border:none;padding:4px 10px;border-radius:4px;font-size:11px;cursor:pointer;}
+.nc-btn-fermer{background:#666;color:#fff;border:none;padding:5px 14px;border-radius:4px;font-size:12px;cursor:pointer;}
+
 /* ── FACTURES (BE / LUX) ── */
 /* Format portrait imposé (2026-08-22, demande de Marc) — sinon certains
    navigateurs proposent le paysage par défaut à l'impression. */
@@ -465,6 +475,9 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
           <div class="fv"><input type="date" id="f-echlu" onchange="markDirty()"></div>
           <button type="button" id="btn-fact-lu" class="btn btn-fact" onclick="openFacture('LU')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture LUX</button>
+        </div>
+        <div class="fr">
+          <button type="button" id="btn-notecredit" class="btn" onclick="ouvrirSelectionNoteCredit()" style="background:#a94442;color:#fff;padding:4px 10px;font-size:11px;white-space:nowrap;">↩️ Note de crédit (annuler une facture)</button>
         </div>
       </div>
 
@@ -1171,7 +1184,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
     <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
     <span id="fact-statut-msg" style="font-size:12px;font-weight:700;color:#c55a11;"></span>
     <button id="btn-fact-autoriser" class="btn" onclick="factAutoriserDossiers()" style="background:#7b2d8b;color:#fff;padding:5px 16px;white-space:nowrap;">🔐 Autoriser dossiers comptables</button>
-    <button id="btn-fact-generer" class="btn" onclick="genererFacture()" style="background:#1a7a3d;color:#fff;padding:5px 16px;white-space:nowrap;margin-left:auto;">🧾 Générer la facture (attribue le n° définitif)</button>
+    <button id="btn-fact-generer" class="btn" onclick="genererDocument()" style="background:#1a7a3d;color:#fff;padding:5px 16px;white-space:nowrap;margin-left:auto;">🧾 Générer la facture (attribue le n° définitif)</button>
     <button id="btn-fact-print" class="btn btn-print" onclick="window.print()" style="display:none;background:#404040;color:#fff;padding:5px 16px;white-space:nowrap;">🖨️ Imprimer / PDF</button>
   </div>
   <div id="fact-save-msg" style="padding:4px 14px;font-size:12px;font-weight:700;"></div>
@@ -2851,7 +2864,9 @@ const FACT_ENTITES = {
     footer:'EDUCPASS  -  Roanne Coo, Grand route 5  -  4987 STOUMONT  -  TVA BE 0875.741.536',
     tribunaux:'de Belgique',
     ctrField:'Dernier N° BE',
-    formatNum:n=>'BE-26/'+String(n).padStart(3,'0')
+    formatNum:n=>'BE-26/'+String(n).padStart(3,'0'),
+    ctrFieldNC:'Dernier N° NC BE',
+    formatNumNC:n=>'NC-BE-26/'+String(n).padStart(3,'0')
   },
   LU: {
     label:'LUX',
@@ -2864,13 +2879,17 @@ const FACT_ENTITES = {
     footer:'EDUCPASS-BENELUX asbl  -  15, Hauptstrooss  -  L-9753 HEINERSCHEID  -  T. +352 621 650 932  -  info@educpass.lu',
     tribunaux:'de Luxembourg',
     ctrField:'Dernier N° LUX',
-    formatNum:n=>'26/'+String(n).padStart(3,'0')
+    formatNum:n=>'26/'+String(n).padStart(3,'0'),
+    ctrFieldNC:'Dernier N° NC LUX',
+    formatNumNC:n=>'NC-26/'+String(n).padStart(3,'0')
   }
 };
 
 let _factType=null;   // 'BE' ou 'LU' — défini au clic sur le bouton de la fiche
 let _factNumero=null; // numéro définitif une fois la facture générée (sinon null = aperçu)
 let _factLines=[];    // lignes modifiables de la facture (date, libellé, quantité, prix unité) — voir factOnLineInput/factAddLine/factRemoveLine (2026-08-22)
+let _factDocKind='facture'; // 'facture' ou 'notecredit' — bascule l'affichage (titre, libellés, CGV) — 2026-08-22
+let _factCreditRef=null;    // { numero, dateISO } de la facture créditée, uniquement en mode 'notecredit'
 
 function factEsc(s){
   return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -3020,10 +3039,14 @@ function factBuildDoc(numero){
   const todayFr = factDateFR(todayISO);
   const echeancePaieFr = factDateFR(factAddDaysISO(todayISO,15));
   const numeroTxt = numero || '(aperçu — n° attribué à la génération)';
-  const editable = (numero===null);
+  const isNC = (_factDocKind==='notecredit');
+  const editable = (numero===null) && !isNC; // une note de crédit est toujours "totale" (2026-08-22) : jamais de lignes modifiables
 
   const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
   const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
+  const concerneTxt = isNC
+    ? 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '')
+    : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
 
   return `
   <div class="fact-doc" id="fact-doc">
@@ -3048,8 +3071,8 @@ function factBuildDoc(numero){
     <div style="text-align:right;font-size:13px;margin-bottom:10px;">${factEsc(cfg.siegeVille)}, le ${todayFr}</div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
       <tr>
-        <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">FACTURE n° : ${factEsc(numeroTxt)}</td>
-        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>Adhésion 12 mois${echFr?' &gt; '+echFr:''}</b></td>
+        <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">${isNC?'NOTE DE CRÉDIT n°':'FACTURE n°'} : ${factEsc(numeroTxt)}</td>
+        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>${concerneTxt}</b></td>
       </tr>
     </table>
     <div style="font-size:11px;font-style:italic;margin:12px 0 5px;">Doit pour ce qui suit :</div>
@@ -3062,10 +3085,14 @@ function factBuildDoc(numero){
           <td colspan="3" rowspan="2" style="text-align:left;font-size:9.5px;vertical-align:top;color:#333;" id="fact-mention-box">${factEsc(mentionBox)}</td>
           <td style="text-align:right;" id="fact-tva-label">${tvaLabel}</td><td id="fact-tva-amount">${tvaAmountStr}</td>${editable?'<td class="fact-noprint" rowspan="2"></td>':''}
         </tr>
-        <tr class="fact-apayer"><td style="text-align:right;">A PAYER =</td><td id="fact-total-apayer">${factEUR(totalAPayer)}</td></tr>
+        <tr class="fact-apayer"><td style="text-align:right;">${isNC?'MONTANT CRÉDITÉ =':'A PAYER ='}</td><td id="fact-total-apayer">${factEUR(totalAPayer)}</td></tr>
       </tbody>
     </table>
     ${editable?'<div class="fact-noprint" style="margin-top:6px;"><button type="button" class="fact-addline-btn" onclick="factAddLine()">+ Ajouter une ligne</button></div>':''}
+    ${isNC ? `
+    <div class="fact-cgv" style="margin-top:18px;">
+      Cette note de crédit annule intégralement la facture n° ${factEsc(_factCreditRef ? _factCreditRef.numero : '')}. Elle doit être conservée avec la facture correspondante à des fins comptables.
+    </div>` : `
     <div style="text-align:right;font-size:13px;margin-top:6px;">Échéance : <b>${echeancePaieFr}</b></div>
     <div style="margin-top:18px;font-size:13px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
     <div class="fact-iban">IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</div>
@@ -3077,7 +3104,7 @@ function factBuildDoc(numero){
       4. Après 3 rappels, les montants facturés seront majorés de plein droit et sans mise en demeure préalable, d'un intérêt de 15%.<br>
       5. Indépendamment de ces intérêts de retard, les montants facturés et restés impayés seront majorés de plein droit de 15% avec un minimum de 25,00 €, à titre de dommages forfaitaires.<br>
       6. Les Tribunaux ${cfg.tribunaux} sont seuls compétents pour connaître de tout litige entre les parties.
-    </div>
+    </div>`}
     <div class="fact-footer">${factEsc(cfg.footer)}</div>
   </div>`;
 }
@@ -3086,6 +3113,8 @@ function openFacture(type){
   if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
   _factType=type;
   _factNumero=null;
+  _factDocKind='facture';
+  _factCreditRef=null;
   const cfg = FACT_ENTITES[type];
   const annee = type==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
   const montantInit = Number((type==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
@@ -3097,6 +3126,84 @@ function openFacture(type){
   }];
   document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
   document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — vérifiez les données puis cliquez sur "Générer la facture".';
+  document.getElementById('btn-fact-generer').textContent = '🧾 Générer la facture (attribue le n° définitif)';
+  document.getElementById('btn-fact-generer').style.display='';
+  document.getElementById('btn-fact-generer').disabled=false;
+  document.getElementById('btn-fact-print').style.display='none';
+  showView('facture');
+}
+
+// ══════════════════════════════════════
+// NOTES DE CRÉDIT (2026-08-22)
+// Toujours "totales" (annulent 100% du montant HTVA d'une facture déjà
+// émise) — sélection de la facture à créditer dans une liste (registre
+// Airtable, filtrée sur ce membre), numérotation séparée par entité
+// (NC-BE-26/NNN / NC-26/NNN), même mécanique d'enregistrement PDF+UBL
+// que les factures. Choix validés par Marc le 2026-08-22.
+// ══════════════════════════════════════
+async function ouvrirSelectionNoteCredit(){
+  if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
+  const modal = document.getElementById('modal-notecredit');
+  const msgEl = document.getElementById('nc-liste-msg');
+  const container = document.getElementById('nc-liste-container');
+  container.innerHTML = '';
+  msgEl.textContent = '⏳ Chargement des factures de ce membre...';
+  modal.style.display = 'flex';
+  try{
+    const formula = encodeURIComponent('{Type document}!="Note de crédit"');
+    const r = await fetch(FACT_REG_URL + '?filterByFormula=' + formula + '&pageSize=100', {headers:hdrs});
+    const data = await r.json();
+    const factures = (data.records||[])
+      .filter(rec => rec.fields['N° Facture'] && Array.isArray(rec.fields['Attraction']) && rec.fields['Attraction'].includes(curId));
+    factures.sort((a,b)=> String(b.fields['Date émission']||'').localeCompare(String(a.fields['Date émission']||'')));
+    if(factures.length===0){
+      msgEl.textContent = 'Aucune facture trouvée pour ce membre dans le registre.';
+      return;
+    }
+    msgEl.textContent = factures.length+' facture(s) trouvée(s) pour ce membre — cliquez sur "Créditer" pour annuler intégralement l\'une d\'elles.';
+    container.innerHTML = '<table class="nc-table"><thead><tr><th>N° Facture</th><th>Entité</th><th>Date</th><th>Montant HTVA</th><th></th></tr></thead><tbody>'
+      + factures.map(rec=>{
+          const f = rec.fields;
+          const montant = Number(f['Montant'])||0;
+          const args = [f['N° Facture'], f['Entité'], f['Date émission']||''].map(factJsStrLit).join(',');
+          return '<tr><td>'+factEsc(f['N° Facture'])+'</td><td>'+factEsc(f['Entité'])+'</td><td>'+factEsc(factDateFR(f['Date émission']))+'</td><td>'+factEUR(montant)+'</td>'
+            + '<td><button type="button" class="nc-btn-crediter" onclick="demarrerNoteCredit('+args+','+montant+')">↩️ Créditer</button></td></tr>';
+        }).join('')
+      + '</tbody></table>';
+  }catch(e){
+    console.error(e);
+    msgEl.textContent = '❌ Erreur lors du chargement des factures depuis Airtable.';
+  }
+}
+
+function fermerSelectionNoteCredit(){
+  document.getElementById('modal-notecredit').style.display = 'none';
+}
+
+// Construit un littéral JS à usage unique (échappé pour un attribut HTML en double quotes)
+// — évite tout risque de casser l'attribut onclick="..." avec des apostrophes/guillemets
+// venant de données Airtable (nom d'enseigne, etc.).
+function factJsStrLit(s){
+  return "'" + String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;') + "'";
+}
+
+function demarrerNoteCredit(numero, entite, dateISO, montant){
+  const typeKey = entite==='BE' ? 'BE' : 'LU';
+  const cfg = FACT_ENTITES[typeKey];
+  _factType = typeKey;
+  _factNumero = null;
+  _factDocKind = 'notecredit';
+  _factCreditRef = { numero: numero, dateISO: dateISO };
+  _factLines = [{
+    date: factDateFR(factTodayISO()),
+    libelle: 'Note de crédit — annule la facture n° '+numero,
+    qte: 1,
+    prixUnit: -Math.abs(Number(montant)||0)
+  }];
+  fermerSelectionNoteCredit();
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
+  document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — cette note de crédit annule intégralement la facture n° '+numero+'.';
+  document.getElementById('btn-fact-generer').textContent = '↩️ Générer la note de crédit (attribue le n° définitif)';
   document.getElementById('btn-fact-generer').style.display='';
   document.getElementById('btn-fact-generer').disabled=false;
   document.getElementById('btn-fact-print').style.display='none';
@@ -3316,6 +3423,100 @@ ${invoiceLinesXml}
 </Invoice>`;
 }
 
+// Note de crédit UBL 2.1 (schéma CreditNote-2, TypeCode 381) — BE uniquement.
+// Convention standard : les montants sont exprimés en POSITIF dans le fichier
+// (c'est le type de document lui-même, pas un signe négatif, qui indique un
+// crédit), avec une référence explicite à la facture créditée (BillingReference).
+function factGenerateUBLCreditNote(numero, cfg, nom, rue, cp, com, tva, montantAbs, todayISO, refNumero, lines){
+  const montantStr = Number(montantAbs||0).toFixed(2);
+  const info = factTvaInfo(tva);
+  const tvaAmt = info.taux===21 ? montantAbs*0.21 : 0;
+  const tvaAmtStr = tvaAmt.toFixed(2);
+  const totalTTC = (montantAbs + tvaAmt).toFixed(2);
+  const taxCatId = info.taux===21 ? 'S' : 'K';
+  const ibanClean = (cfg.iban||'').replace(/[ .]/g,'');
+  const linesArr = (lines && lines.length) ? lines : [{libelle:'Note de crédit — annule la facture n° '+refNumero, qte:1, prixUnit:montantAbs}];
+  const creditLinesXml = linesArr.map((l,i)=>{
+    const qte = Math.abs(Number(l.qte)||0);
+    const prix = Math.abs(Number(l.prixUnit)||0);
+    const lineAmt = (qte*prix).toFixed(2);
+    return `  <cac:CreditNoteLine>
+    <cbc:ID>${i+1}</cbc:ID>
+    <cbc:CreditedQuantity unitCode="C62">${qte}</cbc:CreditedQuantity>
+    <cbc:LineExtensionAmount currencyID="EUR">${lineAmt}</cbc:LineExtensionAmount>
+    <cac:Item>
+      <cbc:Name>${factEsc(l.libelle||('Note de crédit — annule la facture n° '+refNumero))}</cbc:Name>
+      <cac:ClassifiedTaxCategory>
+        <cbc:ID>${taxCatId}</cbc:ID><cbc:Percent>${info.taux}</cbc:Percent>
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:ClassifiedTaxCategory>
+    </cac:Item>
+    <cac:Price><cbc:PriceAmount currencyID="EUR">${prix.toFixed(2)}</cbc:PriceAmount></cac:Price>
+  </cac:CreditNoteLine>`;
+  }).join('\n');
+
+  return `<?xml version="1.0" encoding="UTF-8"?>
+<CreditNote xmlns="urn:oasis:names:specification:ubl:schema:xsd:CreditNote-2"
+         xmlns:cac="urn:oasis:names:specification:ubl:schema:xsd:CommonAggregateComponents-2"
+         xmlns:cbc="urn:oasis:names:specification:ubl:schema:xsd:CommonBasicComponents-2">
+  <cbc:CustomizationID>urn:cen.eu:en16931:2017#compliant#urn:fdc:peppol.eu:2017:poacc:billing:3.0</cbc:CustomizationID>
+  <cbc:ProfileID>urn:fdc:peppol.eu:2017:poacc:billing:01:1.0</cbc:ProfileID>
+  <cbc:ID>${factEsc(numero)}</cbc:ID>
+  <cbc:IssueDate>${todayISO}</cbc:IssueDate>
+  <cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode>
+  <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
+  <cac:BillingReference>
+    <cac:InvoiceDocumentReference><cbc:ID>${factEsc(refNumero)}</cbc:ID></cac:InvoiceDocumentReference>
+  </cac:BillingReference>
+  <cac:AccountingSupplierParty>
+    <cac:Party>
+      <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${FACT_PEPPOL_EP_ID}</cbc:EndpointID>
+      <cac:PartyIdentification><cbc:ID schemeID="${FACT_PEPPOL_BCE_SCHEME}">${FACT_PEPPOL_BCE_ID}</cbc:ID></cac:PartyIdentification>
+      <cac:PartyLegalEntity><cbc:RegistrationName>${factEsc(cfg.footer||'EDUCPASS')}</cbc:RegistrationName></cac:PartyLegalEntity>
+      <cac:PostalAddress>
+        <cbc:CityName>${factEsc(cfg.siegeVille||'')}</cbc:CityName>
+        <cac:Country><cbc:IdentificationCode>${cfg.site==='be'?'BE':'LU'}</cbc:IdentificationCode></cac:Country>
+      </cac:PostalAddress>
+      <cac:PartyTaxScheme><cbc:CompanyID>${FACT_PEPPOL_EP_ID}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>
+    </cac:Party>
+  </cac:AccountingSupplierParty>
+  <cac:AccountingCustomerParty>
+    <cac:Party>
+      <cac:PartyLegalEntity><cbc:RegistrationName>${factEsc(nom)}</cbc:RegistrationName></cac:PartyLegalEntity>
+      <cac:PostalAddress>
+        <cbc:StreetName>${factEsc(rue)}</cbc:StreetName>
+        <cbc:CityName>${factEsc(com)}</cbc:CityName>
+        <cbc:PostalZone>${factEsc(cp)}</cbc:PostalZone>
+      </cac:PostalAddress>
+      ${tva?`<cac:PartyTaxScheme><cbc:CompanyID>${factEsc(tva)}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>`:''}
+    </cac:Party>
+  </cac:AccountingCustomerParty>
+  <cac:PaymentMeans>
+    <cbc:PaymentMeansCode>30</cbc:PaymentMeansCode>
+    <cac:PayeeFinancialAccount><cbc:ID>${factEsc(ibanClean)}</cbc:ID></cac:PayeeFinancialAccount>
+  </cac:PaymentMeans>
+  <cac:TaxTotal>
+    <cbc:TaxAmount currencyID="EUR">${tvaAmtStr}</cbc:TaxAmount>
+    <cac:TaxSubtotal>
+      <cbc:TaxableAmount currencyID="EUR">${montantStr}</cbc:TaxableAmount>
+      <cbc:TaxAmount currencyID="EUR">${tvaAmtStr}</cbc:TaxAmount>
+      <cac:TaxCategory>
+        <cbc:ID>${taxCatId}</cbc:ID><cbc:Percent>${info.taux}</cbc:Percent>
+        ${info.taux===0?`<cbc:TaxExemptionReason>${factEsc(info.mention)}</cbc:TaxExemptionReason>`:''}
+        <cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme>
+      </cac:TaxCategory>
+    </cac:TaxSubtotal>
+  </cac:TaxTotal>
+  <cac:LegalMonetaryTotal>
+    <cbc:LineExtensionAmount currencyID="EUR">${montantStr}</cbc:LineExtensionAmount>
+    <cbc:TaxExclusiveAmount currencyID="EUR">${montantStr}</cbc:TaxExclusiveAmount>
+    <cbc:TaxInclusiveAmount currencyID="EUR">${totalTTC}</cbc:TaxInclusiveAmount>
+    <cbc:PayableAmount currencyID="EUR">${totalTTC}</cbc:PayableAmount>
+  </cac:LegalMonetaryTotal>
+${creditLinesXml}
+</CreditNote>`;
+}
+
 async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva, lines){
   const msgEl = document.getElementById('fact-save-msg');
   const fileBase = factNumFile(numero) + '_' + factSanitizeName(nom);
@@ -3332,7 +3533,11 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
 
   let ublText = null;
   if(_factType==='BE'){
-    try{ ublText = factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO, lines); }
+    try{
+      ublText = (_factDocKind==='notecredit')
+        ? factGenerateUBLCreditNote(numero, cfg, nom, rue, cp, com, tva, Math.abs(montant), todayISO, (_factCreditRef?_factCreditRef.numero:''), lines)
+        : factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO, lines);
+    }
     catch(e){ console.error(e); }
   }
 
@@ -3399,7 +3604,8 @@ async function genererFacture(){
       'Montant': montant,
       'Date émission': todayISO,
       'Échéance paiement': echISO,
-      'Généré par': agent
+      'Généré par': agent,
+      'Type document': 'Facture'
     });
 
     document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
@@ -3411,6 +3617,74 @@ async function genererFacture(){
     document.getElementById('fact-save-msg').textContent = '💾 Enregistrement des fichiers comptables en cours...';
     try{
       await factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva, _factLines.slice());
+    }catch(e){
+      console.error(e);
+      document.getElementById('fact-save-msg').style.color='#c0392b';
+      document.getElementById('fact-save-msg').textContent = "⚠️ Erreur lors de l'enregistrement local des fichiers.";
+    }
+
+    setTimeout(()=>window.print(), 300);
+  }catch(e){
+    console.error(e);
+    document.getElementById('fact-statut-msg').textContent = '❌ Erreur lors de la génération. Réessayez.';
+    btn.disabled=false;
+  }
+}
+
+// Appelé par le bouton "Générer" du view-facture, quel que soit le document en cours
+// (facture normale ou note de crédit) — dispatché sur _factDocKind (2026-08-22).
+function genererDocument(){
+  if(_factDocKind==='notecredit') return genererNoteCredit();
+  return genererFacture();
+}
+
+async function genererNoteCredit(){
+  const btn=document.getElementById('btn-fact-generer');
+  btn.disabled=true;
+  document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  document.getElementById('fact-save-msg').textContent='';
+  try{
+    if(!_factCreditRef || !_factCreditRef.numero){ throw new Error('Facture créditée introuvable.'); }
+    const cfg=FACT_ENTITES[_factType];
+    const ctr = await factGetCounter();
+    const current = Number(ctr.fields[cfg.ctrFieldNC]||0);
+    const next = current+1;
+    await factPatchCounter({[cfg.ctrFieldNC]: next});
+    const numero = cfg.formatNumNC(next);
+    _factNumero = numero;
+
+    const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0); // négatif (toujours totale)
+    const todayISO = factTodayISO();
+    const agent = sessionStorage.getItem('auth_agent')||'';
+    const nom = gv('f-attr')||gv('f-ens')||'';
+    const rue = gv('f-rue')||'';
+    const cp = gv('f-cp')||'';
+    const com = gv('f-com')||'';
+    const tva = gv('f-tva')||'';
+
+    await factPostRegistre({
+      'N° Facture': numero,
+      'Entité': cfg.label,
+      'Attraction': [curId],
+      'Enseigne': nom,
+      'Année cotisation': '',
+      'Montant': montant,
+      'Date émission': todayISO,
+      'Échéance paiement': todayISO,
+      'Généré par': agent,
+      'Type document': 'Note de crédit',
+      'Réf. facture créditée': _factCreditRef.numero
+    });
+
+    document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
+    document.getElementById('fact-statut-msg').textContent = '✅ Note de crédit n° '+numero+' générée et enregistrée (annule la facture n° '+_factCreditRef.numero+').';
+    document.getElementById('btn-fact-generer').style.display='none';
+    document.getElementById('btn-fact-print').style.display='';
+
+    document.getElementById('fact-save-msg').style.color='#c55a11';
+    document.getElementById('fact-save-msg').textContent = '💾 Enregistrement des fichiers comptables en cours...';
+    try{
+      await factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, todayISO, rue, cp, com, tva, _factLines.slice());
     }catch(e){
       console.error(e);
       document.getElementById('fact-save-msg').style.color='#c0392b';
@@ -3617,6 +3891,18 @@ document.addEventListener('DOMContentLoaded', function(){
 
 
 <!-- ═══ MODAL RECHERCHER/REMPLACER ═══ -->
+<!-- ═══ MODAL SÉLECTION NOTE DE CRÉDIT (2026-08-22) ═══ -->
+<div id="modal-notecredit" class="modal-rr" onclick="if(event.target===this)fermerSelectionNoteCredit()">
+  <div class="modal-nc-box">
+    <h3>↩️ Choisir la facture à créditer</h3>
+    <div id="nc-liste-msg" style="font-size:12px;color:#666;margin-bottom:10px;"></div>
+    <div id="nc-liste-container"></div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <button type="button" class="nc-btn-fermer" onclick="fermerSelectionNoteCredit()">Fermer</button>
+    </div>
+  </div>
+</div>
+
 <div id="modal-rr" class="modal-rr" onclick="if(event.target===this)closeRR()">
   <div class="modal-rr-box">
     <h3>🔄 Rechercher / Remplacer dans tous les membres</h3>
