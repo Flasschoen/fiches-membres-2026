@@ -153,6 +153,21 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
 .modal-rr-box .btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:8px;}
 @media print{.conf-doc{padding:10mm 15mm !important;} #view-confirmation>.hdr-bar{display:none;}}
 
+/* ── FACTURES (BE / LUX) ── */
+.fact-doc{max-width:800px;margin:20px auto;padding:30px 40px;background:#fff;box-shadow:0 3px 12px rgba(0,0,0,.18);font-family:Arial,sans-serif;font-size:12px;color:#000;}
+.fact-logo{height:55px;width:auto;object-fit:contain;}
+.fact-statut{font-size:9px;font-style:italic;color:#404040;text-align:right;border-bottom:1px solid #000;padding-bottom:4px;margin-bottom:10px;}
+table.fact-table{width:100%;border-collapse:collapse;font-size:11px;margin-bottom:0;}
+table.fact-table th{background:#404040;color:#fff;padding:5px;border:1px solid #999;text-align:center;}
+table.fact-table td{padding:5px;border:1px solid #ccc;text-align:center;}
+.fact-total-row td{background:#d9d9d9;font-weight:700;}
+.fact-apayer td{background:#1e3a6e;color:#fff;font-weight:700;}
+.fact-iban{margin-top:14px;font-size:11px;font-weight:700;}
+.fact-cgv{font-size:7.5px;margin-top:16px;line-height:1.4;color:#333;}
+.fact-footer{font-size:8px;font-weight:700;text-align:center;border-top:2px solid #999;padding-top:6px;margin-top:16px;background:#f2f2f2;}
+.btn-fact{background:#7b2d8b;color:#fff;}
+@media print{#view-facture>.hdr-bar{display:none;} .fact-doc{box-shadow:none;margin:0;padding:10mm 15mm;}}
+
 /* ── RECAP WORKSHOP ── */
 .recap-zone{max-width:820px;margin:20px auto;padding:20px 40px;background:#fff;box-shadow:0 3px 12px rgba(0,0,0,.18);}
 .recap-zone .recap-title{font-size:14px;font-weight:700;color:#1e3a6e;text-transform:uppercase;letter-spacing:1px;margin-bottom:12px;}
@@ -404,32 +419,34 @@ input[type=number]{-moz-appearance:textfield;appearance:textfield;}
         <div class="fr">
           <div class="fl">Cotisation BE :</div>
           <div class="fv" style="flex:0 0 90px;">
-            <select id="f-cotbe" onchange="markDirty()" style="width:70px;">
+            <select id="f-cotbe" onchange="markDirty();updateFactureButtons()" style="width:70px;">
               <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant BE :</div>
           <div class="fv" style="flex:0 0 110px;">
-            <select id="f-montbe" onchange="markDirty()" style="width:78px;">
+            <select id="f-montbe" onchange="markDirty();updateFactureButtons()" style="width:78px;">
               <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
             </select> €</div>
           <div class="fl" style="min-width:90px;">Échéance BE :</div>
           <div class="fv"><input type="date" id="f-echbe" onchange="markDirty()"></div>
+          <button type="button" id="btn-fact-be" class="btn btn-fact" onclick="openFacture('BE')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture BE</button>
         </div>
         <div class="fr">
           <div class="fl">Cotisation LU :</div>
           <div class="fv" style="flex:0 0 90px;">
-            <select id="f-cotlu" onchange="markDirty()" style="width:70px;">
+            <select id="f-cotlu" onchange="markDirty();updateFactureButtons()" style="width:70px;">
               <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
             </select>
           </div>
           <div class="fl" style="min-width:90px;">Montant LU :</div>
           <div class="fv" style="flex:0 0 110px;">
-            <select id="f-montlu" onchange="markDirty()" style="width:78px;">
+            <select id="f-montlu" onchange="markDirty();updateFactureButtons()" style="width:78px;">
               <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
             </select> €</div>
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
           <div class="fv"><input type="date" id="f-echlu" onchange="markDirty()"></div>
+          <button type="button" id="btn-fact-lu" class="btn btn-fact" onclick="openFacture('LU')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture LUX</button>
         </div>
       </div>
 
@@ -1128,6 +1145,19 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
 
 </div><!-- /view-confirmation -->
 
+<!-- ════════════════════════════════
+     VUE : FACTURE (BE / LUX)
+════════════════════════════════ -->
+<div id="view-facture" class="view">
+  <div class="hdr-bar" style="display:flex;gap:8px;padding:8px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;align-items:center;flex-wrap:wrap;">
+    <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
+    <span id="fact-statut-msg" style="font-size:12px;font-weight:700;color:#c55a11;"></span>
+    <button id="btn-fact-generer" class="btn" onclick="genererFacture()" style="background:#1a7a3d;color:#fff;padding:5px 16px;white-space:nowrap;margin-left:auto;">🧾 Générer la facture (attribue le n° définitif)</button>
+    <button id="btn-fact-print" class="btn btn-print" onclick="window.print()" style="display:none;background:#404040;color:#fff;padding:5px 16px;white-space:nowrap;">🖨️ Imprimer / PDF</button>
+  </div>
+  <div id="fact-doc-container"></div>
+</div><!-- /view-facture -->
+
 </div><!-- /app -->
 
 <script>
@@ -1542,6 +1572,7 @@ function cancelAndReset(){
   document.getElementById('fiche-placeholder').style.display='flex';
   document.getElementById('fiche-main').style.display='none';
   setSt(members.length ? members.length+' membres disponibles' : '');
+  updateFactureButtons();
 }
 
 // ══════════════════════════════════════
@@ -1707,6 +1738,7 @@ function fillForm(f){
   // Confirmation view
   fillConf(f);
   updateDelBtn();
+  updateFactureButtons();
 }
 
 function toTitleCase(str){
@@ -2341,6 +2373,7 @@ function newMember(){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   const t=document.getElementById('view-fiche');
   if(t) t.classList.add('active');
+  updateFactureButtons();
 }
 
 function setSt(msg){
@@ -2741,6 +2774,229 @@ function generateConfPage(f){
     PERSONNE DE CONTACT :&nbsp;<b>${contactTxt}</b>
   </div>
 </div>`;
+}
+
+// ══════════════════════════════════════
+//  FACTURES BE / LUX
+//  — Bouton sur la fiche (si Cotisation BE ou LU remplie) → aperçu
+//    modifiable → "Générer la facture" attribue le numéro définitif
+//    (compteur Airtable dédié) et enregistre une trace dans le
+//    registre, puis propose l'impression / enregistrement en PDF via
+//    la boîte de dialogue d'impression du navigateur.
+// ══════════════════════════════════════
+const FACT_CTR_TBL = 'tblAWzE9V9bD1FHM2';   // table "FACTURES - COMPTEURS"
+const FACT_CTR_REC = 'rec7Zlwnqtr7VbS0Q';   // enregistrement unique "GLOBAL"
+const FACT_REG_TBL = 'tblBZR7s9icd2NEAY';   // table "FACTURES - REGISTRE"
+const FACT_CTR_URL = `https://api.airtable.com/v0/${B}/${FACT_CTR_TBL}`;
+const FACT_REG_URL = `https://api.airtable.com/v0/${B}/${FACT_REG_TBL}`;
+
+async function factGetCounter(){
+  const r=await fetch(FACT_CTR_URL+'/'+FACT_CTR_REC,{headers:hdrs});
+  return r.json();
+}
+async function factPatchCounter(fields){
+  const r=await fetch(FACT_CTR_URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
+    body:JSON.stringify({records:[{id:FACT_CTR_REC,fields}],typecast:true})});
+  return r.json();
+}
+async function factPostRegistre(fields){
+  const r=await fetch(FACT_REG_URL,{method:'POST',headers:{...hdrs,'Content-Type':'application/json'},
+    body:JSON.stringify({records:[{fields}],typecast:true})});
+  return r.json();
+}
+
+const FACT_ENTITES = {
+  BE: {
+    label:'BE',
+    site:'be',
+    siegeVille:'Stoumont',
+    ligneStatut:'EDUCPASS  —  Roanne Coo, Grand route 5  —  4987 STOUMONT  —  TVA BE 0875.741.536',
+    iban:'BE73 7512-0205-3060',
+    bic:'AXABBE22 (Crelan)',
+    mentionTVA:'TVA non applicable.',
+    footer:'EDUCPASS  -  Roanne Coo, Grand route 5  -  4987 STOUMONT  -  TVA BE 0875.741.536',
+    tribunaux:'de Belgique',
+    ctrField:'Dernier N° BE',
+    formatNum:n=>'BE-26/'+String(n).padStart(3,'0')
+  },
+  LU: {
+    label:'LUX',
+    site:'lu',
+    siegeVille:'Heinerscheid',
+    ligneStatut:'Association Sans But Lucratif - RCS n° F 14923 - TVA n° LU 36.753.453',
+    iban:'LU11.6191.PRDY.80KP.X694',
+    bic:'SOXALULL (Luxembourg)',
+    mentionTVA:'TVA non applicable – franchise en base,<br>Article 57, paragraphe 1er, de la loi modifiée du 12 février 1979.',
+    footer:'EDUCPASS-BENELUX asbl  -  15, Hauptstrooss  -  L-9753 HEINERSCHEID  -  T. +352 621 650 932  -  info@educpass.lu',
+    tribunaux:'de Luxembourg',
+    ctrField:'Dernier N° LUX',
+    formatNum:n=>'26/'+String(n).padStart(3,'0')
+  }
+};
+
+let _factType=null;   // 'BE' ou 'LU' — défini au clic sur le bouton de la fiche
+let _factNumero=null; // numéro définitif une fois la facture générée (sinon null = aperçu)
+
+function factEsc(s){
+  return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function factEUR(n){
+  n = Number(n)||0;
+  return n.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €';
+}
+function factDateFR(iso){
+  if(!iso) return '';
+  const d=new Date(iso+'T00:00:00');
+  if(isNaN(d.getTime())) return '';
+  const pad=n=>String(n).padStart(2,'0');
+  return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();
+}
+function factAddDaysISO(iso, days){
+  const d = iso ? new Date(iso+'T00:00:00') : new Date();
+  d.setDate(d.getDate()+days);
+  const pad=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+function factTodayISO(){
+  const d=new Date();
+  const pad=n=>String(n).padStart(2,'0');
+  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
+}
+
+function updateFactureButtons(){
+  const btnBE=document.getElementById('btn-fact-be');
+  const btnLU=document.getElementById('btn-fact-lu');
+  if(btnBE) btnBE.style.display = gv('f-cotbe') ? '' : 'none';
+  if(btnLU) btnLU.style.display = gv('f-cotlu') ? '' : 'none';
+}
+
+function factBuildDoc(numero){
+  const cfg=FACT_ENTITES[_factType];
+  const nom = gv('f-attr')||gv('f-ens')||'—';
+  const contact = gv('f-c1')||'';
+  const titre = gv('f-t1')||'';
+  const rue = gv('f-rue')||'';
+  const cp = gv('f-cp')||'';
+  const com = gv('f-com')||'';
+  const tva = gv('f-tva')||'';
+  const annee = _factType==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
+  const montant = Number((_factType==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
+  const echIso = _factType==='BE' ? gv('f-echbe') : gv('f-echlu');
+  const echFr = factDateFR(echIso);
+  const todayISO = factTodayISO();
+  const todayFr = factDateFR(todayISO);
+  const echeancePaieFr = factDateFR(factAddDaysISO(todayISO,15));
+  const numeroTxt = numero || '(aperçu — n° attribué à la génération)';
+
+  return `
+  <div class="fact-doc" id="fact-doc">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
+      <img class="fact-logo" src="New_logo_jpeg.jpg" alt="Educpass">
+    </div>
+    <div class="fact-statut">${factEsc(cfg.ligneStatut)}</div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
+      <tr>
+        <td style="width:50%;vertical-align:top;font-size:10px;color:#333;">
+          www.educpass.${cfg.site}
+        </td>
+        <td style="width:50%;vertical-align:top;font-size:11px;text-align:left;">
+          <div style="font-size:13px;font-weight:700;">${factEsc(nom)}</div>
+          ${contact?`<div style="font-weight:700;">${factEsc(contact)}${titre?' — '+factEsc(titre):''}</div>`:''}
+          <div>${factEsc(rue)}</div>
+          <div>${factEsc(cp)} ${factEsc(com)}</div>
+          ${tva?`<div style="margin-top:4px;">TVA n° : ${factEsc(tva)}</div>`:''}
+        </td>
+      </tr>
+    </table>
+    <div style="text-align:right;font-size:11px;margin-bottom:8px;">${factEsc(cfg.siegeVille)}, le ${todayFr}</div>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:6px;">
+      <tr>
+        <td style="border:2px solid #000;background:#ffff00;padding:6px 10px;font-weight:700;font-size:12px;white-space:nowrap;">FACTURE n° : ${factEsc(numeroTxt)}</td>
+        <td style="padding:6px 10px;font-size:11px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>Adhésion 12 mois${echFr?' &gt; '+echFr:''}</b></td>
+      </tr>
+    </table>
+    <div style="font-size:9px;font-style:italic;margin:10px 0 4px;">Doit pour ce qui suit :</div>
+    <table class="fact-table">
+      <thead><tr><th style="width:90px;">DATE</th><th>LIBELLÉ</th><th style="width:80px;">QUANTITÉ</th><th style="width:90px;">PRIX UNITÉ</th><th style="width:90px;">TOTAL</th></tr></thead>
+      <tbody>
+        <tr><td>${todayFr}</td><td style="text-align:left;">Cotisation membre ${cfg.label}${annee?' '+factEsc(annee):''}</td><td>1</td><td>${factEUR(montant)}</td><td>${factEUR(montant)}</td></tr>
+        <tr class="fact-total-row"><td colspan="4" style="text-align:right;">TOTAL =</td><td>${factEUR(montant)}</td></tr>
+        <tr>
+          <td colspan="3" rowspan="2" style="text-align:left;font-size:8px;vertical-align:top;color:#333;">${cfg.mentionTVA}</td>
+          <td style="text-align:right;">TVA 0 %</td><td>-</td>
+        </tr>
+        <tr class="fact-apayer"><td style="text-align:right;">A PAYER =</td><td>${factEUR(montant)}</td></tr>
+      </tbody>
+    </table>
+    <div style="text-align:right;font-size:11px;margin-top:4px;">Échéance : <b>${echeancePaieFr}</b></div>
+    <div style="margin-top:16px;font-size:11px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
+    <div class="fact-iban">IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</div>
+    <div class="fact-cgv">
+      <b>CONDITIONS GÉNÉRALES DE VENTE :</b><br>
+      1. Toute réclamation concernant l'établissement de la facture devra nécessairement être formulée par écrit dans les huit jours de son émission. Passé ce délai, la facture est censée être acceptée dans son intégralité.<br>
+      2. Sauf stipulations contraires, nos factures sont payables au plus tard, huit jours après leur émission.<br>
+      3. En cas de retard de paiement, des frais de rappel peuvent être appliqués avec un forfait de 25 €.<br>
+      4. Après 3 rappels, les montants facturés seront majorés de plein droit et sans mise en demeure préalable, d'un intérêt de 15%.<br>
+      5. Indépendamment de ces intérêts de retard, les montants facturés et restés impayés seront majorés de plein droit de 15% avec un minimum de 25,00 €, à titre de dommages forfaitaires.<br>
+      6. Les Tribunaux ${cfg.tribunaux} sont seuls compétents pour connaître de tout litige entre les parties.
+    </div>
+    <div class="fact-footer">${factEsc(cfg.footer)}</div>
+  </div>`;
+}
+
+function openFacture(type){
+  if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
+  _factType=type;
+  _factNumero=null;
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
+  document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — vérifiez les données puis cliquez sur "Générer la facture".';
+  document.getElementById('btn-fact-generer').style.display='';
+  document.getElementById('btn-fact-generer').disabled=false;
+  document.getElementById('btn-fact-print').style.display='none';
+  showView('facture');
+}
+
+async function genererFacture(){
+  const btn=document.getElementById('btn-fact-generer');
+  btn.disabled=true;
+  document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  try{
+    const cfg=FACT_ENTITES[_factType];
+    const ctr = await factGetCounter();
+    const current = Number(ctr.fields[cfg.ctrField]||0);
+    const next = current+1;
+    await factPatchCounter({[cfg.ctrField]: next});
+    const numero = cfg.formatNum(next);
+    _factNumero = numero;
+
+    const montant = Number((_factType==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
+    const annee = _factType==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
+    const todayISO = factTodayISO();
+    const agent = sessionStorage.getItem('auth_agent')||'';
+    const nom = gv('f-attr')||gv('f-ens')||'';
+
+    await factPostRegistre({
+      'N° Facture': numero,
+      'Entité': cfg.label,
+      'Attraction': [curId],
+      'Enseigne': nom,
+      'Année cotisation': annee,
+      'Montant': montant,
+      'Date émission': todayISO,
+      'Échéance paiement': factAddDaysISO(todayISO,15),
+      'Généré par': agent
+    });
+
+    document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
+    document.getElementById('fact-statut-msg').textContent = '✅ Facture n° '+numero+' générée et enregistrée.';
+    document.getElementById('btn-fact-generer').style.display='none';
+    document.getElementById('btn-fact-print').style.display='';
+    setTimeout(()=>window.print(), 300);
+  }catch(e){
+    console.error(e);
+    document.getElementById('fact-statut-msg').textContent = '❌ Erreur lors de la génération. Réessayez.';
+    btn.disabled=false;
+  }
 }
 
 function printMultiConf(){
