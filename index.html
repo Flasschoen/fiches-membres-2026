@@ -681,6 +681,10 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         </thead>
         <tbody id="trim-body"></tbody>
       </table>
+      <div class="fr" style="margin-top:5px;">
+        <button type="button" id="btn-fact-pub-be" class="btn btn-fact" onclick="openFacturePublicite('BE')" style="display:none;margin-right:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité BE</button>
+        <button type="button" id="btn-fact-pub-lu" class="btn btn-fact" onclick="openFacturePublicite('LU')" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité LUX</button>
+      </div>
 
       <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
       <div style="display:grid;grid-template-columns:3fr 2fr;gap:5px;margin-top:2px;">
@@ -2866,7 +2870,9 @@ const FACT_ENTITES = {
     ctrField:'Dernier N° BE',
     formatNum:n=>'BE-26/'+String(n).padStart(3,'0'),
     ctrFieldNC:'Dernier N° NC BE',
-    formatNumNC:n=>'NC-BE-26/'+String(n).padStart(3,'0')
+    formatNumNC:n=>'NC-BE-26/'+String(n).padStart(3,'0'),
+    ctrFieldPub:'Dernier N° PUB BE',
+    formatNumPub:n=>'PUB-BE-26/'+String(n).padStart(3,'0')
   },
   LU: {
     label:'LUX',
@@ -2881,7 +2887,9 @@ const FACT_ENTITES = {
     ctrField:'Dernier N° LUX',
     formatNum:n=>'26/'+String(n).padStart(3,'0'),
     ctrFieldNC:'Dernier N° NC LUX',
-    formatNumNC:n=>'NC-26/'+String(n).padStart(3,'0')
+    formatNumNC:n=>'NC-26/'+String(n).padStart(3,'0'),
+    ctrFieldPub:'Dernier N° PUB LUX',
+    formatNumPub:n=>'PUB-LU-26/'+String(n).padStart(3,'0')
   }
 };
 
@@ -2936,6 +2944,12 @@ function updateFactureButtons(){
   const btnLU=document.getElementById('btn-fact-lu');
   if(btnBE) btnBE.style.display = gv('f-cotbe') ? '' : 'none';
   if(btnLU) btnLU.style.display = gv('f-cotlu') ? '' : 'none';
+  // Facture Publicité (2026-08-22) : même critère de visibilité que les factures de cotisation —
+  // le membre doit être affilié BE et/ou LUX pour pouvoir facturer les insertions publicitaires dans cette entité.
+  const btnPubBE=document.getElementById('btn-fact-pub-be');
+  const btnPubLU=document.getElementById('btn-fact-pub-lu');
+  if(btnPubBE) btnPubBE.style.display = gv('f-cotbe') ? '' : 'none';
+  if(btnPubLU) btnPubLU.style.display = gv('f-cotlu') ? '' : 'none';
 }
 
 // Formate un nombre pour édition (contenteditable) en style FR : "150,00"
@@ -3040,13 +3054,16 @@ function factBuildDoc(numero){
   const echeancePaieFr = factDateFR(factAddDaysISO(todayISO,15));
   const numeroTxt = numero || '(aperçu — n° attribué à la génération)';
   const isNC = (_factDocKind==='notecredit');
-  const editable = (numero===null) && !isNC; // une note de crédit est toujours "totale" (2026-08-22) : jamais de lignes modifiables
+  const isPub = (_factDocKind==='publicite');
+  const editable = (numero===null) && !isNC; // une note de crédit est toujours "totale" (2026-08-22) : jamais de lignes modifiables — la facture publicité, elle, reste modifiable comme une facture normale
 
   const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
   const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
   const concerneTxt = isNC
     ? 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '')
-    : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
+    : isPub
+      ? 'Insertions publicitaires'
+      : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
   const enseigneTxt = gv('f-ens')||'';
 
   return `
@@ -3072,7 +3089,7 @@ function factBuildDoc(numero){
     <div style="text-align:right;font-size:13px;margin-bottom:10px;">${factEsc(cfg.siegeVille)}, le ${todayFr}</div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
       <tr>
-        <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">${isNC?'NOTE DE CRÉDIT n°':'FACTURE n°'} : ${factEsc(numeroTxt)}</td>
+        <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">${isNC?'NOTE DE CRÉDIT n°':(isPub?'FACTURE PUBLICITÉ n°':'FACTURE n°')} : ${factEsc(numeroTxt)}</td>
         <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>${concerneTxt}</b>${enseigneTxt?`<br><b>${factEsc(enseigneTxt)}</b>`:''}</td>
       </tr>
     </table>
@@ -3209,6 +3226,124 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   document.getElementById('btn-fact-generer').disabled=false;
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
+}
+
+// ══════════════════════════════════════
+// FACTURE PUBLICITÉ (2026-08-22)
+// Document séparé (numérotation propre PUB-BE-26/NNN / PUB-LU-26/NNN),
+// émise en BE OU en LUX (choix de Marc), qui reprend le système de lignes
+// modifiables des factures normales. L'aperçu est pré-rempli automatiquement
+// avec une ligne par publication (Annuelle ou Trimestrielle) dont le montant
+// calculé est > 0 ; Marc retire les lignes non désirées avec le bouton ✕
+// déjà existant, ou en ajoute avec "+ Ajouter une ligne".
+// Formules confirmées par Marc :
+//   Annuelles     : (Page gratuite + Page payante) × Tarif − Crédit
+//   Trimestrielles: NBR × PRIX − CRÉDIT (même principe, cohérent avec
+//                   le calcul déjà affiché dans la colonne TOTAL)
+// ══════════════════════════════════════
+const FACT_PUB_ANNUELLES = [
+  {pfx:'bx',  label:'Publication annuelle BELUX'},
+  {pfx:'fr',  label:'Publication annuelle FRANCE'},
+  {pfx:'tp',  label:'Publication annuelle TIPS'},
+  {pfx:'sej', label:'Publication annuelle SÉJOURS'}
+];
+function factBuildPubLines(){
+  const lines=[];
+  const today = factDateFR(factTodayISO());
+  FACT_PUB_ANNUELLES.forEach(cat=>{
+    const pg = parseFloat(document.getElementById('p-'+cat.pfx+'-pg')?.value)||0;
+    const pp = parseFloat(document.getElementById('p-'+cat.pfx+'-pp')?.value)||0;
+    const tarif = parseFloat(document.getElementById('p-'+cat.pfx+'-t')?.value)||0;
+    const credit = parseFloat(document.getElementById('p-'+cat.pfx+'-cred')?.value)||0;
+    const montant = (pg+pp)*tarif - credit;
+    if(montant>0) lines.push({ date:today, libelle:cat.label+' — insertion publicitaire', qte:1, prixUnit:montant });
+  });
+  TRIMS.forEach((t,i)=>{
+    ['bx','fr'].forEach(zone=>{
+      const nbr = parseFloat(document.getElementById('tr-'+zone+'n'+i)?.value)||0;
+      const prix = parseFloat(document.getElementById('tr-'+zone+'p'+i)?.value)||0;
+      const credit = parseFloat(document.getElementById('tr-'+zone+'c'+i)?.value)||0;
+      const montant = nbr*prix - credit;
+      if(montant>0) lines.push({ date:today, libelle:t.label+' — '+(zone==='bx'?'BELUX':'FRANCE')+' — insertion publicitaire', qte:1, prixUnit:montant });
+    });
+  });
+  if(lines.length===0) lines.push({ date:today, libelle:'', qte:1, prixUnit:0 });
+  return lines;
+}
+function openFacturePublicite(type){
+  if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
+  _factType=type;
+  _factNumero=null;
+  _factDocKind='publicite';
+  _factCreditRef=null;
+  _factLines = factBuildPubLines();
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
+  document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — lignes pré-remplies automatiquement (montant > 0) : vérifiez, retirez (✕) ou ajoutez des lignes, puis cliquez sur "Générer".';
+  document.getElementById('btn-fact-generer').textContent = '🧾 Générer la facture publicité (attribue le n° définitif)';
+  document.getElementById('btn-fact-generer').style.display='';
+  document.getElementById('btn-fact-generer').disabled=false;
+  document.getElementById('btn-fact-print').style.display='none';
+  showView('facture');
+}
+
+async function genererFacturePublicite(){
+  const btn=document.getElementById('btn-fact-generer');
+  btn.disabled=true;
+  document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  document.getElementById('fact-save-msg').textContent='';
+  try{
+    const cfg=FACT_ENTITES[_factType];
+    const ctr = await factGetCounter();
+    const current = Number(ctr.fields[cfg.ctrFieldPub]||0);
+    const next = current+1;
+    await factPatchCounter({[cfg.ctrFieldPub]: next});
+    const numero = cfg.formatNumPub(next);
+    _factNumero = numero;
+
+    const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
+    const todayISO = factTodayISO();
+    const echISO = factAddDaysISO(todayISO,15);
+    const agent = sessionStorage.getItem('auth_agent')||'';
+    const nom = gv('f-attr')||gv('f-ens')||'';
+    const rue = gv('f-rue')||'';
+    const cp = gv('f-cp')||'';
+    const com = gv('f-com')||'';
+    const tva = gv('f-tva')||'';
+
+    await factPostRegistre({
+      'N° Facture': numero,
+      'Entité': cfg.label,
+      'Attraction': [curId],
+      'Enseigne': nom,
+      'Année cotisation': '',
+      'Montant': montant,
+      'Date émission': todayISO,
+      'Échéance paiement': echISO,
+      'Généré par': agent,
+      'Type document': 'Facture Publicité'
+    });
+
+    document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
+    document.getElementById('fact-statut-msg').textContent = '✅ Facture Publicité n° '+numero+' générée et enregistrée.';
+    document.getElementById('btn-fact-generer').style.display='none';
+    document.getElementById('btn-fact-print').style.display='';
+
+    document.getElementById('fact-save-msg').style.color='#c55a11';
+    document.getElementById('fact-save-msg').textContent = '💾 Enregistrement des fichiers comptables en cours...';
+    try{
+      await factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, rue, cp, com, tva, _factLines.slice());
+    }catch(e){
+      console.error(e);
+      document.getElementById('fact-save-msg').style.color='#c0392b';
+      document.getElementById('fact-save-msg').textContent = "⚠️ Erreur lors de l'enregistrement local des fichiers.";
+    }
+
+    setTimeout(()=>window.print(), 300);
+  }catch(e){
+    console.error(e);
+    document.getElementById('fact-statut-msg').textContent = '❌ Erreur lors de la génération. Réessayez.';
+    btn.disabled=false;
+  }
 }
 
 // ══════════════════════════════════════
@@ -3636,6 +3771,7 @@ async function genererFacture(){
 // (facture normale ou note de crédit) — dispatché sur _factDocKind (2026-08-22).
 function genererDocument(){
   if(_factDocKind==='notecredit') return genererNoteCredit();
+  if(_factDocKind==='publicite') return genererFacturePublicite();
   return genererFacture();
 }
 
