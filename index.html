@@ -179,7 +179,8 @@ table.fact-table th{background:#404040;color:#fff;padding:7px;border:1px solid #
 table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 .fact-total-row td{background:#d9d9d9;font-weight:700;}
 .fact-apayer td{background:#1e3a6e;color:#fff;font-weight:700;}
-.fact-iban{margin-top:16px;font-size:13px;font-weight:700;}
+.fact-iban{margin-top:16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.fact-bank-logo{height:26px;width:auto;object-fit:contain;}
 .fact-cgv{font-size:9.5px;margin-top:18px;line-height:1.5;color:#333;}
 .fact-footer{font-size:10px;font-weight:700;text-align:center;border-top:2px solid #999;padding-top:8px;margin-top:18px;background:#f2f2f2;}
 .btn-fact{background:#7b2d8b;color:#fff;}
@@ -477,6 +478,22 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <button type="button" id="btn-fact-lu" class="btn btn-fact" onclick="openFacture('LU')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture LUX</button>
         </div>
         <div class="fr">
+          <div class="fl">Cotisation FR :</div>
+          <div class="fv" style="flex:0 0 90px;">
+            <select id="f-cotfr" onchange="markDirty();updateFactureButtons()" style="width:70px;">
+              <option value="">—</option><option>2024</option><option>2025</option><option>2026</option><option>2027</option>
+            </select>
+          </div>
+          <div class="fl" style="min-width:90px;">Montant FR :</div>
+          <div class="fv" style="flex:0 0 110px;">
+            <select id="f-montfr" onchange="markDirty();updateFactureButtons()" style="width:78px;">
+              <option value="">—</option><option>0</option><option>150</option><option>160</option><option>350</option><option>360</option>
+            </select> €</div>
+          <div class="fl" style="min-width:90px;">Échéance FR :</div>
+          <div class="fv"><input type="date" id="f-echfr" onchange="markDirty()"></div>
+          <button type="button" id="btn-fact-fr" class="btn btn-fact" onclick="openFacture('FR')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture FR</button>
+        </div>
+        <div class="fr">
           <button type="button" id="btn-notecredit" class="btn" onclick="ouvrirSelectionNoteCredit()" style="background:#a94442;color:#fff;padding:4px 10px;font-size:11px;white-space:nowrap;">↩️ Note de crédit (annuler une facture)</button>
         </div>
       </div>
@@ -682,8 +699,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         <tbody id="trim-body"></tbody>
       </table>
       <div class="fr" style="margin-top:5px;">
-        <button type="button" id="btn-fact-pub-be" class="btn btn-fact" onclick="openFacturePublicite('BE')" style="display:none;margin-right:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité BE</button>
-        <button type="button" id="btn-fact-pub-lu" class="btn btn-fact" onclick="openFacturePublicite('LU')" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité LUX</button>
+        <button type="button" id="btn-fact-pub-vm" class="btn btn-fact" onclick="openFacturePublicite('VM')" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité (VM-COMMUNICATION)</button>
       </div>
 
       <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
@@ -1688,6 +1704,9 @@ function fillForm(f){
   sv('f-cotlu', f['COTISATION LU']);
   sv('f-montlu',f['MONTANT LU']!==undefined&&f['MONTANT LU']!==null ? String(f['MONTANT LU']) : null);
   sv('f-echlu', fmtDate(f['ÉCHÉANCE LU']));
+  sv('f-cotfr', f['COTISATION FR']);
+  sv('f-montfr',f['MONTANT FR']!==undefined&&f['MONTANT FR']!==null ? String(f['MONTANT FR']) : null);
+  sv('f-echfr', fmtDate(f['ÉCHÉANCE FR']));
 
   sv('f-rem',  f['REMARQUES']);
   sv('f-majd', fmtDate(f['Date mise à jour données']));
@@ -1903,6 +1922,7 @@ function collectFields(){
     'CONTACT 4':gv('f-c4'),'TITRE 4':gv('f-t4'),'GSM 4':gv('f-g4'),'EMAIL 4':gv('f-e4'),
     'COTISATION BE':gv('f-cotbe'),'MONTANT BE':gv('f-montbe') ? Number(gv('f-montbe')) : null,'ÉCHÉANCE BE':gv('f-echbe')||null,
     'COTISATION LU':gv('f-cotlu'),'MONTANT LU':gv('f-montlu') ? Number(gv('f-montlu')) : null,'ÉCHÉANCE LU':gv('f-echlu')||null,
+    'COTISATION FR':gv('f-cotfr'),'MONTANT FR':gv('f-montfr') ? Number(gv('f-montfr')) : null,'ÉCHÉANCE FR':gv('f-echfr')||null,
     'REMARQUES':gv('f-rem'),
     'Date mise à jour données':gv('f-majd')||null,
     'Effectué par':gv('f-majp'),
@@ -2860,6 +2880,9 @@ const FACT_ENTITES = {
   BE: {
     label:'BE',
     site:'be',
+    headerLeft:'www.educpass.be',
+    logo:'New_logo_jpeg.jpg',
+    tvaStandard:true, // 21% client BE/sans TVA, 0% intracommunautaire (cf. factTvaInfo)
     siegeVille:'Stoumont',
     ligneStatut:'EDUCPASS a.s.b.l.  —  Roanne Coo, Grand route 5  —  4987 STOUMONT  —  TVA BE 0875.741.536',
     iban:'BE73 7512-0205-3060',
@@ -2877,6 +2900,9 @@ const FACT_ENTITES = {
   LU: {
     label:'LUX',
     site:'lu',
+    headerLeft:'www.educpass.lu',
+    logo:'New_logo_jpeg.jpg',
+    tvaStandard:false, // franchise en base, jamais de TVA quel que soit le client
     siegeVille:'Heinerscheid',
     ligneStatut:'Association Sans But Lucratif - RCS n° F 14923 - TVA n° LU 36.753.453',
     iban:'LU11.6191.PRDY.80KP.X694',
@@ -2890,6 +2916,60 @@ const FACT_ENTITES = {
     formatNumNC:n=>'NC-26/'+String(n).padStart(3,'0'),
     ctrFieldPub:'Dernier N° PUB LUX',
     formatNumPub:n=>'PUB-LU-26/'+String(n).padStart(3,'0')
+  },
+  // VM-COMMUNICATION scomm (2026-08-29) : régie publicitaire de TOUTES les brochures
+  // (Belux/France/Tips/Séjours) — remplace BE/LUX pour la "Facture Publicité" (éditions).
+  // Un seul bouton "Facture Publicité VM" sur la fiche (cf. updateFactureButtons()) ; pas
+  // de facture "Cotisation" ni d'UBL pour cette entité (ctrField/formatNum non utilisés,
+  // UBL restant réservé à BE uniquement dans factSaveFilesToDisk()). Numérotation reprise
+  // de la séquence manuelle existante de Marc : prochaine facture = FV1-47, prochaine
+  // note de crédit = NV1-4 (compteurs Airtable initialisés à 46/3 le 2026-08-29).
+  VM: {
+    label:'VM',
+    site:null,
+    headerLeft:'Tél. 0475/932.262<br>vm.communication.scomm@gmail.com',
+    logo:'VM-COMMUNICATION_logo.jpg',
+    tvaStandard:true, // TVA BE 0751.641.023 — même règle 21%/0% intracom. que EDUCPASS BE
+    siegeVille:'Grivegnée',
+    ligneStatut:'VM-COMMUNICATION scomm  —  rue Nicolas Spiroux, 104  —  4030 GRIVEGNÉE  —  TVA BE 0751.641.023',
+    iban:'BE98 7512 1060 2093',
+    bic:'AXABBE22 (Crelan)',
+    bankLogo:'Crelan_logo.png', // demande de Marc (2026-08-29) : logo Crélan affiché à côté de l'IBAN/BIC sur la facture VM
+    mentionTVA:'TVA non applicable.',
+    footer:'VM-COMMUNICATION scomm  -  rue Nicolas Spiroux, 104  -  4030 GRIVEGNÉE  -  TVA BE 0751.641.023  -  T. 0475/932.262  -  vm.communication.scomm@gmail.com',
+    tribunaux:'de Liège', // demande de Marc (2026-08-29) : Tribunaux de Liège (et non plus de Belgique)
+    ctrField:null,
+    formatNum:null,
+    ctrFieldNC:'Dernier N° NC VM',
+    formatNumNC:n=>'NV1-'+n,
+    ctrFieldPub:'Dernier N° PUB VM',
+    formatNumPub:n=>'FV1-'+n
+  },
+  // EDUCPASS-France asbl (2026-08-29) : coordonnées légales/bancaires communiquées par Marc,
+  // recoupées avec "INFOIS OFFICIELLES ED-FRANCE.docx" / "RIB EDUCPASS-FRANCE.pdf" (dossier
+  // COMPTA EDUCPASS-FRANCE). Pas de n° de TVA actuellement → franchise (tvaStandard:false,
+  // comme LUX). Numérotation confirmée par Marc : FR-26/NNN (comme BE) à partir de 001,
+  // notes de crédit NC-FR-26/NNN. Pas de "Facture Publicité" pour FR (rôle repris par VM).
+  FR: {
+    label:'FR',
+    site:'fr',
+    headerLeft:'Tél. 06.60.96.41.67',
+    logo:'New_logo_jpeg.jpg',
+    tvaStandard:false, // TVA : NA (actuellement) — franchise, comme LUX (confirmé par Marc)
+    siegeVille:'Vieux-Reng',
+    ligneStatut:'EDUCPASS-France asbl  —  74, rue Aimable Liénard  —  59600 VIEUX-RENG  —  N° RNA W591009811  —  SIRET 109 219 378 00014',
+    iban:'FR76 1027 8027 2100 0443 9580 186',
+    bic:'CMCIFR2A (Crédit Mutuel)',
+    bankLogo:'CREDIT_MUTUEL_logo.png', // demande de Marc (2026-08-29) : logo Crédit Mutuel affiché à côté de l'IBAN/BIC sur la facture FR
+    mentionTVA:'TVA non applicable.',
+    footer:'EDUCPASS-France asbl  -  74, rue Aimable Liénard  -  59600 VIEUX-RENG  -  Tél. 06.60.96.41.67',
+    tribunaux:'de Maubeuge',
+    ctrField:'Dernier N° FR',
+    formatNum:n=>'FR-26/'+String(n).padStart(3,'0'),
+    ctrFieldNC:'Dernier N° NC FR',
+    formatNumNC:n=>'NC-FR-26/'+String(n).padStart(3,'0'),
+    ctrFieldPub:null,
+    formatNumPub:null
   }
 };
 
@@ -2942,14 +3022,17 @@ function factTvaInfo(tvaRaw){
 function updateFactureButtons(){
   const btnBE=document.getElementById('btn-fact-be');
   const btnLU=document.getElementById('btn-fact-lu');
+  const btnFR=document.getElementById('btn-fact-fr');
   if(btnBE) btnBE.style.display = gv('f-cotbe') ? '' : 'none';
   if(btnLU) btnLU.style.display = gv('f-cotlu') ? '' : 'none';
-  // Facture Publicité (2026-08-22) : même critère de visibilité que les factures de cotisation —
-  // le membre doit être affilié BE et/ou LUX pour pouvoir facturer les insertions publicitaires dans cette entité.
-  const btnPubBE=document.getElementById('btn-fact-pub-be');
-  const btnPubLU=document.getElementById('btn-fact-pub-lu');
-  if(btnPubBE) btnPubBE.style.display = gv('f-cotbe') ? '' : 'none';
-  if(btnPubLU) btnPubLU.style.display = gv('f-cotlu') ? '' : 'none';
+  if(btnFR) btnFR.style.display = gv('f-cotfr') ? '' : 'none';
+  // Facture Publicité (2026-08-22, puis réattribuée à VM-COMMUNICATION le 2026-08-29) :
+  // VM-COMMUNICATION scomm est désormais la régie publicitaire de TOUTES les brochures
+  // (Belux/France/Tips/Séjours), donc un seul bouton "Facture Publicité VM" — visible dès
+  // que le membre est affilié dans au moins un pays (BE, LUX ou FR), quel que soit celui-ci,
+  // puisque VM facture indépendamment de l'entité EDUCPASS d'affiliation.
+  const btnPubVM=document.getElementById('btn-fact-pub-vm');
+  if(btnPubVM) btnPubVM.style.display = (gv('f-cotbe')||gv('f-cotlu')||gv('f-cotfr')) ? '' : 'none';
 }
 
 // Formate un nombre pour édition (contenteditable) en style FR : "150,00"
@@ -2965,7 +3048,7 @@ function factParseNum(s){
 // Calcule le bloc TVA (libellé, montant, total à payer, mention légale) à partir du total HTVA des lignes.
 function factComputeTvaBlock(montantHT){
   const cfg = FACT_ENTITES[_factType];
-  if(_factType==='BE'){
+  if(cfg.tvaStandard){ // BE et VM (TVA belge standard 21%/0% intracom.) — LU/FR restent en franchise (cfg.mentionTVA)
     const tva = gv('f-tva')||'';
     const info = factTvaInfo(tva);
     if(info.taux===21){
@@ -3047,7 +3130,8 @@ function factBuildDoc(numero){
   const cp = gv('f-cp')||'';
   const com = gv('f-com')||'';
   const tva = gv('f-tva')||'';
-  const echIso = _factType==='BE' ? gv('f-echbe') : gv('f-echlu');
+  const ECH_FIELD_BY_TYPE = {BE:'f-echbe', LU:'f-echlu', FR:'f-echfr'};
+  const echIso = gv(ECH_FIELD_BY_TYPE[_factType]||'f-echlu');
   const echFr = factDateFR(echIso);
   const todayISO = factTodayISO();
   const todayFr = factDateFR(todayISO);
@@ -3062,20 +3146,20 @@ function factBuildDoc(numero){
   const concerneTxt = isNC
     ? 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '')
     : isPub
-      ? 'Insertions publicitaires'
+      ? 'Insertions publicitaires d\'EDUCPASS'
       : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
   const enseigneTxt = gv('f-ens')||'';
 
   return `
   <div class="fact-doc" id="fact-doc">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
-      <img class="fact-logo" src="New_logo_jpeg.jpg" alt="Educpass">
+      <img class="fact-logo" src="${cfg.logo}" alt="${factEsc(cfg.label)}">
     </div>
     <div class="fact-statut">${factEsc(cfg.ligneStatut)}</div>
     <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
       <tr>
         <td class="fact-hdr-col-left" style="vertical-align:top;font-size:12px;color:#333;">
-          www.educpass.${cfg.site}
+          ${cfg.headerLeft}
         </td>
         <td class="fact-hdr-col-right" style="vertical-align:top;font-size:13px;text-align:left;">
           <div style="font-size:16px;font-weight:700;">${factEsc(nom)}</div>
@@ -3112,8 +3196,9 @@ function factBuildDoc(numero){
       Cette note de crédit annule intégralement la facture n° ${factEsc(_factCreditRef ? _factCreditRef.numero : '')}. Elle doit être conservée avec la facture correspondante à des fins comptables.
     </div>` : `
     <div style="text-align:right;font-size:13px;margin-top:6px;">Échéance : <b>${echeancePaieFr}</b></div>
+    ${_factType==='VM'?'<div style="margin-top:14px;font-size:13px;"><b>A partir du 01/09/2026, VM-COMMUNICATION devient la Régie Publicitaire pour toutes les éditions d\'EDUCPASS.</b></div>':''}
     <div style="margin-top:18px;font-size:13px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
-    <div class="fact-iban">IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</div>
+    <div class="fact-iban">${cfg.bankLogo?`<img class="fact-bank-logo" src="${cfg.bankLogo}" alt="banque">`:''}<span>IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</span></div>
     <div class="fact-cgv">
       <b>CONDITIONS GÉNÉRALES DE VENTE :</b><br>
       1. Toute réclamation concernant l'établissement de la facture devra nécessairement être formulée par écrit dans les huit jours de son émission. Passé ce délai, la facture est censée être acceptée dans son intégralité.<br>
@@ -3134,8 +3219,10 @@ function openFacture(type){
   _factDocKind='facture';
   _factCreditRef=null;
   const cfg = FACT_ENTITES[type];
-  const annee = type==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
-  const montantInit = Number((type==='BE' ? gv('f-montbe') : gv('f-montlu')) || 0);
+  const COT_FIELD_BY_TYPE = {BE:'f-cotbe', LU:'f-cotlu', FR:'f-cotfr'};
+  const MONT_FIELD_BY_TYPE = {BE:'f-montbe', LU:'f-montlu', FR:'f-montfr'};
+  const annee = gv(COT_FIELD_BY_TYPE[type]||'f-cotlu')||'';
+  const montantInit = Number(gv(MONT_FIELD_BY_TYPE[type]||'f-montlu') || 0);
   _factLines = [{
     date: factDateFR(factTodayISO()),
     libelle: 'Cotisation membre ' + cfg.label + (annee?(' '+annee):''),
@@ -3205,8 +3292,12 @@ function factJsStrLit(s){
   return "'" + String(s??'').replace(/\\/g,'\\\\').replace(/'/g,"\\'").replace(/"/g,'&quot;').replace(/</g,'&lt;') + "'";
 }
 
+// Correspondance entre la valeur stockée dans le registre (champ "Entité", = cfg.label
+// au moment de la génération) et la clé interne FACT_ENTITES — nécessaire car label !==
+// clé pour LU ("LUX") et pourrait diverger pour une future entité (2026-08-29, ajout VM).
+const FACT_LABEL_TO_KEY = { BE:'BE', LUX:'LU', VM:'VM', FR:'FR' };
 function demarrerNoteCredit(numero, entite, dateISO, montant){
-  const typeKey = entite==='BE' ? 'BE' : 'LU';
+  const typeKey = FACT_LABEL_TO_KEY[entite] || 'LU';
   const cfg = FACT_ENTITES[typeKey];
   _factType = typeKey;
   _factNumero = null;
@@ -3369,7 +3460,7 @@ async function genererFacturePublicite(){
 // SAUVEGARDE AUTOMATIQUE LOCALE (PDF + UBL)
 // via File System Access API (Chrome/Edge uniquement)
 // ══════════════════════════════════════
-const FACT_DIRKEYS = {compta:'fact_dir_compta', partenaires:'fact_dir_partenaires'};
+const FACT_DIRKEYS = {compta:'fact_dir_compta', partenaires:'fact_dir_partenaires', vm:'fact_dir_vm'};
 
 function factIdbOpen(){
   return new Promise((resolve,reject)=>{
@@ -3412,6 +3503,9 @@ async function factAutoriserDossiers(){
     msgEl.textContent = '👉 Sélectionnez le dossier "DOSSIER PARTENAIRES 2026"...';
     const dirPart = await window.showDirectoryPicker({id:'fact-partenaires', mode:'readwrite'});
     await factIdbSet(FACT_DIRKEYS.partenaires, dirPart);
+    msgEl.textContent = '👉 Sélectionnez le dossier "DOSSIER VM-COMMUNICATION"...';
+    const dirVM = await window.showDirectoryPicker({id:'fact-vm', mode:'readwrite'});
+    await factIdbSet(FACT_DIRKEYS.vm, dirVM);
     msgEl.style.color='#1a7a3d';
     msgEl.textContent = '✅ Dossiers comptables autorisés. Les prochaines factures s\'y enregistreront automatiquement.';
   }catch(e){
@@ -3698,15 +3792,30 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
 
   const results = [];
 
-  const dirCompta = await factGetDirHandle(FACT_DIRKEYS.compta);
-  if(dirCompta){
-    try{
-      await factWriteFile(dirCompta, fileBase+'.pdf', pdfBlob);
-      if(ublText) await factWriteFile(dirCompta, fileBase+'.xml', ublText);
-      results.push('comptabilité ✅');
-    }catch(e){ console.error(e); results.push('comptabilité ❌'); }
+  if(_factType==='VM'){
+    // VM-COMMUNICATION (2026-08-29) : dossier comptable dédié, séparé Factures / Notes de
+    // crédit — remplace le dossier partagé "FACTURES VENTES 2026-2027" utilisé par BE/LUX/FR.
+    const dirVM = await factGetDirHandle(FACT_DIRKEYS.vm);
+    if(dirVM){
+      try{
+        const sub = await factEnsureSubdir(dirVM, [_factDocKind==='notecredit' ? 'NOTES DE CRÉDIT' : 'FACTURES']);
+        await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
+        results.push('VM-COMMUNICATION ✅');
+      }catch(e){ console.error(e); results.push('VM-COMMUNICATION ❌'); }
+    } else {
+      results.push('VM-COMMUNICATION ⏭️ (dossier non autorisé)');
+    }
   } else {
-    results.push('comptabilité ⏭️ (dossier non autorisé)');
+    const dirCompta = await factGetDirHandle(FACT_DIRKEYS.compta);
+    if(dirCompta){
+      try{
+        await factWriteFile(dirCompta, fileBase+'.pdf', pdfBlob);
+        if(ublText) await factWriteFile(dirCompta, fileBase+'.xml', ublText);
+        results.push('comptabilité ✅');
+      }catch(e){ console.error(e); results.push('comptabilité ❌'); }
+    } else {
+      results.push('comptabilité ⏭️ (dossier non autorisé)');
+    }
   }
 
   const dirPart = await factGetDirHandle(FACT_DIRKEYS.partenaires);
@@ -3740,7 +3849,7 @@ async function genererFacture(){
     _factNumero = numero;
 
     const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
-    const annee = _factType==='BE' ? (gv('f-cotbe')||'') : (gv('f-cotlu')||'');
+    const annee = gv({BE:'f-cotbe', LU:'f-cotlu', FR:'f-cotfr'}[_factType]||'f-cotlu')||'';
     const todayISO = factTodayISO();
     const echISO = factAddDaysISO(todayISO,15);
     const agent = sessionStorage.getItem('auth_agent')||'';
