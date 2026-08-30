@@ -3328,9 +3328,10 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
 // calculé est > 0 ; Marc retire les lignes non désirées avec le bouton ✕
 // déjà existant, ou en ajoute avec "+ Ajouter une ligne".
 // Formules confirmées par Marc :
-//   Annuelles     : (Page gratuite + Page payante) × Tarif − Crédit
-//   Trimestrielles: NBR × PRIX − CRÉDIT (même principe, cohérent avec
-//                   le calcul déjà affiché dans la colonne TOTAL)
+//   Annuelles     : TARIF seul (déjà le prix total convenu, pas de multiplication par les
+//                   pages ni déduction du Crédit — corrigé le 2026-08-30, la formule
+//                   précédente (Page gratuite + Page payante) × Tarif était incorrecte)
+//   Trimestrielles: NBR × PRIX (le Crédit reste purement interne, jamais déduit)
 // ══════════════════════════════════════
 const FACT_PUB_ANNUELLES = [
   {pfx:'bx',  label:'Publication annuelle BELUX'},
@@ -3362,9 +3363,12 @@ function factBuildPubLines(){
     const pg = parseFloat(document.getElementById('p-'+cat.pfx+'-pg')?.value)||0;
     const pp = parseFloat(document.getElementById('p-'+cat.pfx+'-pp')?.value)||0;
     const tarif = parseFloat(document.getElementById('p-'+cat.pfx+'-t')?.value)||0;
-    // Le champ Crédit n'est PAS pris en compte dans la facturation : il est purement
-    // interne (repère de planning pour l'équipe), sans lien avec le montant réellement dû.
-    const montant = (pg+pp)*tarif;
+    // Correctif du 2026-08-30 (demande de Marc) : le TARIF est déjà le prix total convenu
+    // pour l'insertion, quel que soit le nombre de pages — on ne multiplie PLUS par
+    // (page gratuite + page payante). Le champ Crédit reste purement interne (repère de
+    // planning), jamais déduit automatiquement. Si un montant doit différer du tarif
+    // affiché, Marc l'ajuste manuellement sur la ligne au moment de la génération.
+    const montant = tarif;
     if(montant>0) lines.push({ date:today, libelle:cat.label+' ('+factPageFrac(pg+pp)+') — insertion publicitaire', qte:1, prixUnit:montant });
   });
   TRIMS.forEach((t,i)=>{
