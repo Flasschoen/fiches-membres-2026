@@ -1,5 +1,10 @@
-# Ignorer tout sauf index.html et le logo
+# Ignorer tout sauf index.html et les logos
 *
 !index.html
 !.gitignore
 !New_logo_jpeg.jpg
+!VM-COMMUNICATION_logo.jpg
+!Crelan_logo.png
+!CREDIT_MUTUEL_logo.png
+!planning-annuelles.html
+!planning-news.html
