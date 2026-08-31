@@ -119,9 +119,13 @@ body{background:#dce3ef;min-height:100vh;}
 
 /* ── CONFIRMATION ── */
 .conf-doc{background:#fff;max-width:820px;margin:18px auto;padding:30px 40px;box-shadow:0 3px 12px rgba(0,0,0,.18);font-size:12px;line-height:1.5;}
-.conf-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:4px;}
-.conf-logo{height:60px;width:auto;object-fit:contain;}
-.conf-title{font-size:18px;font-weight:900;color:#000;text-align:right;text-transform:uppercase;}
+/* Correctif 2026-08-31 (demande de Marc) : logo VM-COMMUNICATION en haut à droite,
+   "CONFIRMATION « WORKSHOP »" centré. Grille à 3 colonnes (1fr / auto / 1fr) : le titre
+   est en colonne 2 (donc vraiment centré sur la largeur totale, colonne 1 vide servant
+   de contrepoids symétrique à la colonne du logo), le logo en colonne 3 aligné à droite. */
+.conf-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:4px;}
+.conf-logo{height:60px;width:auto;object-fit:contain;grid-column:3;justify-self:end;}
+.conf-title{font-size:18px;font-weight:900;color:#000;text-align:center;text-transform:uppercase;grid-column:2;}
 .conf-siege{text-align:center;font-size:10px;color:#333;border-top:1px solid #000;border-bottom:1px solid #000;padding:3px 0;margin:6px 0 10px;}
 .conf-info-table{width:100%;border-collapse:collapse;margin-bottom:10px;}
 .conf-info-table td{padding:2px 4px;font-size:12px;vertical-align:top;}
@@ -969,8 +973,8 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
     <!-- HEADER : logo gauche + titre droite -->
     <div class="conf-header">
-      <img class="conf-logo" src="New_logo_jpeg.jpg" alt="Educpass">
       <div class="conf-title">CONFIRMATION « WORKSHOP »</div>
+      <img class="conf-logo" src="VM-COMMUNICATION_logo.jpg" alt="VM-COMMUNICATION">
     </div>
 
     <!-- SIÈGE SOCIAL -->
@@ -2647,6 +2651,12 @@ async function buildRecap(){
     const stat  = f['STATUT_WKS']||'MEMBRE';
     const tr=document.createElement('tr');
     tr.setAttribute('data-member-id', rec.id);
+    // Demande de Marc (2026-08-31) : cliquer sur une ligne du récapitulatif doit ouvrir
+    // la Confirmation de ce membre pour la modifier (table/repas/drink/activité/statut/
+    // montant restent modifiables inline dans le récap, mais un clic sur la ligne — hors
+    // des champs eux-mêmes — bascule sur le document imprimable complet).
+    tr.style.cursor='pointer';
+    tr.title='Cliquer pour ouvrir la confirmation de ce membre';
     tr.innerHTML=
       `<td><input type="number" class="ri-table" min="1" max="99" value="${tbl}" placeholder="—" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
       `<td style="text-align:left;">${ens}</td>`+
@@ -2658,6 +2668,20 @@ async function buildRecap(){
         `<option${stat==='NON-MEMBRE'?' selected':''}>NON-MEMBRE</option>`+
       `</select></td>`+
       `<td><input type="number" class="ri-montant" min="0" value="${mont}" oninput="recalcRecap()" style="width:74px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:right;box-sizing:border-box;"></td>`;
+    tr.addEventListener('click', function(e){
+      const tag=(e.target.tagName||'').toUpperCase();
+      if(tag==='INPUT'||tag==='SELECT'||tag==='OPTION') return; // laisse l'édition inline tranquille
+      if(isDirty){
+        if(!confirm('Des modifications non sauvegardées seront perdues. Charger quand même ?')) return;
+        clearDirty();
+      }
+      document.getElementById('msel').value=rec.id;
+      curId=rec.id;
+      fillForm(f);
+      clearDirty();
+      showView('confirmation');
+      setSt('✅ Confirmation ouverte : '+ens);
+    });
     tbody.appendChild(tr);
   });
   document.getElementById('recap-cnt').textContent=filteredUniq.length+' participant(s)';
