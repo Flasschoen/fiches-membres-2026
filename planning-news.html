@@ -35,11 +35,27 @@ body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5}
 .tab:not(.active):hover{background:#c9b5e0}
 
 /* ── TABLE ── */
-#content{padding:10px 14px;overflow-x:auto}
+#content{padding:10px 14px}
 #content h2{font-size:13px;padding:6px 0 8px;font-weight:bold}
 #content h3{font-size:12px;padding:10px 0 4px;color:#888}
-table{border-collapse:collapse;font-size:11px;width:100%;min-width:900px;margin-bottom:18px}
-th{padding:5px 4px;text-align:center;border:1px solid #555;white-space:nowrap;position:sticky;top:56px;z-index:5;color:#fff}
+/* Correctif 2026-08-30 v3 : la vraie cause du chevauchement n'était pas l'en-tête mais
+   #content{overflow-x:auto} — sans overflow-y explicite, le navigateur bascule aussi
+   overflow-y sur "auto" (règle CSS standard), ce qui fait de #content son PROPRE
+   conteneur de défilement. Comme #content n'a pas de hauteur limitée, il ne défile
+   jamais lui-même (c'est la page qui défile) : le position:sticky du <thead>, calé par
+   rapport à #content, ne "voit" jamais ce défilement et reste figé — pas un problème de
+   pixels. Fix : chaque tableau (BELUX / FRANCE) est isolé dans .table-wrap, qui devient
+   LUI-MÊME le conteneur qui défile (hauteur limitée + overflow:auto). */
+.table-wrap{overflow:auto;max-height:42vh;border:1px solid #c8b8dc;border-radius:4px;margin-bottom:18px}
+/* Correctif 2026-08-30 v4 : "table{width:100%;min-width:900px}" et "thead{position:sticky}"
+   étaient des sélecteurs GLOBAUX — ils s'appliquaient aussi à la petite table de la
+   fenêtre "Facturer VM" (table.vm-fact-table), l'élargissant de force à 900px et
+   poussant les colonnes Montant/Statut hors champ. On limite ces 2 règles au vrai
+   tableau du planning (.table-wrap), sans toucher aux autres tableaux de la page. */
+table{border-collapse:collapse;font-size:11px}
+.table-wrap table{width:100%;min-width:900px}
+.table-wrap thead{position:sticky;top:0;z-index:5}
+th{padding:5px 4px;text-align:center;border:1px solid #555;white-space:nowrap;color:#fff}
 th.sv-textes{background:#FFC000;color:#000}
 th.sv-epreuve{background:#70AD47;color:#000}
 th.sv-coupon{background:#00B0F0;color:#000}
@@ -401,7 +417,7 @@ function buildSection(ed, section){
     </tr>`;
   }).join("");
   const fN=n=>n?n.toLocaleString("fr-BE"):"";
-  return`<table>
+  return`<div class="table-wrap"><table>
     <thead>
       <tr>
         <th rowspan="2" style="width:28px;background:${hdrBg}">N°</th>
@@ -433,7 +449,7 @@ function buildSection(ed, section){
         <td colspan="6" style="background:${hdrBg}"></td>
       </tr>
     </tfoot>
-  </table>`;
+  </table></div>`;
 }
 
 // ── MAIN TABLE ────────────────────────────────────────────────────────────────
@@ -730,8 +746,11 @@ function openVmFactModal(section){
       tva: f['N° TVA']||'',
       libelleBase: 'NEWS SCOLAIRES '+ed.num+' — '+section+(fmt?' ('+fmt+')':''),
       montant,
-      checked: montant>0,
-      status: ''
+      // Toutes les cases décochées par défaut (demande de Marc, 2026-08-30) : la présence
+      // d'un nbr/prix dans la fiche ne signifie pas que le client a confirmé son insertion
+      // cette édition — Marc coche lui-même au cas par cas selon les critères demandés.
+      checked: false,
+      status: '—'
     };
   });
   renderVmFactRows();

@@ -37,12 +37,35 @@ body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5}
 .tab:not(.active):hover{background:#bbc4d6}
 
 /* ── CONTENT ── */
-#content{padding:10px 14px;overflow-x:auto}
+#content{padding:10px 14px}
 #content h2{color:#1E3A6E;font-size:13px;padding:6px 0 8px;font-weight:bold}
 
 /* ── TABLE ── */
-table{border-collapse:collapse;font-size:11px;width:100%;min-width:1100px}
-th{background:#1E3A6E;color:#fff;padding:5px 4px;text-align:center;border:1px solid #2a5090;white-space:nowrap;position:sticky;top:56px;z-index:5}
+/* Correctif 2026-08-30 v3 (signalé par Marc, "première ligne du planning" mal visible,
+   persistant malgré 2 tentatives précédentes) : la vraie cause n'était pas l'en-tête
+   mais #content{overflow-x:auto} — dès qu'un overflow-x est posé sans overflow-y, le
+   navigateur bascule aussi overflow-y sur "auto" (règle CSS standard), ce qui fait de
+   #content son PROPRE conteneur de défilement. Or #content n'a pas de hauteur limitée,
+   donc il ne défile jamais lui-même : c'est la PAGE qui défile. Résultat : le
+   position:sticky du <thead>, calé par rapport à #content, ne "voit" jamais ce
+   défilement de page et reste figé — le tableau défile sous lui sans qu'il s'accroche
+   nulle part (ce n'était donc jamais un problème de décalage en pixels).
+   Fix : on isole le tableau dans .table-wrap, qui devient LUI-MÊME le conteneur qui
+   défile (hauteur limitée + overflow:auto) ; le <thead> s'accroche alors correctement
+   en haut de .table-wrap pendant qu'on fait défiler les lignes. */
+.table-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #c8d0e0;border-radius:4px}
+/* Correctif 2026-08-30 v4 (signalé par Marc : "montants et statuts n'apparaissent
+   toujours pas" dans la fenêtre Facturer VM) : "table{width:100%;min-width:1100px}" et
+   "thead{position:sticky}" ci-dessous étaient des sélecteurs GLOBAUX — ils s'appliquaient
+   donc aussi à la petite table de la fenêtre de facturation (table.vm-fact-table),
+   l'élargissant de force à 1100px alors que la fenêtre ne fait que ~760px de large :
+   les colonnes Montant/Statut se retrouvaient poussées hors champ, invisibles. On limite
+   maintenant ces deux règles au vrai tableau du planning (.table-wrap), sans toucher aux
+   autres tableaux de la page (fenêtre de facturation, gabarit de facture PDF). */
+table{border-collapse:collapse;font-size:11px}
+.table-wrap table{width:100%;min-width:1100px}
+.table-wrap thead{position:sticky;top:0;z-index:5}
+th{background:#1E3A6E;color:#fff;padding:5px 4px;text-align:center;border:1px solid #2a5090;white-space:nowrap}
 th.pub-hdr{color:#1E3A6E}
 th.sv-textes{background:#FFC000;color:#000}
 th.sv-epreuve{background:#70AD47;color:#000}
@@ -399,6 +422,7 @@ function buildTable(){
   const fmtN=n=>n?n.toLocaleString("fr-BE"):"";
   document.getElementById("content").innerHTML=`
   <h2>${ed.title} &nbsp;—&nbsp; Généré le ${new Date().toLocaleDateString("fr-BE")} <button id="vm-fact-btn" onclick="openVmFactModal()">🧾 Facturer VM (${members.length})</button></h2>
+  <div class="table-wrap">
   <table>
     <thead>
       <tr>
@@ -437,7 +461,8 @@ function buildTable(){
         <td colspan="9"></td>
       </tr>
     </tfoot>
-  </table>`;
+  </table>
+  </div>`;
 }
 
 function status(msg){document.getElementById("status").textContent=msg;}
@@ -732,8 +757,11 @@ function openVmFactModal(){
       pp: parseFloat(f[ed.pp])||0,
       edTitle: ed.title,
       montant: tar,        // défaut = TARIF seul (correctif 2026-08-30), modifiable ci-dessous
-      checked: tar>0,
-      status: ''
+      // Toutes les cases décochées par défaut (demande de Marc, 2026-08-30) : la présence
+      // d'un tarif dans la fiche ne signifie pas que le client a confirmé son insertion
+      // cette édition — Marc coche lui-même au cas par cas selon les critères demandés.
+      checked: false,
+      status: '—'
     };
   });
   renderVmFactRows();

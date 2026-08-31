@@ -1158,7 +1158,15 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
     <div class="recap-title">📊 Récapitulatif Workshop</div>
     <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap;">
       <label style="font-size:12px;font-weight:700;color:#555;">PROFS-CONTACTS :</label>
-      <input type="number" id="recap-profs" min="0" placeholder="—" style="font-size:12px;padding:4px 8px;border:1px solid #aaa;border-radius:3px;width:70px;text-align:center;">
+      <input type="number" id="recap-profs" min="0" placeholder="—" value="1" style="font-size:12px;padding:4px 8px;border:1px solid #aaa;border-radius:3px;width:70px;text-align:center;">
+      <label style="font-size:12px;font-weight:700;color:#555;">Année :</label>
+      <select id="recap-profs-annee" style="font-size:12px;padding:4px 8px;border:1px solid #aaa;border-radius:3px;">
+        <option value="">—</option>
+        <option value="2026" selected>2026</option>
+        <option value="2027">2027</option>
+        <option value="2028">2028</option>
+        <option value="2029">2029</option>
+      </select>
       <button class="btn" onclick="buildRecap()" style="background:#1e3a6e;color:#fff;padding:4px 14px;">🔍 Afficher</button>
       <button class="btn" id="recap-save-btn" onclick="saveRecap()" style="background:#1a7a3d;color:#fff;padding:4px 14px;display:none;">💾 Sauvegarder</button>
       <button class="btn" id="recap-export-btn" onclick="exportRecap()" style="background:#217346;color:#fff;padding:4px 14px;display:none;">📤 Exporter CSV</button>
@@ -2393,10 +2401,14 @@ function showView(v){
   }
   if(v==='confirmation'){
     calcConfTotal();
-    // Pré-remplir le PROFS-CONTACTS du récap avec la valeur de la FICHE
-    const fp=document.getElementById('f-profs')?.value||'';
-    const rp=document.getElementById('recap-profs');
-    if(rp&&fp!==''){rp.value=fp;buildRecap();}
+    // Correctif 2026-08-31 (signalé par Marc : "4 membres qui n'ont rien à voir" dans le
+    // récapitulatif) : on recopiait ici automatiquement le PROFS-CONTACTS du membre dont
+    // la fiche était ouverte dans le champ de recherche du Récapitulatif, et on relançait
+    // la recherche avec cette valeur — donc changer de fiche réinitialisait silencieusement
+    // le récap sur un groupe différent (souvent "code 0", une valeur par défaut sans lien
+    // avec le vrai groupe recherché). Le récap ne touche plus au champ : il reste sur
+    // le code + année que Marc a lui-même saisis (1 + 2026 par défaut), stable d'une fiche
+    // à l'autre.
   }
 }
 
@@ -2569,6 +2581,12 @@ async function executeRR(){
 // ══════════════════════════════════════
 async function buildRecap(){
   const profsVal = document.getElementById('recap-profs').value;
+  // Correctif 2026-08-31 (signalé par Marc : "j'ai 4 membres qui n'ont rien à voir" dans
+  // le récapitulatif) : le récap ne filtrait QUE sur le code PROFS-CONTACTS, jamais sur
+  // l'année — un code réutilisé une autre année (ou laissé à 0 par défaut) polluait la
+  // liste. On exige maintenant code + année ensemble (l'année est optionnelle : si le
+  // sélecteur est vide, on retombe sur le filtrage par code seul, pour rester souple).
+  const anneeVal = document.getElementById('recap-profs-annee')?.value || '';
   const tbody=document.getElementById('recap-tbody');
   if(profsVal===''){
     tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Saisissez une valeur PROFS-CONTACTS et cliquez sur Afficher</td></tr>';
@@ -2581,7 +2599,12 @@ async function buildRecap(){
   const profsNum=Number(profsVal);
   const filtered = members.filter(m => {
     const v=m.fields['PROFS-CONTACTS'];
-    return v!==undefined && v!==null && v!=='' && Number(v)===profsNum;
+    if(v===undefined||v===null||v===''||Number(v)!==profsNum) return false;
+    if(anneeVal!==''){
+      const a=m.fields['ANNEE PROFS-CONTACTS'];
+      if(String(a||'')!==anneeVal) return false;
+    }
+    return true;
   });
   filtered.sort((a,b)=>{
     const ta=a.fields['TABLE_WKS']!=null?Number(a.fields['TABLE_WKS']):9999;
@@ -2600,7 +2623,8 @@ async function buildRecap(){
   });
   tbody.innerHTML='';
   if(!filteredUniq.length){
-    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Aucun membre avec PROFS-CONTACTS = '+profsNum+'</td></tr>';
+    const _lbl='Aucun membre avec PROFS-CONTACTS = '+profsNum+(anneeVal?' (année '+anneeVal+')':'');
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">'+_lbl+'</td></tr>';
     document.getElementById('recap-cnt').textContent='';
     recalcRecap();
     return;
