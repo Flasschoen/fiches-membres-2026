@@ -1523,6 +1523,16 @@ async function loadAll(){
       if(_m){
         document.getElementById('msel').value=_m.id;
         await loadMember();
+        // 2026-09-01 (demande de Marc) : ?fact=vm en plus de ?id=recXXX ouvre directement
+        // l'écran de facture Publicité VM-COMMUNICATION (aperçu modifiable), pour permettre
+        // un clic depuis les plannings (News/Annuelles) jusqu'à la facture prête à vérifier/
+        // générer, sans étape intermédiaire. Ignoré silencieusement si le bouton n'est pas
+        // visible pour ce membre (aucune cotisation BE/LUX/FR active).
+        if(_params.get('fact')==='vm'){
+          const _btnPubVM=document.getElementById('btn-fact-pub-vm');
+          if(_btnPubVM && _btnPubVM.style.display!=='none') openFacturePublicite('VM');
+          else console.warn('[autoSel] ?fact=vm ignoré : bouton Facture Publicité VM non disponible pour ce membre.');
+        }
       } else {
         // ── Restauration depuis sessionStorage (refresh de page) ────────────
         const _ssId=sessionStorage.getItem('lastMemberId');

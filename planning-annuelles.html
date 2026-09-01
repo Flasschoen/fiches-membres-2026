@@ -4,8 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Planning Brochures Annuelles 2027</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5}
@@ -54,14 +52,6 @@ body{font-family:Arial,sans-serif;font-size:12px;background:#f0f2f5}
    défile (hauteur limitée + overflow:auto) ; le <thead> s'accroche alors correctement
    en haut de .table-wrap pendant qu'on fait défiler les lignes. */
 .table-wrap{overflow:auto;max-height:calc(100vh - 170px);border:1px solid #c8d0e0;border-radius:4px}
-/* Correctif 2026-08-30 v4 (signalé par Marc : "montants et statuts n'apparaissent
-   toujours pas" dans la fenêtre Facturer VM) : "table{width:100%;min-width:1100px}" et
-   "thead{position:sticky}" ci-dessous étaient des sélecteurs GLOBAUX — ils s'appliquaient
-   donc aussi à la petite table de la fenêtre de facturation (table.vm-fact-table),
-   l'élargissant de force à 1100px alors que la fenêtre ne fait que ~760px de large :
-   les colonnes Montant/Statut se retrouvaient poussées hors champ, invisibles. On limite
-   maintenant ces deux règles au vrai tableau du planning (.table-wrap), sans toucher aux
-   autres tableaux de la page (fenêtre de facturation, gabarit de facture PDF). */
 table{border-collapse:collapse;font-size:11px}
 .table-wrap table{width:100%;min-width:1100px}
 .table-wrap thead{position:sticky;top:0;z-index:5}
@@ -77,6 +67,8 @@ tr:nth-child(odd) td{background:#fff}
 td.num{text-align:center}
 td.right{text-align:right}
 td.nm{font-weight:bold;max-width:170px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+td.nm a{color:#1E3A6E;text-decoration:none}
+td.nm a:hover{text-decoration:underline}
 td.pub{background:#FFFDE7}
 td.suivi{padding:2px}
 td.suivi input,td.suivi select{width:100%;font-size:10px;font-weight:bold;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:#fefde8}
@@ -89,42 +81,6 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
 #loading-dialog{border:3px solid #1E3A6E;border-radius:14px;padding:36px 60px;font-size:20px;font-weight:bold;color:#1E3A6E;box-shadow:0 10px 40px rgba(0,0,0,.35);text-align:center;min-width:300px;line-height:1.8;background:#fff;margin:auto}
 #loading-dialog::backdrop{background:rgba(0,0,0,.50)}
 
-/* ── FACTURATION VM (2026-08-30) ── */
-#vm-fact-btn{background:#7b2d8b;color:#fff;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-left:8px}
-#vm-fact-btn:hover{background:#5f2270}
-#vm-autoriser-btn{background:#e67e22;color:#fff;border:none;padding:6px 12px;border-radius:5px;cursor:pointer;font-size:11px;font-weight:bold}
-#modal-vm-fact{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:2000}
-#modal-vm-fact.open{display:flex}
-.vm-modal-box{background:#fff;border-radius:10px;padding:20px 24px;max-width:760px;width:92%;max-height:86vh;overflow-y:auto;box-shadow:0 10px 40px rgba(0,0,0,.4)}
-.vm-modal-box h3{color:#7b2d8b;margin-bottom:4px;font-size:15px}
-.vm-modal-box p.sub{color:#666;font-size:11.5px;margin-bottom:12px}
-table.vm-fact-table{width:100%;border-collapse:collapse;font-size:12px;margin-bottom:14px}
-table.vm-fact-table th{background:#7b2d8b;color:#fff;padding:6px;text-align:left}
-table.vm-fact-table td{padding:5px 6px;border-bottom:1px solid #e5e5e5;vertical-align:middle}
-table.vm-fact-table input[type="number"]{width:80px;font-size:12px;padding:3px 5px;border:1px solid #bbb;border-radius:3px;text-align:right}
-table.vm-fact-table td.vm-status{font-size:11px;white-space:nowrap}
-.vm-modal-actions{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
-#vm-fact-summary{font-size:12px;font-weight:bold;color:#1e3a6e;margin-top:10px;min-height:16px}
-.vm-btn-generer{background:#1a7a3d;color:#fff;border:none;padding:8px 18px;border-radius:5px;cursor:pointer;font-size:13px;font-weight:bold}
-.vm-btn-generer:disabled{background:#9bbfa8;cursor:not-allowed}
-.vm-btn-fermer{background:#666;color:#fff;border:none;padding:8px 16px;border-radius:5px;cursor:pointer;font-size:13px}
-
-/* ── Gabarit de facture (identique à index.html — rendu hors-écran pour la capture PDF) ── */
-#fact-doc-container{position:fixed;left:-9999px;top:0;width:210mm}
-.fact-doc{max-width:210mm;margin:0;padding:15mm 18mm;background:#fff;font-family:Arial,sans-serif;font-size:14px;color:#000}
-.fact-logo{height:60px;width:auto;object-fit:contain}
-.fact-hdr-col-left{width:38%}
-.fact-hdr-col-right{width:62%}
-.fact-statut{font-size:11px;font-style:italic;color:#404040;text-align:right;border-bottom:1px solid #000;padding-bottom:5px;margin-bottom:12px}
-table.fact-table{width:100%;border-collapse:collapse;font-size:13.5px;margin-bottom:0}
-table.fact-table th{background:#404040;color:#fff;padding:7px;border:1px solid #999;text-align:center}
-table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center}
-.fact-total-row td{background:#d9d9d9;font-weight:700}
-.fact-apayer td{background:#1e3a6e;color:#fff;font-weight:700}
-.fact-iban{margin-top:16px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:10px}
-.fact-bank-logo{height:26px;width:auto;object-fit:contain}
-.fact-cgv{font-size:9.5px;margin-top:18px;line-height:1.5;color:#333}
-.fact-footer{font-size:10px;font-weight:700;text-align:center;border-top:2px solid #999;padding-top:8px;margin-top:18px;background:#f2f2f2}
 </style>
 </head>
 <body>
@@ -150,31 +106,12 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center}
       <button onclick="changeAgent()" style="background:#fff;color:#1E3A6E;border:2px solid #fff;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-right:4px">🔄 Changer agent</button>
       <button onclick="window.open('https://flasschoen.github.io/fiches-membres-2026/','_blank')" style="background:#FFD966;color:#1E3A6E;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-right:4px">📋 FICHE MEMBRE</button>
       <button id="save-btn" onclick="saveAll()" style="background:#e67e22;color:#fff;border:none;padding:6px 14px;border-radius:5px;cursor:pointer;font-size:12px;font-weight:bold;margin-right:4px">💾 Enregistrer</button>
-      <button id="vm-autoriser-btn" onclick="factAutoriserDossiers()" title="À faire une fois si les dossiers comptables ne sont pas déjà autorisés depuis la fiche membre">🔐 Autoriser dossiers</button>
       <button id="refresh-btn" onclick="loadData()">↺ Mettre à jour</button>
     </div>
   </div>
   <div id="tabs"></div>
   <div id="content"><p style="padding:20px;color:#888">Chargement…</p></div>
 </div>
-
-<!-- Facturation VM-COMMUNICATION (2026-08-30) -->
-<div id="modal-vm-fact">
-  <div class="vm-modal-box">
-    <h3>🧾 Facturer VM-COMMUNICATION — <span id="vm-fact-title"></span></h3>
-    <p class="sub">Montant = Tarif convenu (modifiable ci-dessous, uniquement pour cette génération — n'écrase pas la fiche membre). Décochez les annonceurs à exclure.</p>
-    <table class="vm-fact-table">
-      <thead><tr><th style="width:26px"></th><th>Annonceur</th><th style="width:110px">Montant €</th><th style="width:140px">Statut</th></tr></thead>
-      <tbody id="vm-fact-rows"></tbody>
-    </table>
-    <div class="vm-modal-actions">
-      <button class="vm-btn-generer" id="vm-btn-generer" onclick="genererFacturesVM()">🧾 Générer les factures cochées</button>
-      <button class="vm-btn-fermer" onclick="fermerVmFactModal()">Fermer</button>
-    </div>
-    <div id="vm-fact-summary"></div>
-  </div>
-</div>
-<div id="fact-doc-container"></div>
 
 <dialog id="loading-dialog"><span id="msg-box"></span></dialog>
 <div id="status">Prêt</div>
@@ -185,6 +122,12 @@ const TK       = "pat2HkJhQsqj6clFJ.a1fb4a3a4d51f8f7e57d4eca2a0c633051bd89b80b90
 const BASE     = "appixzcrs5T5kRQ36";
 const TABLE_ID = "tblMiiIYVibfpe0L3";
 const SF       = "SUIVI_ANNUELLES";   // champ JSON SUIVI dans Airtable
+// 2026-09-01 (demande de Marc) : clic sur le nom d'un annonceur → ouvre sa fiche membre
+// (GitHub Pages) directement sur l'écran de facture Publicité VM modifiable (aperçu).
+const FICHE_MEMBRE_URL = "https://flasschoen.github.io/fiches-membres-2026/";
+function factLienHtml(rid, nom){
+  return `<a href="${FICHE_MEMBRE_URL}?id=${encodeURIComponent(rid)}&fact=vm" target="_blank" rel="noopener" title="Ouvrir la facture VM modifiable pour ${String(nom||"").replace(/"/g,"&quot;")}">${nom} 🧾</a>`;
+}
 
 const AGENTS = {"1111":"MARC","4444":"VANESSA","3333":"ANTOINE"};
 const EDITIONS = [
@@ -365,6 +308,20 @@ function dateHtml(rid,edLabel,key,cur){
 function txtHtml(rid,edLabel,key,cur){
   return`<input type="text" value="${(cur||"").replace(/"/g,"&quot;")}" placeholder="Remarques…" onchange="dbSave('${rid}','${edLabel}','${key}',this.value)">`;
 }
+// Colonne FACTURE (2026-09-01, demande de Marc) : simple suivi manuel — NON par défaut,
+// basculé sur OK par Marc lui-même une fois la facture générée une à une depuis la fiche
+// membre (index.html). Ne déclenche aucune génération ; enregistré comme les autres
+// colonnes de suivi (mêmes clé/mécanisme dbSave → champ SUIVI_ANNUELLES).
+function factureHtml(rid,edLabel,cur){
+  const val=cur||"NON";
+  const bg=val==="OK"?"#c6efce":"#ffc7ce";
+  const tc=val==="OK"?"#276221":"#9c0006";
+  return`<select style="width:100%;font-size:11px;font-weight:bold;padding:2px 3px;border:1px solid #bbb;border-radius:3px;background:${bg};color:${tc};text-align:center"
+    onchange="const b=this.value==='OK'?'#c6efce':'#ffc7ce';const c=this.value==='OK'?'#276221':'#9c0006';this.style.background=b;this.style.color=c;dbSave('${rid}','${edLabel}','facture',this.value)">
+    <option${val==="NON"?" selected":""}>NON</option>
+    <option${val==="OK"?" selected":""}>OK</option>
+  </select>`;
+}
 
 // ── TABLE ───────────────────────────────────────────────────────────────────
 // Extrait pour être réutilisé identiquement par la facturation VM en masse (2026-08-30) :
@@ -398,7 +355,7 @@ function buildTable(){
     const s=sv(rec,label);const rid=rec.id;
     return`<tr>
       <td class="num">${idx+1}</td>
-      <td class="nm" title="${nom}">${nom}</td>
+      <td class="nm" title="${nom}">${factLienHtml(rid,nom)}</td>
       <td class="num">${cpn(f)}</td>
       <td class="right">${cotBe}</td>
       <td class="right">${cotLu}</td>
@@ -416,12 +373,13 @@ function buildTable(){
       <td class="suivi">${dateHtml(rid,label,"coupons_env",s.coupons_env)}</td>
       <td class="suivi">${selHtml(rid,label,"coupons_recu",s.coupons_recu,SEL.coupons_recu)}</td>
       <td class="suivi">${txtHtml(rid,label,"remarques",s.remarques)}</td>
+      <td class="suivi">${factureHtml(rid,label,s.facture)}</td>
     </tr>`;
   }).join("");
 
   const fmtN=n=>n?n.toLocaleString("fr-BE"):"";
   document.getElementById("content").innerHTML=`
-  <h2>${ed.title} &nbsp;—&nbsp; Généré le ${new Date().toLocaleDateString("fr-BE")} <button id="vm-fact-btn" onclick="openVmFactModal()">🧾 Facturer VM (${members.length})</button></h2>
+  <h2>${ed.title} &nbsp;—&nbsp; Généré le ${new Date().toLocaleDateString("fr-BE")}</h2>
   <div class="table-wrap">
   <table>
     <thead>
@@ -436,6 +394,7 @@ function buildTable(){
         <th colspan="2" class="sv-epreuve">ÉPREUVES</th>
         <th colspan="2" class="sv-coupon">COUPON-ECLAIREUR</th>
         <th class="sv-rem" rowspan="2" style="min-width:120px">REMARQUES</th>
+        <th rowspan="2" style="background:#1a6b1a;color:#fff;width:60px;font-size:11px">FACTURE</th>
       </tr>
       <tr>
         <th class="pub-hdr" style="background:${ed.hdrBg};color:${ed.hdrTx}">Gratuit</th>
@@ -449,7 +408,7 @@ function buildTable(){
         <th class="sv-coupon">Env.</th><th class="sv-coupon">Reçu</th>
       </tr>
     </thead>
-    <tbody>${rows||'<tr><td colspan="19" style="text-align:center;padding:20px;color:#888">Aucun annonceur pour cette édition</td></tr>'}</tbody>
+    <tbody>${rows||'<tr><td colspan="20" style="text-align:center;padding:20px;color:#888">Aucun annonceur pour cette édition</td></tr>'}</tbody>
     <tfoot>
       <tr>
         <td colspan="5">TOTAL : ${members.length} annonceur${members.length>1?"s":""}</td>
@@ -458,7 +417,7 @@ function buildTable(){
         <td></td>
         <td class="right">${fmtN(tPrix)}</td>
         <td class="right">${fmtN(tCrd)}</td>
-        <td colspan="9"></td>
+        <td colspan="10"></td>
       </tr>
     </tfoot>
   </table>
@@ -473,389 +432,6 @@ function showOv(msg){
 function hideOv(){
   try{document.getElementById("loading-dialog").close();}catch(e){}
 }
-// ══════════════════════════════════════
-// FACTURATION VM-COMMUNICATION EN MASSE (2026-08-30)
-// Génère une "Facture Publicité VM" pour chaque annonceur coché de l'édition affichée,
-// avec le même rendu visuel, la même numérotation (compteur Airtable partagé "Dernier N°
-// PUB VM"), le même enregistrement au registre et sur disque que depuis la fiche membre
-// (index.html). Montant par défaut = TARIF de l'édition (colonne "Prix €" du tableau —
-// PAS de multiplication par les pages, correctif du 2026-08-30), modifiable manuellement
-// dans la fenêtre de facturation mais UNIQUEMENT pour cette génération : jamais réécrit
-// dans la fiche Airtable du membre ("réservé dans ma session", demande de Marc). Génération
-// séquentielle (une facture à la fois) pour incrémenter le compteur en toute sécurité.
-// ══════════════════════════════════════
-const FACT_CTR_TBL = 'tblAWzE9V9bD1FHM2';   // table "FACTURES - COMPTEURS"
-const FACT_CTR_REC = 'rec7Zlwnqtr7VbS0Q';   // enregistrement unique "GLOBAL"
-const FACT_REG_TBL = 'tblBZR7s9icd2NEAY';   // table "FACTURES - REGISTRE"
-const FACT_CTR_URL = `https://api.airtable.com/v0/${BASE}/${FACT_CTR_TBL}`;
-const FACT_REG_URL = `https://api.airtable.com/v0/${BASE}/${FACT_REG_TBL}`;
-
-async function factGetCounter(){
-  const r=await fetch(FACT_CTR_URL+'/'+FACT_CTR_REC,{headers:headers()});
-  return r.json();
-}
-async function factPatchCounter(fields){
-  const r=await fetch(FACT_CTR_URL,{method:'PATCH',headers:headers(),
-    body:JSON.stringify({records:[{id:FACT_CTR_REC,fields}],typecast:true})});
-  return r.json();
-}
-async function factPostRegistre(fields){
-  const r=await fetch(FACT_REG_URL,{method:'POST',headers:headers(),
-    body:JSON.stringify({records:[{fields}],typecast:true})});
-  return r.json();
-}
-
-// Config VM-COMMUNICATION — copie exacte de FACT_ENTITES.VM (index.html, 2026-08-29/30).
-const FACT_VM = {
-  label:'VM', site:null,
-  headerLeft:'Tél. 0475/932.262<br>vm.communication.scomm@gmail.com',
-  logo:'VM-COMMUNICATION_logo.jpg',
-  tvaStandard:true,
-  siegeVille:'Grivegnée',
-  ligneStatut:'VM-COMMUNICATION scomm  —  rue Nicolas Spiroux, 104  —  4030 GRIVEGNÉE  —  TVA BE 0751.641.023',
-  iban:'BE98 7512 1060 2093',
-  bic:'AXABBE22 (Crelan)',
-  bankLogo:'Crelan_logo.png',
-  mentionTVA:'TVA non applicable.',
-  footer:'VM-COMMUNICATION scomm  -  rue Nicolas Spiroux, 104  -  4030 GRIVEGNÉE  -  TVA BE 0751.641.023  -  T. 0475/932.262  -  vm.communication.scomm@gmail.com',
-  tribunaux:'de Liège',
-  ctrFieldPub:'Dernier N° PUB VM',
-  formatNumPub:n=>'FV1-'+n
-};
-
-function factEsc(s){ return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
-function factEUR(n){ n=Number(n)||0; return n.toLocaleString('fr-BE',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
-function factDateFR(iso){
-  if(!iso) return '';
-  const d=new Date(iso+'T00:00:00');
-  if(isNaN(d.getTime())) return '';
-  const pad=n=>String(n).padStart(2,'0');
-  return pad(d.getDate())+'/'+pad(d.getMonth()+1)+'/'+d.getFullYear();
-}
-function factAddDaysISO(iso, days){
-  const d = iso ? new Date(iso+'T00:00:00') : new Date();
-  d.setDate(d.getDate()+days);
-  const pad=n=>String(n).padStart(2,'0');
-  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-}
-function factTodayISO(){
-  const d=new Date();
-  const pad=n=>String(n).padStart(2,'0');
-  return d.getFullYear()+'-'+pad(d.getMonth()+1)+'-'+pad(d.getDate());
-}
-function factTvaInfo(tvaRaw){
-  const tva = String(tvaRaw||'').trim().toUpperCase().replace(/^BE\s*TVA|^TVA\s*/,'');
-  const m = tva.match(/^([A-Z]{2})/);
-  const prefix = m ? m[1] : '';
-  if(prefix && prefix!=='BE'){
-    return { taux:0, exonere:true, mention:'Exonération de TVA — Livraison intracommunautaire — Article 138 Directive 2006/112/CE.' };
-  }
-  return { taux:21, exonere:false, mention:'Prix unitaire exprimé hors TVA (HTVA).' };
-}
-function factPageFrac(n){
-  n = Number(n)||0;
-  if(n<=0) return '0 page';
-  const whole = Math.floor(n);
-  const fracVal = Math.round((n-whole)*4)/4;
-  const fracMap = {0:'', 0.25:'1/4', 0.5:'1/2', 0.75:'3/4'};
-  const fracStr = fracMap[fracVal] || '';
-  const plural = n>1;
-  let txt = '';
-  if(whole>0) txt += whole+' ';
-  if(fracStr) txt += fracStr+' ';
-  txt += 'page'+(plural?'s':'');
-  return txt.trim();
-}
-
-// ── Dossiers comptables (File System Access API — mêmes clés IndexedDB que index.html,
-// même origine GitHub Pages ⇒ les autorisations déjà accordées depuis la fiche membre sont
-// réutilisées automatiquement, sans nouvelle demande) ──
-const FACT_DIRKEYS = {compta:'fact_dir_compta', partenaires:'fact_dir_partenaires', vm:'fact_dir_vm'};
-function factIdbOpen(){
-  return new Promise((resolve,reject)=>{
-    const req = indexedDB.open('educpass_fact_dirs', 1);
-    req.onupgradeneeded = ()=>{ req.result.createObjectStore('handles'); };
-    req.onsuccess = ()=>resolve(req.result);
-    req.onerror = ()=>reject(req.error);
-  });
-}
-async function factIdbSet(key, val){
-  const db = await factIdbOpen();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction('handles','readwrite');
-    tx.objectStore('handles').put(val, key);
-    tx.oncomplete = ()=>resolve();
-    tx.onerror = ()=>reject(tx.error);
-  });
-}
-async function factIdbGet(key){
-  const db = await factIdbOpen();
-  return new Promise((resolve,reject)=>{
-    const tx = db.transaction('handles','readonly');
-    const req = tx.objectStore('handles').get(key);
-    req.onsuccess = ()=>resolve(req.result||null);
-    req.onerror = ()=>reject(req.error);
-  });
-}
-async function factAutoriserDossiers(){
-  if(!window.showDirectoryPicker){
-    alert('Cette fonctionnalité nécessite Google Chrome ou Microsoft Edge (l\'autorisation de dossier n\'est pas disponible dans ce navigateur).');
-    return;
-  }
-  try{
-    status('👉 Sélectionnez le dossier "FACTURES VENTES 2026-2027"...');
-    const dirCompta = await window.showDirectoryPicker({id:'fact-compta', mode:'readwrite'});
-    await factIdbSet(FACT_DIRKEYS.compta, dirCompta);
-    status('👉 Sélectionnez le dossier "DOSSIER PARTENAIRES 2026"...');
-    const dirPart = await window.showDirectoryPicker({id:'fact-partenaires', mode:'readwrite'});
-    await factIdbSet(FACT_DIRKEYS.partenaires, dirPart);
-    status('👉 Sélectionnez le dossier "DOSSIER VM-COMMUNICATION"...');
-    const dirVM = await window.showDirectoryPicker({id:'fact-vm', mode:'readwrite'});
-    await factIdbSet(FACT_DIRKEYS.vm, dirVM);
-    status('✅ Dossiers comptables autorisés — les prochaines factures s\'y enregistreront automatiquement.');
-  }catch(e){
-    if(e && e.name!=='AbortError'){ console.error(e); status('❌ Autorisation annulée ou impossible ('+e.message+').'); }
-    else status('Prêt');
-  }
-}
-async function factGetDirHandle(key){
-  try{
-    const handle = await factIdbGet(key);
-    if(!handle) return null;
-    let perm = await handle.queryPermission({mode:'readwrite'});
-    if(perm!=='granted') perm = await handle.requestPermission({mode:'readwrite'});
-    return perm==='granted' ? handle : null;
-  }catch(e){ console.error(e); return null; }
-}
-async function factEnsureSubdir(rootHandle, parts){
-  let dir = rootHandle;
-  for(const p of parts){ dir = await dir.getDirectoryHandle(p, {create:true}); }
-  return dir;
-}
-function factSanitizeName(s){ return String(s||'').trim().replace(/[\\/:*?"<>|]/g,'-').replace(/\s+/g,' ').trim() || 'SANS-NOM'; }
-function factNumFile(numero){ return String(numero||'').replace(/\//g,'-'); }
-async function factWriteFile(dirHandle, filename, data){
-  const fh = await dirHandle.getFileHandle(filename, {create:true});
-  const w = await fh.createWritable();
-  await w.write(data);
-  await w.close();
-}
-async function factGeneratePDFBlob(){
-  const el = document.getElementById('fact-doc');
-  if(!el) throw new Error('Document facture introuvable.');
-  await new Promise(r=>setTimeout(r,60));
-  const canvas = await html2canvas(el, {scale:2, useCORS:true, backgroundColor:'#ffffff'});
-  const imgData = canvas.toDataURL('image/jpeg',0.95);
-  const { jsPDF } = window.jspdf;
-  const pdf = new jsPDF({orientation:'portrait', unit:'mm', format:'a4'});
-  const pageW = pdf.internal.pageSize.getWidth();
-  const pageH = pdf.internal.pageSize.getHeight();
-  const imgW = pageW;
-  const imgH = canvas.height * imgW / canvas.width;
-  pdf.addImage(imgData,'JPEG',0,0,imgW, Math.min(imgH,pageH));
-  return pdf.output('blob');
-}
-
-// Rendu — identique visuellement à factBuildDoc() (fiche membre), simplifié à une seule
-// ligne fixe (le montant de l'édition, éventuellement ajusté dans la fenêtre) : pas de
-// lignes modifiables/ajoutables ici, l'ajustement se fait via le champ "Montant €" avant
-// génération.
-function buildVmFactDocHTML(numero, entry){
-  const cfg = FACT_VM;
-  const todayISO = factTodayISO();
-  const todayFr = factDateFR(todayISO);
-  const echeancePaieFr = factDateFR(factAddDaysISO(todayISO,15));
-  const numeroTxt = numero || '(aperçu)';
-  const montantHT = Number(entry.montant)||0;
-  const tva = entry.tva||'';
-  const info = factTvaInfo(tva);
-  let tvaLabel, tvaAmountStr, totalAPayer, mentionBox;
-  if(info.taux===21){
-    const tvaAmt = montantHT*0.21;
-    tvaLabel='TVA 21 %'; tvaAmountStr=factEUR(tvaAmt); totalAPayer=montantHT+tvaAmt; mentionBox=info.mention;
-  } else {
-    tvaLabel='TVA 0 % (intracom.)'; tvaAmountStr='-'; totalAPayer=montantHT; mentionBox=info.mention;
-  }
-  const libelle = entry.edTitle+' ('+factPageFrac((Number(entry.pg)||0)+(Number(entry.pp)||0))+') — insertion publicitaire';
-
-  return `
-  <div class="fact-doc" id="fact-doc">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;">
-      <img class="fact-logo" src="${cfg.logo}" alt="${factEsc(cfg.label)}">
-    </div>
-    <div class="fact-statut">${factEsc(cfg.ligneStatut)}</div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:14px;">
-      <tr>
-        <td class="fact-hdr-col-left" style="vertical-align:top;font-size:12px;color:#333;">${cfg.headerLeft}</td>
-        <td class="fact-hdr-col-right" style="vertical-align:top;font-size:13px;text-align:left;">
-          <div style="font-size:16px;font-weight:700;">${factEsc(entry.nom)}</div>
-          ${entry.contact?`<div style="font-weight:700;">${factEsc(entry.contact)}${entry.titre?' — '+factEsc(entry.titre):''}</div>`:''}
-          <div>${factEsc(entry.rue)}</div>
-          <div>${factEsc(entry.cp)} ${factEsc(entry.com)}</div>
-          ${tva?`<div style="margin-top:5px;">TVA n° : ${factEsc(tva)}</div>`:''}
-        </td>
-      </tr>
-    </table>
-    <div style="text-align:right;font-size:13px;margin-bottom:10px;">${factEsc(cfg.siegeVille)}, le ${todayFr}</div>
-    <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
-      <tr>
-        <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">FACTURE PUBLICITÉ n° : ${factEsc(numeroTxt)}</td>
-        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>Insertions publicitaires d'EDUCPASS</b>${entry.enseigne&&entry.enseigne!==entry.nom?`<br><b>${factEsc(entry.enseigne)}</b>`:''}</td>
-      </tr>
-    </table>
-    <div style="font-size:11px;font-style:italic;margin:12px 0 5px;">Doit pour ce qui suit :</div>
-    <table class="fact-table">
-      <thead><tr><th style="width:90px;">DATE</th><th>LIBELLÉ</th><th style="width:80px;">QUANTITÉ</th><th style="width:90px;">PRIX UNITÉ</th><th style="width:90px;">TOTAL</th></tr></thead>
-      <tbody>
-        <tr><td>${todayFr}</td><td style="text-align:left;">${factEsc(libelle)}</td><td>1</td><td>${factEUR(montantHT)}</td><td>${factEUR(montantHT)}</td></tr>
-        <tr class="fact-total-row"><td colspan="4" style="text-align:right;">TOTAL HTVA =</td><td>${factEUR(montantHT)}</td></tr>
-        <tr>
-          <td colspan="3" rowspan="2" style="text-align:left;font-size:9.5px;vertical-align:top;color:#333;">${factEsc(mentionBox)}</td>
-          <td style="text-align:right;">${tvaLabel}</td><td>${tvaAmountStr}</td>
-        </tr>
-        <tr class="fact-apayer"><td style="text-align:right;">A PAYER =</td><td>${factEUR(totalAPayer)}</td></tr>
-      </tbody>
-    </table>
-    <div style="text-align:right;font-size:13px;margin-top:6px;">Échéance : <b>${echeancePaieFr}</b></div>
-    <div style="margin-top:14px;font-size:13px;"><b>A partir du 01/09/2026, VM-COMMUNICATION devient la Régie Publicitaire pour toutes les éditions d'EDUCPASS.</b></div>
-    <div style="margin-top:18px;font-size:13px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
-    <div class="fact-iban"><img class="fact-bank-logo" src="${cfg.bankLogo}" alt="banque"><span>IBAN : ${factEsc(cfg.iban)} &nbsp;&nbsp;&nbsp; BIC : ${factEsc(cfg.bic)}</span></div>
-    <div class="fact-cgv">
-      <b>CONDITIONS GÉNÉRALES DE VENTE :</b><br>
-      1. Toute réclamation concernant l'établissement de la facture devra nécessairement être formulée par écrit dans les huit jours de son émission. Passé ce délai, la facture est censée être acceptée dans son intégralité.<br>
-      2. Sauf stipulations contraires, nos factures sont payables au plus tard, huit jours après leur émission.<br>
-      3. En cas de retard de paiement, des frais de rappel peuvent être appliqués avec un forfait de 25 €.<br>
-      4. Après 3 rappels, les montants facturés seront majorés de plein droit et sans mise en demeure préalable, d'un intérêt de 15%.<br>
-      5. Indépendamment de ces intérêts de retard, les montants facturés et restés impayés seront majorés de plein droit de 15% avec un minimum de 25,00 €, à titre de dommages forfaitaires.<br>
-      6. Les Tribunaux ${cfg.tribunaux} sont seuls compétents pour connaître de tout litige entre les parties.
-    </div>
-    <div class="fact-footer">${factEsc(cfg.footer)}</div>
-  </div>`;
-}
-
-// ── Fenêtre de facturation en masse ──
-let _vmFactCache = [];
-function openVmFactModal(){
-  const ed = EDITIONS[edIdx];
-  const members = getEditionMembers(ed);
-  if(!members.length){ alert('Aucun annonceur coché pour cette édition.'); return; }
-  document.getElementById('vm-fact-title').textContent = ed.title;
-  _vmFactCache = members.map(rec=>{
-    const f = rec.fields;
-    const tar = parseFloat(f[ed.tar])||0;
-    return {
-      recId: rec.id,
-      nom: f['NOM ATTRACTION']||f['Enseigne commerciale']||f['ENSEIGNE']||'—',
-      enseigne: f['Enseigne commerciale']||f['ENSEIGNE']||'',
-      contact: f['CONTACT']||'',
-      titre: f['TITRE']||'',
-      rue: f['RUE']||'',
-      cp: f['CP']||'',
-      com: f['COMMUNE']||'',
-      tva: f['N° TVA']||'',
-      pg: parseFloat(f[ed.pg])||0,
-      pp: parseFloat(f[ed.pp])||0,
-      edTitle: ed.title,
-      montant: tar,        // défaut = TARIF seul (correctif 2026-08-30), modifiable ci-dessous
-      // Toutes les cases décochées par défaut (demande de Marc, 2026-08-30) : la présence
-      // d'un tarif dans la fiche ne signifie pas que le client a confirmé son insertion
-      // cette édition — Marc coche lui-même au cas par cas selon les critères demandés.
-      checked: false,
-      status: '—'
-    };
-  });
-  renderVmFactRows();
-  document.getElementById('modal-vm-fact').classList.add('open');
-}
-function renderVmFactRows(){
-  document.getElementById('vm-fact-rows').innerHTML = _vmFactCache.map((e,i)=>`
-    <tr>
-      <td><input type="checkbox" ${e.checked?'checked':''} onchange="_vmFactCache[${i}].checked=this.checked;renderVmFactRows()"></td>
-      <td>${factEsc(e.nom)}</td>
-      <td><input type="number" step="0.01" value="${e.montant.toFixed(2)}" onchange="_vmFactCache[${i}].montant=parseFloat(this.value)||0"></td>
-      <td class="vm-status">${e.status||''}</td>
-    </tr>`).join('');
-  const nb = _vmFactCache.filter(e=>e.checked && e.montant>0).length;
-  document.getElementById('vm-btn-generer').textContent = `🧾 Générer les factures cochées (${nb})`;
-}
-function fermerVmFactModal(){
-  document.getElementById('modal-vm-fact').classList.remove('open');
-}
-async function genererFacturesVM(){
-  const rows = _vmFactCache.filter(e=>e.checked && e.montant>0);
-  if(!rows.length){ alert('Aucun annonceur coché avec un montant > 0.'); return; }
-  if(!confirm(`Générer ${rows.length} facture(s) VM-COMMUNICATION ?\nCette action attribue des numéros de facture définitifs (compteur Airtable partagé).`)) return;
-  const btn = document.getElementById('vm-btn-generer');
-  btn.disabled = true;
-  let ok=0, err=0;
-  for(const entry of _vmFactCache){
-    if(!(entry.checked && entry.montant>0)) continue;
-    entry.status = '⏳ en cours…';
-    renderVmFactRows();
-    try{
-      const numero = await genererUneFactureVM(entry);
-      entry.status = '✅ '+numero;
-      ok++;
-    }catch(e){
-      console.error(e);
-      entry.status = '❌ erreur';
-      err++;
-    }
-    renderVmFactRows();
-  }
-  document.getElementById('vm-fact-summary').textContent = `Terminé : ${ok} facture(s) générée(s)${err?` — ❌ ${err} erreur(s)`:''}.`;
-  btn.disabled = false;
-  status(`✅ Facturation VM : ${ok} facture(s)${err?` — ❌ ${err} erreur(s)`:''} — ${new Date().toLocaleTimeString()}`);
-}
-async function genererUneFactureVM(entry){
-  const cfg = FACT_VM;
-  const ctr = await factGetCounter();
-  const current = Number(ctr.fields[cfg.ctrFieldPub]||0);
-  const next = current+1;
-  await factPatchCounter({[cfg.ctrFieldPub]: next});
-  const numero = cfg.formatNumPub(next);
-
-  const todayISO = factTodayISO();
-  const echISO = factAddDaysISO(todayISO,15);
-
-  document.getElementById('fact-doc-container').innerHTML = buildVmFactDocHTML(numero, entry);
-
-  await factPostRegistre({
-    'N° Facture': numero,
-    'Entité': cfg.label,
-    'Attraction': [entry.recId],
-    'Enseigne': entry.nom,
-    'Année cotisation': '',
-    'Montant': entry.montant,
-    'Date émission': todayISO,
-    'Échéance paiement': echISO,
-    'Généré par': agent,
-    'Type document': 'Facture Publicité'
-  });
-
-  try{
-    const pdfBlob = await factGeneratePDFBlob();
-    const fileBase = factNumFile(numero) + '_' + factSanitizeName(entry.nom);
-    const dirVM = await factGetDirHandle(FACT_DIRKEYS.vm);
-    if(dirVM){
-      const sub = await factEnsureSubdir(dirVM, ['FACTURES']);
-      await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
-    }
-    const dirPart = await factGetDirHandle(FACT_DIRKEYS.partenaires);
-    if(dirPart){
-      const sub = await factEnsureSubdir(dirPart, [factSanitizeName(entry.nom), 'ADMINISTRATIF', 'COMPTA', 'FACTURES']);
-      await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
-    }
-  }catch(e){
-    // La facture reste enregistrée dans Airtable (registre) même si l'écriture du PDF
-    // local échoue (dossier non autorisé, navigateur non compatible…) — on ne bloque pas
-    // la boucle pour autant, mais on le signale dans la console.
-    console.error('Erreur sauvegarde PDF pour '+entry.nom, e);
-  }
-
-  return numero;
-}
-
 document.getElementById("pin-input").focus();
 </script>
 </body>
