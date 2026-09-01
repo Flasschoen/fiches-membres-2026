@@ -120,11 +120,17 @@ body{background:#dce3ef;min-height:100vh;}
 /* ── CONFIRMATION ── */
 .conf-doc{background:#fff;max-width:820px;margin:18px auto;padding:30px 40px;box-shadow:0 3px 12px rgba(0,0,0,.18);font-size:12px;line-height:1.5;}
 /* Correctif 2026-08-31 (demande de Marc) : logo VM-COMMUNICATION en haut à droite,
-   "CONFIRMATION « WORKSHOP »" centré. Grille à 3 colonnes (1fr / auto / 1fr) : le titre
-   est en colonne 2 (donc vraiment centré sur la largeur totale, colonne 1 vide servant
-   de contrepoids symétrique à la colonne du logo), le logo en colonne 3 aligné à droite. */
-.conf-header{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;margin-bottom:4px;}
+   "CONFIRMATION « WORKSHOP »" centré, logo Educpass conservé en haut à gauche (Marc a
+   signalé sa disparition — le 1er jet remplaçait le logo Educpass au lieu d'ajouter le
+   logo VM à côté). Grille à 3 colonnes de largeurs FIXES ET ÉGALES (230px de chaque
+   côté) : les deux logos n'ont pas du tout la même largeur naturelle une fois réduits à
+   60px de haut (Educpass ≈ 218px de large, VM-COMMUNICATION ≈ 89px) — avec des colonnes
+   1fr/auto/1fr classiques le titre se serait retrouvé décalé du vrai centre. Des colonnes
+   fixes et symétriques (assez larges pour contenir le plus grand des deux logos) gardent
+   le titre au centre exact quelle que soit la largeur réelle de chaque logo. */
+.conf-header{display:grid;grid-template-columns:230px 1fr 230px;align-items:center;margin-bottom:4px;}
 .conf-logo{height:60px;width:auto;object-fit:contain;grid-column:3;justify-self:end;}
+.conf-logo-educpass{grid-column:1;justify-self:start;}
 .conf-title{font-size:18px;font-weight:900;color:#000;text-align:center;text-transform:uppercase;grid-column:2;}
 .conf-siege{text-align:center;font-size:10px;color:#333;border-top:1px solid #000;border-bottom:1px solid #000;padding:3px 0;margin:6px 0 10px;}
 .conf-info-table{width:100%;border-collapse:collapse;margin-bottom:10px;}
@@ -932,6 +938,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
       <thead>
         <tr>
           <th style="width:30px;text-align:center;padding:2px;"><input type="checkbox" id="sel-all" onclick="toggleSelAll(this)" title="Tout sélectionner" style="width:15px;height:15px;cursor:pointer;accent-color:#7b2d8b;"></th>
+          <th style="width:34px;text-align:center;padding:2px;" title="Cocher pour ajouter au Récapitulatif Workshop (Confirmation)">🧾</th>
           <th>N°</th>
           <th>ENSEIGNE</th>
           <th>ATTRACTION / MUSÉE</th>
@@ -973,6 +980,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
     <!-- HEADER : logo gauche + titre droite -->
     <div class="conf-header">
+      <img class="conf-logo conf-logo-educpass" src="New_logo_jpeg.jpg" alt="Educpass">
       <div class="conf-title">CONFIRMATION « WORKSHOP »</div>
       <img class="conf-logo" src="VM-COMMUNICATION_logo.jpg" alt="VM-COMMUNICATION">
     </div>
@@ -1180,7 +1188,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
     <table class="recap-table">
       <thead>
         <tr>
-          <th style="width:65px;">N° TABLE</th>
+          <th id="recap-th-table" style="width:65px;cursor:pointer;user-select:none;" onclick="toggleRecapSort()" title="Cliquer pour trier par N° de table">N° TABLE ▲</th>
           <th style="text-align:left;">ENSEIGNE</th>
           <th style="width:65px;">REPAS</th>
           <th style="width:65px;">DRINK</th>
@@ -1277,6 +1285,11 @@ TRIMS.forEach((t,i)=>{
 //  STATE
 // ══════════════════════════════════════
 let members=[], curId=null, isDirty=false, lastFiltered=[], _autoSelDone=false, _loadingAll=false;
+// Cases 🧾 cochées dans RECHERCHE (demande de Marc, 2026-08-31) : ces IDs pilotent le
+// Récapitulatif Workshop (vue CONFIRMATION) à la place du filtre code+année, de façon
+// INSTANTANÉE. Conservé en mémoire indépendamment des recherches successives : affiner
+// ou relancer une recherche ne décoche pas ce qui a déjà été ajouté au récap.
+let recapCheckedIds = new Set();
 let _currentSuiviNews={}; // JSON courant du champ SUIVI_NEWS du membre chargé
 
 // ── Dossier membres (mettre à jour pour Google Drive) ──
@@ -2207,6 +2220,29 @@ function buildTable(){
     chk.onclick=e=>{e.stopPropagation();updateSelCount();};
     tdSel.appendChild(chk);
     tr.appendChild(tdSel);
+    // Case "Ajouter au Récapitulatif Workshop" (demande de Marc, 2026-08-31) : distincte
+    // de la case d'export ci-dessus — cocher/décocher ici met à jour le Récapitulatif
+    // (vue Confirmation) INSTANTANÉMENT, et remplace ce qu'il contenait. La sélection
+    // (recapCheckedIds) est conservée en mémoire indépendamment des recherches
+    // successives : rafraîchir/affiner la recherche ne décoche pas ce qui a déjà été
+    // ajouté au récap.
+    const tdRecap=document.createElement('td');
+    tdRecap.style.cssText='text-align:center;width:34px;padding:2px;';
+    tdRecap.onclick=e=>e.stopPropagation();
+    const chkRecap=document.createElement('input');
+    chkRecap.type='checkbox';
+    chkRecap.className='row-recap-sel';
+    chkRecap.dataset.memberId=m.id;
+    chkRecap.checked=recapCheckedIds.has(m.id);
+    chkRecap.title='Ajouter au Récapitulatif Workshop';
+    chkRecap.style.cssText='width:15px;height:15px;cursor:pointer;accent-color:#c55a11;';
+    chkRecap.onclick=e=>{
+      e.stopPropagation();
+      if(chkRecap.checked) recapCheckedIds.add(m.id); else recapCheckedIds.delete(m.id);
+      renderRecapFromChecked();
+    };
+    tdRecap.appendChild(chkRecap);
+    tr.appendChild(tdRecap);
     tr.appendChild(td(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''));
     tr.appendChild(td(f['Enseigne commerciale']||f['ENSEIGNE']||''));
     tr.appendChild(td(f['NOM ATTRACTION']||''));
@@ -2583,6 +2619,112 @@ async function executeRR(){
 // ══════════════════════════════════════
 //  RÉCAP WORKSHOP
 // ══════════════════════════════════════
+// Tri (N° table puis nom) + déduplication par nom, partagés entre le filtre code+année
+// et le nouveau mode "cases cochées dans Recherche" (demande de Marc, 2026-08-31).
+function sortDedupeMembers(list){
+  const sorted=list.slice().sort((a,b)=>{
+    const ta=a.fields['TABLE_WKS']!=null?Number(a.fields['TABLE_WKS']):9999;
+    const tb=b.fields['TABLE_WKS']!=null?Number(b.fields['TABLE_WKS']):9999;
+    if(ta!==tb) return ta-tb;
+    const ea=(a.fields['Enseigne commerciale']||a.fields['NOM ATTRACTION']||'').toLowerCase();
+    const eb=(b.fields['Enseigne commerciale']||b.fields['NOM ATTRACTION']||'').toLowerCase();
+    return ea.localeCompare(eb,'fr');
+  });
+  const _seenRec=new Set();
+  return sorted.filter(m=>{
+    const n=(m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||'').trim().toUpperCase();
+    if(_seenRec.has(n)) return false;
+    _seenRec.add(n); return true;
+  });
+}
+
+// Construit et ajoute UNE ligne du Récapitulatif Workshop (partagé entre buildRecap() et
+// renderRecapFromChecked()) — inclut le clic-pour-ouvrir-la-confirmation (Marc, 2026-08-31).
+function buildRecapRow(rec){
+  const f=rec.fields;
+  const ens=f['Enseigne commerciale']||f['NOM ATTRACTION']||'—';
+  // Valeurs depuis Airtable (sauvegardées via CONFIRMATION)
+  const tbl   = f['TABLE_WKS']!==undefined&&f['TABLE_WKS']!==null ? f['TABLE_WKS'] : '';
+  const rep   = (f['REPAS1_WKS']||0)+(f['REPAS2_WKS']||0);
+  const drk   = f['DRINK_WKS']||0;
+  const xnbr  = f['EXTRA_NBR_WKS']!==undefined&&f['EXTRA_NBR_WKS']!==null ? f['EXTRA_NBR_WKS'] : '';
+  const mont  = (f['MONT1_WKS']||0)+(f['MONT2_WKS']||0);
+  const stat  = f['STATUT_WKS']||'MEMBRE';
+  const tr=document.createElement('tr');
+  tr.setAttribute('data-member-id', rec.id);
+  tr.style.cursor='pointer';
+  tr.title='Cliquer pour ouvrir la confirmation de ce membre';
+  tr.innerHTML=
+    `<td><input type="number" class="ri-table" min="1" max="99" value="${tbl}" placeholder="—" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+    `<td style="text-align:left;">${ens}</td>`+
+    `<td><input type="number" class="ri-repas" min="0" value="${rep}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+    `<td><input type="number" class="ri-drink" min="0" value="${drk}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+    `<td><input type="number" class="ri-extra" min="0" value="${xnbr}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
+    `<td><select class="ri-statut" style="width:90px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:2px;">`+
+      `<option${stat==='MEMBRE'?' selected':''}>MEMBRE</option>`+
+      `<option${stat==='NON-MEMBRE'?' selected':''}>NON-MEMBRE</option>`+
+    `</select></td>`+
+    `<td><input type="number" class="ri-montant" min="0" value="${mont}" oninput="recalcRecap()" style="width:74px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:right;box-sizing:border-box;"></td>`;
+  tr.addEventListener('click', function(e){
+    const tag=(e.target.tagName||'').toUpperCase();
+    if(tag==='INPUT'||tag==='SELECT'||tag==='OPTION') return; // laisse l'édition inline tranquille
+    if(isDirty){
+      if(!confirm('Des modifications non sauvegardées seront perdues. Charger quand même ?')) return;
+      clearDirty();
+    }
+    document.getElementById('msel').value=rec.id;
+    curId=rec.id;
+    fillForm(f);
+    clearDirty();
+    showView('confirmation');
+    setSt('✅ Confirmation ouverte : '+ens);
+  });
+  return tr;
+}
+
+// Rend une liste déjà triée/dédupliquée de membres dans #recap-tbody (partagé entre
+// buildRecap() et renderRecapFromChecked()). Retourne false si la liste est vide (le
+// vidage/état vide reste géré par l'appelant, dont le libellé diffère selon le mode).
+function renderRecapRows(list){
+  const tbody=document.getElementById('recap-tbody');
+  tbody.innerHTML='';
+  if(!list.length) return false;
+  const saveBtn=document.getElementById('recap-save-btn');
+  if(saveBtn) saveBtn.style.display='';
+  const expBtn=document.getElementById('recap-export-btn');
+  if(expBtn) expBtn.style.display='';
+  list.forEach(rec=>{ tbody.appendChild(buildRecapRow(rec)); });
+  document.getElementById('recap-cnt').textContent=list.length+' participant(s)';
+  sortRecapByTable(); // Réapplique le tri N° table courant (demande de Marc, 2026-08-31)
+  recalcRecap();
+  return true;
+}
+
+// Tri par N° de table dans le Récapitulatif Workshop (demande de Marc, 2026-08-31) : clic
+// sur l'en-tête "N° TABLE" = tri croissant/décroissant au choix (2e clic inverse le sens).
+// Le tri se base sur la valeur ACTUELLEMENT SAISIE dans chaque case (pas seulement la
+// donnée Airtable d'origine), pour permettre d'attribuer les tables puis de trier/vérifier
+// sans devoir d'abord sauvegarder.
+let recapSortDir = 1; // 1 = croissant, -1 = décroissant — persiste tant que la vue reste ouverte
+function sortRecapByTable(){
+  const tbody=document.getElementById('recap-tbody');
+  const rows=Array.from(tbody.children).filter(tr=>tr && tr.querySelector && tr.querySelector('.ri-table'));
+  if(rows.length){
+    rows.sort((a,b)=>{
+      const va=Number(a.querySelector('.ri-table').value)||0;
+      const vb=Number(b.querySelector('.ri-table').value)||0;
+      return recapSortDir*(va-vb);
+    });
+    rows.forEach(tr=>tbody.appendChild(tr));
+  }
+  const th=document.getElementById('recap-th-table');
+  if(th) th.textContent='N° TABLE '+(recapSortDir===1?'▲':'▼');
+}
+function toggleRecapSort(){
+  recapSortDir = -recapSortDir;
+  sortRecapByTable();
+}
+
 async function buildRecap(){
   const profsVal = document.getElementById('recap-profs').value;
   // Correctif 2026-08-31 (signalé par Marc : "j'ai 4 membres qui n'ont rien à voir" dans
@@ -2610,82 +2752,33 @@ async function buildRecap(){
     }
     return true;
   });
-  filtered.sort((a,b)=>{
-    const ta=a.fields['TABLE_WKS']!=null?Number(a.fields['TABLE_WKS']):9999;
-    const tb=b.fields['TABLE_WKS']!=null?Number(b.fields['TABLE_WKS']):9999;
-    if(ta!==tb) return ta-tb;
-    const ea=(a.fields['Enseigne commerciale']||a.fields['NOM ATTRACTION']||'').toLowerCase();
-    const eb=(b.fields['Enseigne commerciale']||b.fields['NOM ATTRACTION']||'').toLowerCase();
-    return ea.localeCompare(eb,'fr');
-  });
-  // Déduplication par nom (évite les doublons Airtable)
-  const _seenRec=new Set();
-  const filteredUniq=filtered.filter(m=>{
-    const n=(m.fields['Enseigne commerciale']||m.fields['NOM ATTRACTION']||'').trim().toUpperCase();
-    if(_seenRec.has(n)) return false;
-    _seenRec.add(n); return true;
-  });
-  tbody.innerHTML='';
-  if(!filteredUniq.length){
+  const filteredUniq=sortDedupeMembers(filtered);
+  if(!renderRecapRows(filteredUniq)){
     const _lbl='Aucun membre avec PROFS-CONTACTS = '+profsNum+(anneeVal?' (année '+anneeVal+')':'');
     tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">'+_lbl+'</td></tr>';
     document.getElementById('recap-cnt').textContent='';
     recalcRecap();
+  }
+}
+
+// Cases 🧾 cochées dans RECHERCHE → Récapitulatif Workshop (demande de Marc, 2026-08-31).
+// Remplace INSTANTANÉMENT le contenu du récap par les membres cochés (pas d'ajout au
+// filtre code+année, pas de bouton "envoyer" — reflète l'état de recapCheckedIds à chaque
+// clic de case).
+function renderRecapFromChecked(){
+  const tbody=document.getElementById('recap-tbody');
+  if(recapCheckedIds.size===0){
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;color:#999;padding:14px;">Aucun membre coché dans Recherche — cochez 🧾 sur une ou plusieurs lignes pour les ajouter ici</td></tr>';
+    document.getElementById('recap-cnt').textContent='';
+    const saveBtn=document.getElementById('recap-save-btn');
+    if(saveBtn) saveBtn.style.display='none';
+    const expBtn=document.getElementById('recap-export-btn');
+    if(expBtn) expBtn.style.display='none';
+    recalcRecap();
     return;
   }
-  // Afficher boutons Sauvegarder et Exporter
-  const saveBtn=document.getElementById('recap-save-btn');
-  if(saveBtn) saveBtn.style.display='';
-  const expBtn=document.getElementById('recap-export-btn');
-  if(expBtn) expBtn.style.display='';
-
-  filteredUniq.forEach((rec,i)=>{
-    const f=rec.fields;
-    const ens=f['Enseigne commerciale']||f['NOM ATTRACTION']||'—';
-    // Valeurs depuis Airtable (sauvegardées via CONFIRMATION)
-    const tbl   = f['TABLE_WKS']!==undefined&&f['TABLE_WKS']!==null ? f['TABLE_WKS'] : '';
-    const rep   = (f['REPAS1_WKS']||0)+(f['REPAS2_WKS']||0);
-    const drk   = f['DRINK_WKS']||0;
-    const xnbr  = f['EXTRA_NBR_WKS']!==undefined&&f['EXTRA_NBR_WKS']!==null ? f['EXTRA_NBR_WKS'] : '';
-    const mont  = (f['MONT1_WKS']||0)+(f['MONT2_WKS']||0);
-    const stat  = f['STATUT_WKS']||'MEMBRE';
-    const tr=document.createElement('tr');
-    tr.setAttribute('data-member-id', rec.id);
-    // Demande de Marc (2026-08-31) : cliquer sur une ligne du récapitulatif doit ouvrir
-    // la Confirmation de ce membre pour la modifier (table/repas/drink/activité/statut/
-    // montant restent modifiables inline dans le récap, mais un clic sur la ligne — hors
-    // des champs eux-mêmes — bascule sur le document imprimable complet).
-    tr.style.cursor='pointer';
-    tr.title='Cliquer pour ouvrir la confirmation de ce membre';
-    tr.innerHTML=
-      `<td><input type="number" class="ri-table" min="1" max="99" value="${tbl}" placeholder="—" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
-      `<td style="text-align:left;">${ens}</td>`+
-      `<td><input type="number" class="ri-repas" min="0" value="${rep}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
-      `<td><input type="number" class="ri-drink" min="0" value="${drk}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
-      `<td><input type="number" class="ri-extra" min="0" value="${xnbr}" oninput="recalcRecap()" style="width:54px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:center;box-sizing:border-box;"></td>`+
-      `<td><select class="ri-statut" style="width:90px;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:2px;">`+
-        `<option${stat==='MEMBRE'?' selected':''}>MEMBRE</option>`+
-        `<option${stat==='NON-MEMBRE'?' selected':''}>NON-MEMBRE</option>`+
-      `</select></td>`+
-      `<td><input type="number" class="ri-montant" min="0" value="${mont}" oninput="recalcRecap()" style="width:74px;border:1px solid #bbb;border-radius:2px;padding:2px 4px;font-size:11px;text-align:right;box-sizing:border-box;"></td>`;
-    tr.addEventListener('click', function(e){
-      const tag=(e.target.tagName||'').toUpperCase();
-      if(tag==='INPUT'||tag==='SELECT'||tag==='OPTION') return; // laisse l'édition inline tranquille
-      if(isDirty){
-        if(!confirm('Des modifications non sauvegardées seront perdues. Charger quand même ?')) return;
-        clearDirty();
-      }
-      document.getElementById('msel').value=rec.id;
-      curId=rec.id;
-      fillForm(f);
-      clearDirty();
-      showView('confirmation');
-      setSt('✅ Confirmation ouverte : '+ens);
-    });
-    tbody.appendChild(tr);
-  });
-  document.getElementById('recap-cnt').textContent=filteredUniq.length+' participant(s)';
-  recalcRecap();
+  const list=members.filter(m=>recapCheckedIds.has(m.id));
+  renderRecapRows(sortDedupeMembers(list));
 }
 
 async function saveRecap(){
@@ -2928,6 +3021,9 @@ const FACT_ENTITES = {
   BE: {
     label:'BE',
     site:'be',
+    paysCode:'BE', // 2026-09-01 : pays déclaré dans le fichier UBL (cac:Country) — ne dépend plus de site==='be'
+    peppolEpId:'BE0875741536',   // TVA belge d'EDUCPASS — identifiant émetteur du fichier UBL
+    peppolBceId:'0875741536',    // n° d'entreprise belge (BCE/KBO) d'EDUCPASS
     headerLeft:'www.educpass.be',
     logo:'New_logo_jpeg.jpg',
     tvaStandard:true, // 21% client BE/sans TVA, 0% intracommunautaire (cf. factTvaInfo)
@@ -2948,6 +3044,7 @@ const FACT_ENTITES = {
   LU: {
     label:'LUX',
     site:'lu',
+    paysCode:'LU', // 2026-09-01 : pays déclaré dans le fichier UBL — pas d'UBL généré pour LUX à ce jour, gardé pour cohérence
     headerLeft:'www.educpass.lu',
     logo:'New_logo_jpeg.jpg',
     tvaStandard:false, // franchise en base, jamais de TVA quel que soit le client
@@ -2968,13 +3065,20 @@ const FACT_ENTITES = {
   // VM-COMMUNICATION scomm (2026-08-29) : régie publicitaire de TOUTES les brochures
   // (Belux/France/Tips/Séjours) — remplace BE/LUX pour la "Facture Publicité" (éditions).
   // Un seul bouton "Facture Publicité VM" sur la fiche (cf. updateFactureButtons()) ; pas
-  // de facture "Cotisation" ni d'UBL pour cette entité (ctrField/formatNum non utilisés,
-  // UBL restant réservé à BE uniquement dans factSaveFilesToDisk()). Numérotation reprise
-  // de la séquence manuelle existante de Marc : prochaine facture = FV1-47, prochaine
+  // de facture "Cotisation" pour cette entité (ctrField/formatNum non utilisés). Numérotation
+  // reprise de la séquence manuelle existante de Marc : prochaine facture = FV1-47, prochaine
   // note de crédit = NV1-4 (compteurs Airtable initialisés à 46/3 le 2026-08-29).
+  // 2026-09-01 (demande de Marc, à déposer chez OKIOKI) : UBL désormais généré aussi pour VM,
+  // avec les identifiants PROPRES à VM-COMMUNICATION (PAS ceux d'EDUCPASS BE) — TVA
+  // BE 0751.641.023, confirmé par Marc. VM-COMMUNICATION est une entité belge distincte
+  // d'EDUCPASS asbl, d'où paysCode:'BE' explicite (le champ "site" reste null : pas de
+  // site web propre à VM, sans rapport avec le pays de résidence fiscale).
   VM: {
     label:'VM',
     site:null,
+    paysCode:'BE',
+    peppolEpId:'BE0751641023',   // TVA de VM-COMMUNICATION scomm — identifiant émetteur du fichier UBL
+    peppolBceId:'0751641023',    // n° d'entreprise belge (BCE/KBO) de VM-COMMUNICATION scomm
     headerLeft:'Tél. 0475/932.262<br>vm.communication.scomm@gmail.com',
     logo:'VM-COMMUNICATION_logo.jpg',
     tvaStandard:true, // TVA BE 0751.641.023 — même règle 21%/0% intracom. que EDUCPASS BE
@@ -3001,6 +3105,7 @@ const FACT_ENTITES = {
   FR: {
     label:'FR',
     site:'fr',
+    paysCode:'FR', // 2026-09-01 : pas d'UBL généré pour FR à ce jour, gardé pour cohérence
     headerLeft:'Tél. 06.60.96.41.67',
     logo:'New_logo_jpeg.jpg',
     tvaStandard:false, // TVA : NA (actuellement) — franchise, comme LUX (confirmé par Marc)
@@ -3454,6 +3559,7 @@ async function genererFacturePublicite(){
   document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
   document.getElementById('fact-save-msg').textContent='';
   try{
+    await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
     const cfg=FACT_ENTITES[_factType];
     const ctr = await factGetCounter();
     const current = Number(ctr.fields[cfg.ctrFieldPub]||0);
@@ -3581,6 +3687,23 @@ async function factGetDirHandle(key){
   }catch(e){ console.error(e); return null; }
 }
 
+// Correctif 2026-09-01 (signalé par Marc : facture "test" ABBAYE DE STAVELOT introuvable
+// sur le disque) : Chrome ne garde le droit d'écriture sur un dossier que pour la session
+// de navigation en cours — il doit être re-confirmé (fenêtre d'autorisation) après chaque
+// redémarrage du navigateur/PC, et cette re-confirmation exige un "geste utilisateur"
+// récent. Or factSaveFilesToDisk() n'était appelée qu'APRÈS 3 allers-retours réseau vers
+// Airtable (attribution du n°, enregistrement au registre) : le temps d'y arriver, Chrome
+// avait déjà invalidé ce geste, donc la fenêtre d'autorisation ne s'affichait plus et le
+// fichier était sauté silencieusement ("dossier non autorisé"), sans que Marc ne le sache.
+// → On redemande donc maintenant la permission sur les dossiers concernés TOUT DE SUITE au
+// clic sur "Générer", avant tout appel Airtable, pendant que le geste utilisateur est frais.
+// Si la permission est déjà valide (cas normal en cours de session), queryPermission()
+// répond immédiatement sans rouvrir de fenêtre — rien ne change pour Marc dans ce cas.
+async function factPreauthDirs(type){
+  const keys = (type==='VM') ? [FACT_DIRKEYS.vm, FACT_DIRKEYS.partenaires] : [FACT_DIRKEYS.compta, FACT_DIRKEYS.partenaires];
+  for(const key of keys){ await factGetDirHandle(key); }
+}
+
 async function factEnsureSubdir(rootHandle, parts){
   let dir = rootHandle;
   for(const p of parts){ dir = await dir.getDirectoryHandle(p, {create:true}); }
@@ -3624,16 +3747,18 @@ async function factGeneratePDFBlob(){
   return pdf.output('blob');
 }
 
-// Fichier UBL 2.1 (Peppol BIS Billing 3.0, structure standard) — BE uniquement.
+// Fichier UBL 2.1 (Peppol BIS Billing 3.0, structure standard) — BE et VM uniquement
+// (seules entités belges avec un n° de TVA ; LUX/FR n'en génèrent pas à ce jour).
 // ⚠️ Prêt pour import comptable (Oki-Oki) ; ne constitue pas une transmission
 // officielle via le réseau Peppol (nécessite un fournisseur d'accès dédié).
-// Identifiants Peppol EDUCPASS (fournis par Marc le 2026-08-22) :
-// - 0208:0875741536  → scheme "numéro d'entreprise belge (BCE/KBO)"
-// - 9925:BE0875741536 → scheme "n° de TVA belge" (identifiant enregistré chez OKI-OKI)
+// Les codes de scheme ci-dessous sont des codes standard Peppol (identiques pour toute
+// entité belge) ; l'identifiant réel (n° TVA / BCE) est propre à chaque entité et vient de
+// cfg.peppolEpId / cfg.peppolBceId (FACT_ENTITES) — 2026-09-01, pour éviter que le fichier
+// UBL de VM-COMMUNICATION ne déclare par erreur les identifiants d'EDUCPASS.
+// - 0208 → scheme "numéro d'entreprise belge (BCE/KBO)"
+// - 9925 → scheme "n° de TVA belge" (identifiant enregistré chez OKI-OKI)
 const FACT_PEPPOL_EP_SCHEME = '9925';
-const FACT_PEPPOL_EP_ID = 'BE0875741536';
 const FACT_PEPPOL_BCE_SCHEME = '0208';
-const FACT_PEPPOL_BCE_ID = '0875741536';
 
 function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO, echISO, lines){
   const montantStr = Number(montant||0).toFixed(2);
@@ -3677,14 +3802,14 @@ function factGenerateUBL(numero, cfg, nom, rue, cp, com, tva, montant, todayISO,
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
   <cac:AccountingSupplierParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${FACT_PEPPOL_EP_ID}</cbc:EndpointID>
-      <cac:PartyIdentification><cbc:ID schemeID="${FACT_PEPPOL_BCE_SCHEME}">${FACT_PEPPOL_BCE_ID}</cbc:ID></cac:PartyIdentification>
+      <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${cfg.peppolEpId}</cbc:EndpointID>
+      <cac:PartyIdentification><cbc:ID schemeID="${FACT_PEPPOL_BCE_SCHEME}">${cfg.peppolBceId}</cbc:ID></cac:PartyIdentification>
       <cac:PartyLegalEntity><cbc:RegistrationName>${factEsc(cfg.footer||'EDUCPASS')}</cbc:RegistrationName></cac:PartyLegalEntity>
       <cac:PostalAddress>
         <cbc:CityName>${factEsc(cfg.siegeVille||'')}</cbc:CityName>
-        <cac:Country><cbc:IdentificationCode>${cfg.site==='be'?'BE':'LU'}</cbc:IdentificationCode></cac:Country>
+        <cac:Country><cbc:IdentificationCode>${cfg.paysCode||'BE'}</cbc:IdentificationCode></cac:Country>
       </cac:PostalAddress>
-      <cac:PartyTaxScheme><cbc:CompanyID>${FACT_PEPPOL_EP_ID}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>
+      <cac:PartyTaxScheme><cbc:CompanyID>${cfg.peppolEpId}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
@@ -3771,14 +3896,14 @@ function factGenerateUBLCreditNote(numero, cfg, nom, rue, cp, com, tva, montantA
   </cac:BillingReference>
   <cac:AccountingSupplierParty>
     <cac:Party>
-      <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${FACT_PEPPOL_EP_ID}</cbc:EndpointID>
-      <cac:PartyIdentification><cbc:ID schemeID="${FACT_PEPPOL_BCE_SCHEME}">${FACT_PEPPOL_BCE_ID}</cbc:ID></cac:PartyIdentification>
+      <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${cfg.peppolEpId}</cbc:EndpointID>
+      <cac:PartyIdentification><cbc:ID schemeID="${FACT_PEPPOL_BCE_SCHEME}">${cfg.peppolBceId}</cbc:ID></cac:PartyIdentification>
       <cac:PartyLegalEntity><cbc:RegistrationName>${factEsc(cfg.footer||'EDUCPASS')}</cbc:RegistrationName></cac:PartyLegalEntity>
       <cac:PostalAddress>
         <cbc:CityName>${factEsc(cfg.siegeVille||'')}</cbc:CityName>
-        <cac:Country><cbc:IdentificationCode>${cfg.site==='be'?'BE':'LU'}</cbc:IdentificationCode></cac:Country>
+        <cac:Country><cbc:IdentificationCode>${cfg.paysCode||'BE'}</cbc:IdentificationCode></cac:Country>
       </cac:PostalAddress>
-      <cac:PartyTaxScheme><cbc:CompanyID>${FACT_PEPPOL_EP_ID}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>
+      <cac:PartyTaxScheme><cbc:CompanyID>${cfg.peppolEpId}</cbc:CompanyID><cac:TaxScheme><cbc:ID>VAT</cbc:ID></cac:TaxScheme></cac:PartyTaxScheme>
     </cac:Party>
   </cac:AccountingSupplierParty>
   <cac:AccountingCustomerParty>
@@ -3832,8 +3957,11 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
     return;
   }
 
+  // 2026-09-01 (demande de Marc, dépôt chez OKIOKI) : UBL désormais généré aussi pour VM,
+  // avec les identifiants propres de VM-COMMUNICATION (cfg.peppolEpId/peppolBceId) — voir
+  // factGenerateUBL()/factGenerateUBLCreditNote(). Toujours pas d'UBL pour LUX/FR.
   let ublText = null;
-  if(_factType==='BE'){
+  if(_factType==='BE' || _factType==='VM'){
     try{
       ublText = (_factDocKind==='notecredit')
         ? factGenerateUBLCreditNote(numero, cfg, nom, rue, cp, com, tva, Math.abs(montant), todayISO, (_factCreditRef?_factCreditRef.numero:''), lines)
@@ -3852,6 +3980,7 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
       try{
         const sub = await factEnsureSubdir(dirVM, [_factDocKind==='notecredit' ? 'NOTES DE CRÉDIT' : 'FACTURES']);
         await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
+        if(ublText) await factWriteFile(sub, fileBase+'.xml', ublText); // fichier UBL à déposer chez OKIOKI (2026-09-01)
         results.push('VM-COMMUNICATION ✅');
       }catch(e){ console.error(e); results.push('VM-COMMUNICATION ❌'); }
     } else {
@@ -3892,6 +4021,7 @@ async function genererFacture(){
   document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
   document.getElementById('fact-save-msg').textContent='';
   try{
+    await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
     const cfg=FACT_ENTITES[_factType];
     const ctr = await factGetCounter();
     const current = Number(ctr.fields[cfg.ctrField]||0);
@@ -3962,6 +4092,7 @@ async function genererNoteCredit(){
   document.getElementById('fact-save-msg').textContent='';
   try{
     if(!_factCreditRef || !_factCreditRef.numero){ throw new Error('Facture créditée introuvable.'); }
+    await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
     const cfg=FACT_ENTITES[_factType];
     const ctr = await factGetCounter();
     const current = Number(ctr.fields[cfg.ctrFieldNC]||0);
