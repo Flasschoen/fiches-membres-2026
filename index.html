@@ -3326,7 +3326,7 @@ function factBuildDoc(numero){
         </td>
         <td class="fact-hdr-col-right" style="vertical-align:top;font-size:13px;text-align:left;">
           <div style="font-size:16px;font-weight:700;">${factEsc(nom)}</div>
-          ${contact?`<div style="font-weight:700;">${factEsc(contact)}${titre?' — '+factEsc(titre):''}</div>`:''}
+          <div style="font-weight:700;">À l'attention du service comptabilité</div>
           <div>${factEsc(rue)}</div>
           <div>${factEsc(cp)} ${factEsc(com)}</div>
           ${tva?`<div style="margin-top:5px;">TVA n° : ${factEsc(tva)}</div>`:''}
@@ -3628,7 +3628,13 @@ async function genererFacturePublicite(){
 // SAUVEGARDE AUTOMATIQUE LOCALE (PDF + UBL)
 // via File System Access API (Chrome/Edge uniquement)
 // ══════════════════════════════════════
-const FACT_DIRKEYS = {compta:'fact_dir_compta', partenaires:'fact_dir_partenaires', vm:'fact_dir_vm'};
+// 2026-09-01 (demande de Marc, suite à la facture FV1-48 SANGLIER DURBUY ADVENTURES) :
+// suppression de la copie "dossier partenaire/membre" — elle créait un sous-dossier par
+// membre (ADMINISTRATIF/COMPTA/FACTURES) qui prêtait à confusion et ne contenait jamais le
+// fichier UBL. Seul le dossier comptable (VM ou BE/LUX/FR) reçoit désormais PDF + UBL,
+// directement à sa racine (plus de sous-dossier FACTURES/NOTES DE CRÉDIT créé par l'outil —
+// Marc autorise directement le dossier de destination final qu'il souhaite).
+const FACT_DIRKEYS = {compta:'fact_dir_compta', vm:'fact_dir_vm'};
 
 function factIdbOpen(){
   return new Promise((resolve,reject)=>{
@@ -3668,10 +3674,7 @@ async function factAutoriserDossiers(){
     msgEl.textContent = '👉 Sélectionnez le dossier "FACTURES VENTES 2026-2027"...';
     const dirCompta = await window.showDirectoryPicker({id:'fact-compta', mode:'readwrite'});
     await factIdbSet(FACT_DIRKEYS.compta, dirCompta);
-    msgEl.textContent = '👉 Sélectionnez le dossier "DOSSIER PARTENAIRES 2026"...';
-    const dirPart = await window.showDirectoryPicker({id:'fact-partenaires', mode:'readwrite'});
-    await factIdbSet(FACT_DIRKEYS.partenaires, dirPart);
-    msgEl.textContent = '👉 Sélectionnez le dossier "DOSSIER VM-COMMUNICATION"...';
+    msgEl.textContent = '👉 Sélectionnez le dossier où enregistrer les factures VM-COMMUNICATION (PDF + UBL, à plat, sans sous-dossier)...';
     const dirVM = await window.showDirectoryPicker({id:'fact-vm', mode:'readwrite'});
     await factIdbSet(FACT_DIRKEYS.vm, dirVM);
     msgEl.style.color='#1a7a3d';
@@ -3710,7 +3713,7 @@ async function factGetDirHandle(key){
 // Si la permission est déjà valide (cas normal en cours de session), queryPermission()
 // répond immédiatement sans rouvrir de fenêtre — rien ne change pour Marc dans ce cas.
 async function factPreauthDirs(type){
-  const keys = (type==='VM') ? [FACT_DIRKEYS.vm, FACT_DIRKEYS.partenaires] : [FACT_DIRKEYS.compta, FACT_DIRKEYS.partenaires];
+  const keys = (type==='VM') ? [FACT_DIRKEYS.vm] : [FACT_DIRKEYS.compta];
   for(const key of keys){ await factGetDirHandle(key); }
 }
 
@@ -3982,15 +3985,17 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
 
   const results = [];
 
+  // 2026-09-01 (demande de Marc) : plus AUCUN sous-dossier créé automatiquement par l'outil
+  // (ni séparation FACTURES/NOTES DE CRÉDIT, ni copie dans un dossier par membre) — tout est
+  // écrit directement à la racine du dossier autorisé, PDF + UBL ensemble, quel que soit le
+  // type de document (facture ou note de crédit). Marc autorise directement le dossier de
+  // destination final qu'il veut (ex. "FACTURES 01.09.26").
   if(_factType==='VM'){
-    // VM-COMMUNICATION (2026-08-29) : dossier comptable dédié, séparé Factures / Notes de
-    // crédit — remplace le dossier partagé "FACTURES VENTES 2026-2027" utilisé par BE/LUX/FR.
     const dirVM = await factGetDirHandle(FACT_DIRKEYS.vm);
     if(dirVM){
       try{
-        const sub = await factEnsureSubdir(dirVM, [_factDocKind==='notecredit' ? 'NOTES DE CRÉDIT' : 'FACTURES']);
-        await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
-        if(ublText) await factWriteFile(sub, fileBase+'.xml', ublText); // fichier UBL à déposer chez OKIOKI (2026-09-01)
+        await factWriteFile(dirVM, fileBase+'.pdf', pdfBlob);
+        if(ublText) await factWriteFile(dirVM, fileBase+'.xml', ublText); // fichier UBL à déposer chez OKIOKI (2026-09-01)
         results.push('VM-COMMUNICATION ✅');
       }catch(e){ console.error(e); results.push('VM-COMMUNICATION ❌'); }
     } else {
@@ -4007,17 +4012,6 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
     } else {
       results.push('comptabilité ⏭️ (dossier non autorisé)');
     }
-  }
-
-  const dirPart = await factGetDirHandle(FACT_DIRKEYS.partenaires);
-  if(dirPart){
-    try{
-      const sub = await factEnsureSubdir(dirPart, [factSanitizeName(nom), 'ADMINISTRATIF', 'COMPTA', 'FACTURES']);
-      await factWriteFile(sub, fileBase+'.pdf', pdfBlob);
-      results.push('dossier partenaire ✅');
-    }catch(e){ console.error(e); results.push('dossier partenaire ❌'); }
-  } else {
-    results.push('dossier partenaire ⏭️ (dossier non autorisé)');
   }
 
   const anyOk = results.some(r=>r.includes('✅'));
