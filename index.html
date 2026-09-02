@@ -470,6 +470,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fl" style="min-width:90px;">Échéance BE :</div>
           <div class="fv"><input type="date" id="f-echbe" onchange="markDirty()"></div>
           <button type="button" id="btn-fact-be" class="btn btn-fact" onclick="openFacture('BE')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture BE</button>
+          <button type="button" id="btn-fact-correct-be" class="btn btn-fact" onclick="corrigerDerniereFacture('BE')" style="display:none;margin-left:4px;padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger (même jour)</button>
         </div>
         <div class="fr">
           <div class="fl">Cotisation LU :</div>
@@ -486,6 +487,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fl" style="min-width:90px;">Échéance LU :</div>
           <div class="fv"><input type="date" id="f-echlu" onchange="markDirty()"></div>
           <button type="button" id="btn-fact-lu" class="btn btn-fact" onclick="openFacture('LU')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture LUX</button>
+          <button type="button" id="btn-fact-correct-lu" class="btn btn-fact" onclick="corrigerDerniereFacture('LU')" style="display:none;margin-left:4px;padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger (même jour)</button>
         </div>
         <div class="fr">
           <div class="fl">Cotisation FR :</div>
@@ -502,6 +504,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fl" style="min-width:90px;">Échéance FR :</div>
           <div class="fv"><input type="date" id="f-echfr" onchange="markDirty()"></div>
           <button type="button" id="btn-fact-fr" class="btn btn-fact" onclick="openFacture('FR')" style="display:none;margin-left:8px;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture FR</button>
+          <button type="button" id="btn-fact-correct-fr" class="btn btn-fact" onclick="corrigerDerniereFacture('FR')" style="display:none;margin-left:4px;padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger (même jour)</button>
         </div>
         <div class="fr">
           <button type="button" id="btn-notecredit" class="btn" onclick="ouvrirSelectionNoteCredit()" style="background:#a94442;color:#fff;padding:4px 10px;font-size:11px;white-space:nowrap;">↩️ Note de crédit (annuler une facture)</button>
@@ -710,7 +713,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
       </table>
       <div class="fr" style="margin-top:5px;">
         <button type="button" id="btn-fact-pub-vm" class="btn btn-fact" onclick="openFacturePublicite('VM')" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Facture Publicité (VM-COMMUNICATION)</button>
-        <button type="button" id="btn-fact-correct-vm" class="btn btn-fact" onclick="corrigerDerniereFacturePubliciteVM()" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger la dernière facture VM (même jour)</button>
+        <button type="button" id="btn-fact-correct-vm" class="btn btn-fact" onclick="corrigerDerniereFacture('VM')" style="display:none;padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger la dernière facture VM (même jour)</button>
       </div>
 
       <div class="sec" style="margin-top:7px;">📧 Newsletters & Bannières</div>
@@ -3195,6 +3198,17 @@ function updateFactureButtons(){
   if(btnBE) btnBE.style.display = gv('f-cotbe') ? '' : 'none';
   if(btnLU) btnLU.style.display = gv('f-cotlu') ? '' : 'none';
   if(btnFR) btnFR.style.display = gv('f-cotfr') ? '' : 'none';
+  // "Corriger (même jour)" par entité Educpass (2026-09-02, généralisée depuis VM sur
+  // nouvelle demande de Marc) — même condition d'affichage que le bouton Facture de la
+  // même entité ; l'éligibilité réelle (facture du jour, dernier n° émis) n'est vérifiée
+  // qu'au clic, dans corrigerDerniereFacture(), pour éviter un appel Airtable à chaque
+  // ouverture de fiche.
+  const btnCorrectBE=document.getElementById('btn-fact-correct-be');
+  if(btnCorrectBE) btnCorrectBE.style.display = gv('f-cotbe') ? '' : 'none';
+  const btnCorrectLU=document.getElementById('btn-fact-correct-lu');
+  if(btnCorrectLU) btnCorrectLU.style.display = gv('f-cotlu') ? '' : 'none';
+  const btnCorrectFR=document.getElementById('btn-fact-correct-fr');
+  if(btnCorrectFR) btnCorrectFR.style.display = gv('f-cotfr') ? '' : 'none';
   // Facture Publicité (2026-08-22, puis réattribuée à VM-COMMUNICATION le 2026-08-29) :
   // VM-COMMUNICATION scomm est désormais la régie publicitaire de TOUTES les brochures
   // (Belux/France/Tips/Séjours), donc un seul bouton "Facture Publicité VM" — visible dès
@@ -3204,7 +3218,7 @@ function updateFactureButtons(){
   if(btnPubVM) btnPubVM.style.display = (gv('f-cotbe')||gv('f-cotlu')||gv('f-cotfr')) ? '' : 'none';
   // Même condition d'affichage que le bouton Facture Publicité VM lui-même (2026-09-02) —
   // l'éligibilité réelle (facture du jour, dernier n° émis) n'est vérifiée qu'au clic, dans
-  // corrigerDerniereFacturePubliciteVM(), pour éviter un appel Airtable à chaque ouverture de fiche.
+  // corrigerDerniereFacture('VM'), pour éviter un appel Airtable à chaque ouverture de fiche.
   const btnCorrectVM=document.getElementById('btn-fact-correct-vm');
   if(btnCorrectVM) btnCorrectVM.style.display = (gv('f-cotbe')||gv('f-cotlu')||gv('f-cotfr')) ? '' : 'none';
 }
@@ -3668,34 +3682,50 @@ async function factPatchRegistre(recId, fields){
 }
 
 // ══════════════════════════════════════
-// CORRECTION RAPIDE — Facture Publicité VM (2026-09-02, demande de Marc)
+// CORRECTION RAPIDE — toute facture (2026-09-02, demande de Marc ; généralisée le
+// 2026-09-02 en fin de journée de VM-COMMUNICATION vers BE/LUX/FR également)
 // ══════════════════════════════════════
-// Avant ce correctif, la SEULE façon de corriger une erreur sur une facture VM déjà
+// Avant ce correctif, la SEULE façon de corriger une erreur sur une facture déjà
 // générée était de passer par la Note de Crédit officielle (annule intégralement +
 // nouvelle facture sous un NOUVEAU numéro) — ex. FV1-49 MALAGNE (640€, erreur) créditée
 // via NV1-4 puis réémise sous FV1-50 (320€). Marc trouve ce détour lourd pour une simple
 // erreur repérée le jour même, avant tout envoi au client : il veut alors pouvoir
 // corriger directement SOUS LE MÊME NUMÉRO — comme cela avait été fait "à la main" dans
 // Airtable pour FV1-49 ARCHEOFORUM DE LIEGE le 2026-09-01 (enregistrement marqué
-// "❌ ANNULÉE" dans le champ Référence, compteur "Dernier N° PUB VM" remis en arrière
-// d'une unité, facture régénérée avec les données corrigées). Cette fonction automatise
-// exactement ce geste, avec deux garde-fous validés avec Marc (pour rester compatible
-// avec la règle belge : un numéro de facture déjà émis ne se modifie normalement pas,
-// seule une note de crédit officielle le peut — donc on ne s'autorise cette exception
-// que dans un cas très encadré) :
-//  - uniquement la facture Publicité VM générée AUJOURD'HUI pour ce membre ;
-//  - uniquement si c'est la DERNIÈRE facture VM émise, tous membres confondus (son
-//    numéro = valeur actuelle du compteur) — sinon rembobiner le compteur créerait un
-//    doublon avec une facture plus récente déjà émise pour un autre membre.
+// "❌ ANNULÉE" dans le champ Référence, compteur remis en arrière d'une unité, facture
+// régénérée avec les données corrigées). Cette fonction automatise exactement ce geste,
+// avec deux garde-fous validés avec Marc (pour rester compatible avec la règle belge :
+// un numéro de facture déjà émis ne se modifie normalement pas, seule une note de
+// crédit officielle le peut — donc on ne s'autorise cette exception que dans un cas très
+// encadré) :
+//  - uniquement la facture générée AUJOURD'HUI pour ce membre, dans cette entité ;
+//  - uniquement si c'est la DERNIÈRE facture émise pour cette entité, tous membres
+//    confondus (son numéro = celui que régénère le compteur actuel) — sinon rembobiner
+//    le compteur créerait un doublon avec une facture plus récente déjà émise pour un
+//    autre membre.
 // Si une de ces conditions n'est pas remplie → message explicite, et Marc doit alors
 // passer par "↩️ Note de crédit" (seul chemin correct comptablement dans ce cas).
-async function corrigerDerniereFacturePubliciteVM(){
+// Initialement limitée à VM-COMMUNICATION (Facture Publicité) à la demande de Marc,
+// généralisée le même jour à BE/LUX/FR (Facture normale) sur nouvelle demande — même
+// logique, seuls le libellé "Type document" Airtable et le compteur/format changent
+// selon l'entité (cfg.ctrFieldPub/formatNumPub pour VM, cfg.ctrField/formatNum sinon).
+// La comparaison "est-ce la dernière ?" se fait en RECONSTRUISANT le numéro attendu à
+// partir du compteur actuel (formatFn(current)) et en le comparant tel quel au numéro
+// stocké dans le registre — plus robuste qu'un regex par entité (chaque entité a son
+// propre format de numéro, ex. "BE-26/013" vs "FV1-53").
+async function corrigerDerniereFacture(type){
   if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
-  const btn = document.getElementById('btn-fact-correct-vm');
-  btn.disabled = true;
+  const cfg = FACT_ENTITES[type];
+  const isVM = (type==='VM');
+  const typeDocLabel = isVM ? 'Facture Publicité' : 'Facture';
+  const ctrField = isVM ? cfg.ctrFieldPub : cfg.ctrField;
+  const formatFn = isVM ? cfg.formatNumPub : cfg.formatNum;
+  const btnId = isVM ? 'btn-fact-correct-vm' : 'btn-fact-correct-'+type.toLowerCase();
+  const btn = document.getElementById(btnId);
+  if(btn) btn.disabled = true;
   try{
     const todayISO = factTodayISO();
-    const formula = encodeURIComponent("AND({Entité}='VM',{Type document}='Facture Publicité')");
+    const formula = encodeURIComponent("AND({Entité}='"+cfg.label+"',{Type document}='"+typeDocLabel+"')");
     const r = await fetch(FACT_REG_URL + '?filterByFormula=' + formula + '&pageSize=100', {headers:hdrs});
     const data = await r.json();
     const candidats = (data.records||[]).filter(rec=>{
@@ -3706,45 +3736,40 @@ async function corrigerDerniereFacturePubliciteVM(){
         && !/^❌/.test(f['Référence']||'');
     });
     if(candidats.length===0){
-      alert('Aucune facture Publicité VM générée AUJOURD\'HUI pour ce membre — impossible de "corriger" ainsi.\n\nPour une facture plus ancienne (ou déjà envoyée), utilisez "↩️ Note de crédit".');
+      alert('Aucune facture '+cfg.label+' générée AUJOURD\'HUI pour ce membre — impossible de "corriger" ainsi.\n\nPour une facture plus ancienne (ou déjà envoyée), utilisez "↩️ Note de crédit".');
       return;
     }
     candidats.sort((a,b)=> String(b.fields['N° Facture']||'').localeCompare(String(a.fields['N° Facture']||''), undefined, {numeric:true}));
     const rec = candidats[0];
     const numero = rec.fields['N° Facture'];
-    const numMatch = /^FV1-(\d+)$/.exec(numero||'');
-    if(!numMatch){
-      alert('Numéro de facture inattendu ("'+numero+'") — correction automatique impossible. Utilisez "↩️ Note de crédit".');
-      return;
-    }
-    const num = Number(numMatch[1]);
 
     const ctr = await factGetCounter();
-    const current = Number(ctr.fields['Dernier N° PUB VM']||0);
-    if(num !== current){
-      alert('La facture '+numero+' n\'est plus la dernière facture VM émise (une facture plus récente, n° FV1-'+current+', a déjà été générée depuis) — la corriger romprait la numérotation.\n\nUtilisez "↩️ Note de crédit" pour l\'annuler proprement, puis générez une nouvelle facture.');
+    const current = Number(ctr.fields[ctrField]||0);
+    const expectedNumero = formatFn(current);
+    if(numero !== expectedNumero){
+      alert('La facture '+numero+' n\'est plus la dernière facture '+cfg.label+' émise (le numéro actuellement attendu est '+expectedNumero+', une facture plus récente a déjà été générée depuis) — la corriger romprait la numérotation.\n\nUtilisez "↩️ Note de crédit" pour l\'annuler proprement, puis générez une nouvelle facture.');
       return;
     }
 
     const montant = Number(rec.fields['Montant'])||0;
     const enseigne = rec.fields['Enseigne']||'';
     const ok = confirm('Corriger la facture '+numero+' ('+enseigne+', '+factEUR(montant)+') ?\n\n'
-      + 'Elle sera marquée annulée dans le registre, puis vous allez immédiatement régénérer une nouvelle facture Publicité VM sous LE MÊME numéro '+numero+', avec les données actuelles de la fiche.\n\n'
+      + 'Elle sera marquée annulée dans le registre, puis vous allez immédiatement régénérer une nouvelle facture '+cfg.label+' sous LE MÊME numéro '+numero+', avec les données actuelles de la fiche.\n\n'
       + '⚠️ Vérifiez que les champs erronés sur la fiche sont déjà corrigés avant de continuer.');
     if(!ok) return;
 
     await factPatchRegistre(rec.id, {
-      'Référence': '❌ ANNULÉE (corrigée le '+factDateFR(todayISO)+' via "Corriger la dernière facture VM") — remplacée par une nouvelle génération sous le même numéro '+numero+'. Ne pas payer.'
+      'Référence': '❌ ANNULÉE (corrigée le '+factDateFR(todayISO)+' via "Corriger la dernière facture") — remplacée par une nouvelle génération sous le même numéro '+numero+'. Ne pas payer.'
     });
-    await factPatchCounter({ 'Dernier N° PUB VM': current-1 });
+    await factPatchCounter({ [ctrField]: current-1 });
 
-    openFacturePublicite('VM');
+    if(isVM) openFacturePublicite('VM'); else openFacture(type);
     document.getElementById('fact-statut-msg').textContent = '✏️ Facture '+numero+' annulée dans le registre — vérifiez/complétez les lignes ci-dessous puis cliquez sur "Générer" pour la régénérer sous ce même numéro.';
   }catch(e){
     console.error(e);
     alert('Erreur lors de la correction : '+e.message);
   }finally{
-    btn.disabled = false;
+    if(btn) btn.disabled = false;
   }
 }
 
