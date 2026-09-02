@@ -3822,13 +3822,34 @@ async function factAutoriserDossiers(){
     msgEl.style.color='#c55a11';
     msgEl.textContent = '👉 Sélectionnez le dossier "FACTURES VENTES 2026-2027"...';
     const dirCompta = await window.showDirectoryPicker({id:'fact-compta', mode:'readwrite'});
-    await factIdbSet(FACT_DIRKEYS.compta, dirCompta);
     // 2026-09-02 (demande de Marc, suite à des factures VM retrouvées dans le mauvais dossier
     // "NOTES DE CRÉDIT" au lieu de "FACTURES 01.09.26") : le nom du dossier attendu est
     // maintenant rappelé explicitement dans le message, pour éviter de sélectionner par erreur
     // un autre dossier au moment du clic.
     msgEl.textContent = '👉 Sélectionnez le dossier VM-COMMUNICATION où enregistrer les factures (PDF + UBL, à plat, sans sous-dossier) — normalement "FACTURES 01.09.26"...';
     const dirVM = await window.showDirectoryPicker({id:'fact-vm', mode:'readwrite'});
+
+    // 2026-09-02 (demande de Marc, suite à un 2e incident de dossier mal sélectionné le même
+    // jour — cette fois c'est "compta" qui pointait vers le dossier VM-COMMUNICATION, faisant
+    // atterrir la facture BE-26/102 au mauvais endroit) : on vérifie AVANT d'enregistrer quoi
+    // que ce soit que les deux dossiers choisis ne sont pas LE MÊME. isSameEntry() compare les
+    // deux handles au niveau du système de fichiers (pas juste leur nom, qui pourrait coïncider
+    // par hasard) — utile car le sélecteur de dossier Windows démarre souvent sur le dernier
+    // dossier utilisé, ce qui rend facile de cliquer deux fois sur le même par erreur. Si les
+    // deux coïncident, on bloque avec un message explicite et on n'enregistre RIEN (les anciens
+    // dossiers, s'il y en avait, restent donc inchangés) plutôt que de sauvegarder une config
+    // cassée en silence.
+    const same = await dirCompta.isSameEntry(dirVM);
+    if(same){
+      msgEl.style.color='#c0392b';
+      msgEl.textContent = '';
+      alert('⚠️ Vous avez sélectionné DEUX FOIS LE MÊME DOSSIER ("'+dirCompta.name+'") pour la comptabilité ET pour VM-COMMUNICATION.\n\n'
+        + 'C\'est presque certainement une erreur : les factures Educpass (BE/LUX/FR) doivent aller dans "FACTURES VENTES 2026-2027", et les factures VM dans "FACTURES 01.09.26" — deux dossiers DIFFÉRENTS.\n\n'
+        + 'Rien n\'a été enregistré (les dossiers précédemment autorisés, s\'il y en avait, restent inchangés). Cliquez à nouveau sur "🔐 Autoriser dossiers comptables" et sélectionnez bien deux dossiers différents cette fois.');
+      return;
+    }
+
+    await factIdbSet(FACT_DIRKEYS.compta, dirCompta);
     await factIdbSet(FACT_DIRKEYS.vm, dirVM);
     msgEl.style.color='#1a7a3d';
     msgEl.textContent = '✅ Dossiers comptables autorisés : comptabilité → "'+dirCompta.name+'"  •  VM-COMMUNICATION → "'+dirVM.name+'". Les prochaines factures s\'y enregistreront automatiquement.';
