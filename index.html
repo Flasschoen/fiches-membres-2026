@@ -4109,6 +4109,7 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
   }
 
   const results = [];
+  let writeErrorDetail = ''; // 2026-09-02 : message d'erreur réel de factWriteFile, pour l'alerte ci-dessous
 
   // 2026-09-01 (demande de Marc) : plus AUCUN sous-dossier créé automatiquement par l'outil
   // (ni séparation FACTURES/NOTES DE CRÉDIT, ni copie dans un dossier par membre) — tout est
@@ -4122,7 +4123,7 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
         await factWriteFile(dirVM, fileBase+'.pdf', pdfBlob);
         if(ublText) await factWriteFile(dirVM, fileBase+'.xml', ublText); // fichier UBL à déposer chez OKIOKI (2026-09-01)
         results.push('VM-COMMUNICATION ✅');
-      }catch(e){ console.error(e); results.push('VM-COMMUNICATION ❌'); }
+      }catch(e){ console.error(e); results.push('VM-COMMUNICATION ❌'); writeErrorDetail=e.message||String(e); }
     } else {
       results.push('VM-COMMUNICATION ⏭️ (dossier non autorisé)');
     }
@@ -4133,7 +4134,7 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
         await factWriteFile(dirCompta, fileBase+'.pdf', pdfBlob);
         if(ublText) await factWriteFile(dirCompta, fileBase+'.xml', ublText);
         results.push('comptabilité ✅');
-      }catch(e){ console.error(e); results.push('comptabilité ❌'); }
+      }catch(e){ console.error(e); results.push('comptabilité ❌'); writeErrorDetail=e.message||String(e); }
     } else {
       results.push('comptabilité ⏭️ (dossier non autorisé)');
     }
@@ -4142,6 +4143,19 @@ async function factSaveFilesToDisk(numero, cfg, nom, montant, todayISO, echISO, 
   const anyOk = results.some(r=>r.includes('✅'));
   msgEl.style.color = anyOk ? '#1a7a3d' : '#c55a11';
   msgEl.textContent = '💾 Enregistrement local — ' + results.join(' · ');
+
+  // 2026-09-02 (demande de Marc, suite à la facture FV1-53 BELLEWAERDE PARK introuvable sur
+  // le disque sans qu'il ne s'en rende compte) : un échec d'enregistrement local ne peut plus
+  // passer inaperçu — ce message discret ne suffisait pas (4e incident du genre). La facture
+  // FV1-53 elle-même était pourtant bien enregistrée dans Airtable (registre + compteur
+  // corrects) — seul le PDF/UBL local manquait ; ce point est rappelé explicitement ici pour
+  // éviter toute inquiétude inutile de Marc sur la validité de la facture.
+  if(!anyOk){
+    alert('⚠️ ATTENTION : le PDF/UBL de la facture '+numero+' n\'a PAS pu être enregistré sur le disque !\n\n'
+      + 'Détail : '+results.join(' · ')+(writeErrorDetail?'\n('+writeErrorDetail+')':'')+'\n\n'
+      + 'Rassurez-vous : la facture est correctement enregistrée dans Airtable (numéro et montant), rien n\'est perdu côté comptabilité.\n\n'
+      + 'Mais le fichier local est manquant — vérifiez le dossier autorisé (indicateur 📁 à côté de "Autoriser dossiers comptables"), réautorisez-le si besoin, puis prévenez Claude pour reconstruire le PDF/UBL manquant si nécessaire.');
+  }
 }
 
 async function genererFacture(){
