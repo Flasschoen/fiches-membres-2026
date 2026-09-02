@@ -1224,6 +1224,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
   <div class="hdr-bar" style="display:flex;gap:8px;padding:8px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;align-items:center;flex-wrap:wrap;">
     <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
     <span id="fact-statut-msg" style="font-size:12px;font-weight:700;color:#c55a11;"></span>
+    <span id="fact-numero-prevu" style="font-size:12px;font-weight:700;color:#1a5fb4;white-space:nowrap;"></span>
     <button id="btn-fact-autoriser" class="btn" onclick="factAutoriserDossiers()" style="background:#7b2d8b;color:#fff;padding:5px 16px;white-space:nowrap;">🔐 Autoriser dossiers comptables</button>
     <span id="fact-dir-status" style="font-size:11px;color:#666;white-space:nowrap;"></span>
     <button id="btn-fact-generer" class="btn" onclick="genererDocument()" style="background:#1a7a3d;color:#fff;padding:5px 16px;white-space:nowrap;margin-left:auto;">🧾 Générer la facture (attribue le n° définitif)</button>
@@ -3145,6 +3146,7 @@ let _factNumero=null; // numéro définitif une fois la facture générée (sino
 let _factLines=[];    // lignes modifiables de la facture (date, libellé, quantité, prix unité) — voir factOnLineInput/factAddLine/factRemoveLine (2026-08-22)
 let _factDocKind='facture'; // 'facture' ou 'notecredit' — bascule l'affichage (titre, libellés, CGV) — 2026-08-22
 let _factCreditRef=null;    // { numero, dateISO } de la facture créditée, uniquement en mode 'notecredit'
+let _factConcerneTxt=null;  // texte "Concerne" modifié manuellement (2026-09-02) — null = utiliser le texte automatique par défaut ; jamais utilisé pour une note de crédit (toujours fixe, cf. factBuildDoc)
 
 function factEsc(s){
   return String(s??'').replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -3259,6 +3261,11 @@ function factOnLineInput(el){
   if(totalCell) totalCell.textContent = factEUR(lineTotal);
   factRecalcAggregate();
 }
+// Appelé sur chaque frappe dans le texte "Concerne" (modifiable, 2026-09-02) — jamais pour
+// une note de crédit (ce champ n'est alors même pas rendu éditable, cf. factBuildDoc).
+function factOnConcerneInput(el){
+  _factConcerneTxt = el.textContent.trim();
+}
 // Ajoute une ligne vide (aperçu uniquement — la facture n'est pas encore générée).
 function factAddLine(){
   _factLines.push({ date: factDateFR(factTodayISO()), libelle:'', qte:1, prixUnit:0 });
@@ -3315,11 +3322,22 @@ function factBuildDoc(numero){
 
   const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
   const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
-  const concerneTxt = isNC
-    ? 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '')
-    : isPub
-      ? 'Insertions publicitaires d\'EDUCPASS'
-      : 'Adhésion 12 mois'+(echFr?' &gt; '+echFr:'');
+  // 2026-09-02 (demande de Marc) : le texte "Concerne" est désormais modifiable à la main
+  // pour les factures normales ET les factures publicité VM (pré-rempli avec le texte par
+  // défaut habituel) — SAUF pour une note de crédit, qui doit toujours rester liée à la
+  // facture qu'elle annule (texte fixe, jamais éditable). _factConcerneTxt (global) garde la
+  // valeur tapée par Marc tant que l'aperçu reste ouvert (voir factOnConcerneInput) ; une fois
+  // la facture générée (numero !== null), le texte est figé comme les lignes du tableau.
+  const concerneNC = 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '');
+  const concerneDefault = isPub
+    ? 'Insertions publicitaires d\'EDUCPASS'
+    : 'Adhésion 12 mois'+(echFr?' > '+echFr:'');
+  const concerneVal = (_factConcerneTxt!==null && _factConcerneTxt!==undefined) ? _factConcerneTxt : concerneDefault;
+  const concerneHtml = isNC
+    ? `<b>${concerneNC}</b>`
+    : (editable
+        ? `<b class="fact-editable" contenteditable="true" oninput="factOnConcerneInput(this)">${factEsc(concerneVal)}</b>`
+        : `<b>${factEsc(concerneVal)}</b>`);
   const enseigneTxt = gv('f-ens')||'';
 
   return `
@@ -3346,7 +3364,7 @@ function factBuildDoc(numero){
     <table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
       <tr>
         <td class="fact-hdr-col-left" style="border:2px solid #000;background:#ffff00;padding:8px 10px;font-weight:700;font-size:15px;">${isNC?'NOTE DE CRÉDIT n°':(isPub?'FACTURE PUBLICITÉ n°':'FACTURE n°')} : ${factEsc(numeroTxt)}</td>
-        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : <b>${concerneTxt}</b>${enseigneTxt?`<br><b>${factEsc(enseigneTxt)}</b>`:''}</td>
+        <td class="fact-hdr-col-right" style="padding:8px 10px;font-size:14px;border-top:2px solid #000;border-bottom:2px solid #000;">Concerne : ${concerneHtml}${enseigneTxt?`<br><b>${factEsc(enseigneTxt)}</b>`:''}</td>
       </tr>
     </table>
     <div style="font-size:11px;font-style:italic;margin:12px 0 5px;">Doit pour ce qui suit :</div>
@@ -3390,6 +3408,7 @@ function openFacture(type){
   _factNumero=null;
   _factDocKind='facture';
   _factCreditRef=null;
+  _factConcerneTxt=null;
   const cfg = FACT_ENTITES[type];
   const COT_FIELD_BY_TYPE = {BE:'f-cotbe', LU:'f-cotlu', FR:'f-cotfr'};
   const MONT_FIELD_BY_TYPE = {BE:'f-montbe', LU:'f-montlu', FR:'f-montfr'};
@@ -3409,6 +3428,7 @@ function openFacture(type){
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
   factShowDirStatus();
+  factShowNumeroPrevu();
 }
 
 // ══════════════════════════════════════
@@ -3476,6 +3496,7 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   _factNumero = null;
   _factDocKind = 'notecredit';
   _factCreditRef = { numero: numero, dateISO: dateISO };
+  _factConcerneTxt = null;
   _factLines = [{
     date: factDateFR(factTodayISO()),
     libelle: 'Note de crédit — annule la facture n° '+numero,
@@ -3491,6 +3512,7 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
   factShowDirStatus();
+  factShowNumeroPrevu();
 }
 
 // ══════════════════════════════════════
@@ -3564,6 +3586,7 @@ function openFacturePublicite(type){
   _factNumero=null;
   _factDocKind='publicite';
   _factCreditRef=null;
+  _factConcerneTxt=null;
   _factLines = factBuildPubLines();
   document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
   document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — lignes pré-remplies automatiquement (montant > 0) : vérifiez, retirez (✕) ou ajoutez des lignes, puis cliquez sur "Générer".';
@@ -3573,12 +3596,14 @@ function openFacturePublicite(type){
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
   factShowDirStatus();
+  factShowNumeroPrevu();
 }
 
 async function genererFacturePublicite(){
   const btn=document.getElementById('btn-fact-generer');
   btn.disabled=true;
   document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  document.getElementById('fact-numero-prevu').textContent='';
   document.getElementById('fact-save-msg').textContent='';
   try{
     await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
@@ -3809,6 +3834,35 @@ async function factShowDirStatus(){
     const comptaTxt = (dirCompta && dirCompta.name) ? '"'+dirCompta.name+'"' : '⚠️ non autorisé';
     const vmTxt = (dirVM && dirVM.name) ? '"'+dirVM.name+'"' : '⚠️ non autorisé';
     el.textContent = '📁 Compta : '+comptaTxt+'   •   VM : '+vmTxt;
+  }catch(e){
+    console.error(e);
+    el.textContent = '';
+  }
+}
+
+// 2026-09-02 (demande de Marc) : affiche dans l'aperçu, AVANT de cliquer sur "Générer", le
+// prochain numéro qui sera attribué — pour que Marc puisse le valider d'un coup d'œil.
+// Lecture SEULE du compteur Airtable (pas de PATCH ici, donc aucun risque de consommer/
+// décaler un numéro juste en ouvrant un aperçu) — le numéro réellement attribué est
+// confirmé au clic sur "Générer" (peut différer si une autre facture est générée entre-
+// temps, d'où la mention "provisoire"). Couvre les 3 types de documents (facture normale,
+// note de crédit, facture publicité VM), chacun avec son propre compteur/format.
+async function factShowNumeroPrevu(){
+  const el = document.getElementById('fact-numero-prevu');
+  if(!el) return;
+  el.textContent = '';
+  try{
+    const cfg = FACT_ENTITES[_factType];
+    if(!cfg) return;
+    let ctrField, formatFn;
+    if(_factDocKind==='notecredit'){ ctrField=cfg.ctrFieldNC; formatFn=cfg.formatNumNC; }
+    else if(_factDocKind==='publicite'){ ctrField=cfg.ctrFieldPub; formatFn=cfg.formatNumPub; }
+    else { ctrField=cfg.ctrField; formatFn=cfg.formatNum; }
+    if(!ctrField || !formatFn) return;
+    const ctr = await factGetCounter();
+    const current = Number(ctr.fields[ctrField]||0);
+    const numero = formatFn(current+1);
+    el.textContent = '🔢 Prochain n° : '+numero+' (provisoire — confirmé à la génération)';
   }catch(e){
     console.error(e);
     el.textContent = '';
@@ -4162,6 +4216,7 @@ async function genererFacture(){
   const btn=document.getElementById('btn-fact-generer');
   btn.disabled=true;
   document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  document.getElementById('fact-numero-prevu').textContent='';
   document.getElementById('fact-save-msg').textContent='';
   try{
     await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
@@ -4232,6 +4287,7 @@ async function genererNoteCredit(){
   const btn=document.getElementById('btn-fact-generer');
   btn.disabled=true;
   document.getElementById('fact-statut-msg').textContent='⏳ Attribution du numéro...';
+  document.getElementById('fact-numero-prevu').textContent='';
   document.getElementById('fact-save-msg').textContent='';
   try{
     if(!_factCreditRef || !_factCreditRef.numero){ throw new Error('Facture créditée introuvable.'); }
