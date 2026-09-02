@@ -1225,6 +1225,7 @@ Pensez à prendre vos rallonges et multi-prises. Accès Internet limité.</texta
     <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
     <span id="fact-statut-msg" style="font-size:12px;font-weight:700;color:#c55a11;"></span>
     <button id="btn-fact-autoriser" class="btn" onclick="factAutoriserDossiers()" style="background:#7b2d8b;color:#fff;padding:5px 16px;white-space:nowrap;">🔐 Autoriser dossiers comptables</button>
+    <span id="fact-dir-status" style="font-size:11px;color:#666;white-space:nowrap;"></span>
     <button id="btn-fact-generer" class="btn" onclick="genererDocument()" style="background:#1a7a3d;color:#fff;padding:5px 16px;white-space:nowrap;margin-left:auto;">🧾 Générer la facture (attribue le n° définitif)</button>
     <button id="btn-fact-print" class="btn btn-print" onclick="window.print()" style="display:none;background:#404040;color:#fff;padding:5px 16px;white-space:nowrap;">🖨️ Imprimer / PDF</button>
   </div>
@@ -3407,6 +3408,7 @@ function openFacture(type){
   document.getElementById('btn-fact-generer').disabled=false;
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
+  factShowDirStatus();
 }
 
 // ══════════════════════════════════════
@@ -3488,6 +3490,7 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   document.getElementById('btn-fact-generer').disabled=false;
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
+  factShowDirStatus();
 }
 
 // ══════════════════════════════════════
@@ -3569,6 +3572,7 @@ function openFacturePublicite(type){
   document.getElementById('btn-fact-generer').disabled=false;
   document.getElementById('btn-fact-print').style.display='none';
   showView('facture');
+  factShowDirStatus();
 }
 
 async function genererFacturePublicite(){
@@ -3769,11 +3773,16 @@ async function factAutoriserDossiers(){
     msgEl.textContent = '👉 Sélectionnez le dossier "FACTURES VENTES 2026-2027"...';
     const dirCompta = await window.showDirectoryPicker({id:'fact-compta', mode:'readwrite'});
     await factIdbSet(FACT_DIRKEYS.compta, dirCompta);
-    msgEl.textContent = '👉 Sélectionnez le dossier où enregistrer les factures VM-COMMUNICATION (PDF + UBL, à plat, sans sous-dossier)...';
+    // 2026-09-02 (demande de Marc, suite à des factures VM retrouvées dans le mauvais dossier
+    // "NOTES DE CRÉDIT" au lieu de "FACTURES 01.09.26") : le nom du dossier attendu est
+    // maintenant rappelé explicitement dans le message, pour éviter de sélectionner par erreur
+    // un autre dossier au moment du clic.
+    msgEl.textContent = '👉 Sélectionnez le dossier VM-COMMUNICATION où enregistrer les factures (PDF + UBL, à plat, sans sous-dossier) — normalement "FACTURES 01.09.26"...';
     const dirVM = await window.showDirectoryPicker({id:'fact-vm', mode:'readwrite'});
     await factIdbSet(FACT_DIRKEYS.vm, dirVM);
     msgEl.style.color='#1a7a3d';
-    msgEl.textContent = '✅ Dossiers comptables autorisés. Les prochaines factures s\'y enregistreront automatiquement.';
+    msgEl.textContent = '✅ Dossiers comptables autorisés : comptabilité → "'+dirCompta.name+'"  •  VM-COMMUNICATION → "'+dirVM.name+'". Les prochaines factures s\'y enregistreront automatiquement.';
+    factShowDirStatus();
   }catch(e){
     if(e && e.name!=='AbortError'){
       console.error(e);
@@ -3782,6 +3791,27 @@ async function factAutoriserDossiers(){
     } else {
       msgEl.textContent = '';
     }
+  }
+}
+
+// 2026-09-02 (demande de Marc) : affiche en permanence, à côté du bouton "🔐 Autoriser
+// dossiers comptables", le NOM des dossiers actuellement enregistrés en IndexedDB (sans
+// redemander de permission — juste lecture du handle déjà stocké) — pour repérer tout de
+// suite si le dossier VM pointe vers le mauvais endroit (ex. l'incident du 2026-09-02 où
+// FV1-51/FV1-52 s'étaient enregistrées dans "NOTES DE CRÉDIT" au lieu de "FACTURES 01.09.26",
+// sans que rien ne le signale à l'écran).
+async function factShowDirStatus(){
+  const el = document.getElementById('fact-dir-status');
+  if(!el) return;
+  try{
+    const dirCompta = await factIdbGet(FACT_DIRKEYS.compta);
+    const dirVM = await factIdbGet(FACT_DIRKEYS.vm);
+    const comptaTxt = (dirCompta && dirCompta.name) ? '"'+dirCompta.name+'"' : '⚠️ non autorisé';
+    const vmTxt = (dirVM && dirVM.name) ? '"'+dirVM.name+'"' : '⚠️ non autorisé';
+    el.textContent = '📁 Compta : '+comptaTxt+'   •   VM : '+vmTxt;
+  }catch(e){
+    console.error(e);
+    el.textContent = '';
   }
 }
 
