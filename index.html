@@ -904,6 +904,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-adr" onclick="showCarteTab('cv-tab-adr')">📍 Adresses et contacts</button>
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-logos" onclick="showCarteTab('cv-tab-logos')">🖼️ Logos et images</button>
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-video" onclick="showCarteTab('cv-tab-video')">🎬 Vidéo</button>
+    <button type="button" class="cv-tab-btn" data-tab="cv-tab-preview" onclick="showCarteTab('cv-tab-preview')">📱 Aperçu coupon</button>
   </div>
 
   <!-- ── ONGLET 1 : DESCRIPTION ── -->
@@ -935,30 +936,37 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 2 : ADRESSES ET CONTACTS ── -->
   <div id="cv-tab-adr" class="cv-tab-panel">
-    <div class="sec">📍 Adresse & coordonnées (depuis la fiche membre — non modifiables ici)</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Rue :</div><div class="fv" id="cv-ro-rue">—</div></div>
-      <div class="fr"><div class="fl">CP :</div><div class="fv" id="cv-ro-cp">—</div></div>
-      <div class="fr"><div class="fl">Localité :</div><div class="fv" id="cv-ro-com">—</div></div>
-      <div class="fr"><div class="fl">Téléphone :</div><div class="fv" id="cv-ro-tel">—</div></div>
-      <div class="fr"><div class="fl">E-mail :</div><div class="fv" id="cv-ro-email">—</div></div>
-      <div class="fr"><div class="fl">Site internet :</div><div class="fv" id="cv-ro-site">—</div></div>
-      <div class="fr"><div class="fl">Contact principal :</div><div class="fv" id="cv-ro-contact">—</div></div>
-    </div>
-    <div style="font-size:11px;color:#888;margin:4px 2px;">✏️ Pour modifier ces champs, retournez à l'onglet « Fiche membre ».</div>
-    <div class="sec" style="margin-top:7px;">📍 Localisation & publication</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Coordonnées GPS :</div><div class="fv"><input type="text" id="cv-gps" oninput="markCvDirty()" placeholder="ex: 50.4123, 5.8734" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Publié dans l'app :</div><div class="fv"><input type="checkbox" id="cv-publie" onchange="markCvDirty()" style="width:auto;"></div></div>
-    </div>
-    <div class="sec" style="margin-top:7px;">🌍 Pays, province & réseaux sociaux</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="cv-province" oninput="markCvDirty()" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Facebook :</div><div class="fv"><input type="url" id="cv-fb" oninput="markCvDirty()" placeholder="https://facebook.com/..." style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Twitter / X :</div><div class="fv"><input type="url" id="cv-tw" oninput="markCvDirty()" placeholder="https://x.com/..." style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Instagram :</div><div class="fv"><input type="url" id="cv-ig" oninput="markCvDirty()" placeholder="https://instagram.com/..." style="width:100%;"></div></div>
-    </div>
+    <div class="two-col">
+      <!-- ── COLONNE GAUCHE : adresse & coordonnées (lecture seule) ── -->
+      <div>
+        <div class="sec">📍 Adresse & coordonnées (depuis la fiche membre — non modifiables ici)</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Rue :</div><div class="fv" id="cv-ro-rue">—</div></div>
+          <div class="fr"><div class="fl">CP :</div><div class="fv" id="cv-ro-cp">—</div></div>
+          <div class="fr"><div class="fl">Localité :</div><div class="fv" id="cv-ro-com">—</div></div>
+          <div class="fr"><div class="fl">Téléphone :</div><div class="fv" id="cv-ro-tel">—</div></div>
+          <div class="fr"><div class="fl">E-mail :</div><div class="fv" id="cv-ro-email">—</div></div>
+          <div class="fr"><div class="fl">Site internet :</div><div class="fv" id="cv-ro-site">—</div></div>
+          <div class="fr"><div class="fl">Contact principal :</div><div class="fv" id="cv-ro-contact">—</div></div>
+        </div>
+        <div style="font-size:11px;color:#888;margin:4px 2px;">✏️ Pour modifier ces champs, retournez à l'onglet « Fiche membre ».</div>
+      </div>
+      <!-- ── COLONNE DROITE : localisation/publication + pays/province/réseaux ── -->
+      <div>
+        <div class="sec">📍 Localisation & publication</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Coordonnées GPS :</div><div class="fv"><input type="text" id="cv-gps" oninput="markCvDirty()" placeholder="ex: 50.4123, 5.8734" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Publié dans l'app :</div><div class="fv"><input type="checkbox" id="cv-publie" onchange="markCvDirty()" style="width:auto;"></div></div>
+        </div>
+        <div class="sec" style="margin-top:7px;">🌍 Pays, province & réseaux sociaux</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="cv-province" oninput="markCvDirty()" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Facebook :</div><div class="fv"><input type="url" id="cv-fb" oninput="markCvDirty()" placeholder="https://facebook.com/..." style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Twitter / X :</div><div class="fv"><input type="url" id="cv-tw" oninput="markCvDirty()" placeholder="https://x.com/..." style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Instagram :</div><div class="fv"><input type="url" id="cv-ig" oninput="markCvDirty()" placeholder="https://instagram.com/..." style="width:100%;"></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1005,6 +1013,51 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
     <div style="margin-top:10px;">
       <div id="cv-video-empty" style="color:#888;font-size:12px;">Aucune vidéo — collez un lien YouTube ci-dessus pour voir l'aperçu.</div>
       <iframe id="cv-video-frame" style="display:none;width:100%;max-width:560px;height:315px;border:1px solid #c0cce0;border-radius:6px;" allowfullscreen></iframe>
+    </div>
+  </div>
+
+  <!-- ── ONGLET 5 : APERÇU COUPON ── -->
+  <div id="cv-tab-preview" class="cv-tab-panel">
+    <div style="font-size:11px;color:#888;margin:4px 2px 12px;">📱 Aperçu de l'écran affiché sur le téléphone de l'enseignant quand il ouvre son coupon-éclaireur. Le nom/adresse de l'enseignant et le QR code ci-dessous sont des <b>exemples fictifs</b> (ces infos sont propres à chaque prof au moment réel de la validation, pas à la fiche de l'attraction). L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
+    <div style="display:flex;justify-content:center;padding:10px 0 30px;">
+      <div style="width:290px;background:#1a1a1a;border-radius:36px;padding:14px 10px;box-shadow:0 10px 30px rgba(0,0,0,.35);">
+        <div style="background:#fff;border-radius:22px;overflow:hidden;font-family:Arial,sans-serif;">
+          <div style="background:#f2f2f2;padding:6px 10px;font-size:10px;color:#555;display:flex;align-items:center;gap:6px;border-bottom:1px solid #ddd;">
+            <span>🔒</span><span>educpass.eu</span>
+          </div>
+          <div style="background:#1a1a1a;color:#fff;padding:8px 12px;display:flex;align-items:center;justify-content:space-between;">
+            <img src="New_logo_jpeg.jpg" alt="Educpass" style="height:22px;">
+            <span style="font-size:16px;">👤</span>
+          </div>
+          <div style="background:#ffd54a;color:#333;text-align:center;font-weight:700;font-size:12px;padding:6px;">Valider le coupon</div>
+          <div style="padding:14px 14px 4px;text-align:center;">
+            <div style="font-size:26px;font-weight:800;color:#1a1a1a;letter-spacing:-.5px;">Educ<span style="color:#f5a623;">pass</span></div>
+            <div style="font-size:13px;font-weight:700;margin-top:6px;">Coupon-éclaireur</div>
+            <div style="font-size:9px;color:#888;">Non-valable en groupe (5p. Max)</div>
+          </div>
+          <div style="padding:10px 14px;display:flex;gap:10px;align-items:center;">
+            <img id="cvp-logo" src="" style="width:80px;height:80px;object-fit:contain;border:1px solid #ddd;border-radius:4px;display:none;">
+            <div id="cvp-logo-empty" style="width:80px;height:80px;border:1px dashed #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;text-align:center;">Pas de logo coupon</div>
+            <div style="flex:1;font-size:10px;color:#333;line-height:1.5;" id="cvp-adresse">—</div>
+          </div>
+          <div style="padding:0 14px 10px;text-align:right;">
+            <div id="cvp-avantage" style="font-size:10px;font-weight:700;color:#c0392b;white-space:pre-line;">—</div>
+          </div>
+          <div style="background:#f7f7f7;border-top:1px solid #eee;padding:10px 14px;">
+            <div style="font-size:9px;color:#999;font-weight:700;">Info titulaire enseignant <span style="font-weight:400;">(exemple)</span></div>
+            <div style="font-size:10px;color:#333;margin-top:4px;line-height:1.5;">
+              Jean Dupont<br>
+              Rue de l'École, 12<br>
+              4000 - Liège<br>
+              jean.dupont@exemple.be
+            </div>
+          </div>
+          <div style="padding:12px 14px 18px;display:flex;justify-content:center;">
+            <div style="width:90px;height:90px;background:repeating-conic-gradient(#222 0% 25%, #fff 0% 50%) 0 0/16px 16px;border:4px solid #fff;box-shadow:0 0 0 1px #ddd;"></div>
+          </div>
+          <div style="text-align:center;font-size:8px;color:#bbb;padding-bottom:8px;">QR code (exemple)</div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -2663,6 +2716,7 @@ function showCarteTab(tab){
   if(panel) panel.classList.add('active');
   const btn=document.querySelector('.cv-tab-btn[data-tab="'+tab+'"]');
   if(btn) btn.classList.add('active');
+  if(tab==='cv-tab-preview') updateCouponPreview();
 }
 
 async function openCarteVisite(){
@@ -2879,6 +2933,41 @@ function updateVideoPreview(){
   if(!frame) return;
   if(embed){ frame.src=embed; frame.style.display='block'; if(empty) empty.style.display='none'; }
   else { frame.src=''; frame.style.display='none'; if(empty) empty.style.display='block'; }
+}
+
+function updateCouponPreview(){
+  // Logo coupon
+  const logoImg=document.getElementById('cvp-logo');
+  const logoEmpty=document.getElementById('cvp-logo-empty');
+  const logoArr=carteAttachments['Logo coupon']||[];
+  if(logoImg && logoEmpty){
+    if(logoArr.length){
+      const att=logoArr[0];
+      const url=(att.thumbnails&&att.thumbnails.large&&att.thumbnails.large.url)||att.url;
+      logoImg.src=url;
+      logoImg.style.display='block';
+      logoEmpty.style.display='none';
+    } else {
+      logoImg.src='';
+      logoImg.style.display='none';
+      logoEmpty.style.display='flex';
+    }
+  }
+  // Adresse (depuis les champs lecture seule de l'onglet Adresses et contacts)
+  const gt=(id)=>{const e=document.getElementById(id); return (e&&e.textContent!=='—')?e.textContent:'';};
+  const rue=gt('cv-ro-rue'), cp=gt('cv-ro-cp'), com=gt('cv-ro-com');
+  const adresseEl=document.getElementById('cvp-adresse');
+  if(adresseEl){
+    const ligne2=[cp,com].filter(Boolean).join(' - ');
+    const lignes=[rue,ligne2].filter(Boolean);
+    adresseEl.innerHTML=lignes.length?lignes.join('<br>'):'—';
+  }
+  // Avantage coupon (Cadre 5)
+  const avantageEl=document.getElementById('cvp-avantage');
+  if(avantageEl){
+    const txt=gv('cv-avantage');
+    avantageEl.textContent=txt?txt:'—';
+  }
 }
 
 function newMember(){
