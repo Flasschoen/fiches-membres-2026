@@ -919,33 +919,41 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
       <div class="fr"><div class="fl">Tarifs, réservation, infos :</div><div class="fv"><textarea id="cv-tarifs" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
       <div class="fr"><div class="fl">Avantage coupon-éclaireur :</div><div class="fv"><textarea id="cv-avantage" oninput="markCvDirty()" style="min-height:50px;" placeholder="Texte exact de l'avantage imprimé sur le coupon"></textarea></div></div>
     </div>
-    <div class="sec" style="margin-top:7px;">📍 Localisation & publication</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Coordonnées GPS :</div><div class="fv"><input type="text" id="cv-gps" oninput="markCvDirty()" placeholder="ex: 50.4123, 5.8734" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Publié dans l'app :</div><div class="fv"><input type="checkbox" id="cv-publie" onchange="markCvDirty()" style="width:auto;"></div></div>
-    </div>
   </div>
 
   <!-- ── ONGLET 2 : ADRESSES ET CONTACTS ── -->
   <div id="cv-tab-adr" class="cv-tab-panel">
-    <div class="sec">📍 Adresse & coordonnées (depuis la fiche membre — non modifiables ici)</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Rue :</div><div class="fv" id="cv-ro-rue">—</div></div>
-      <div class="fr"><div class="fl">CP :</div><div class="fv" id="cv-ro-cp">—</div></div>
-      <div class="fr"><div class="fl">Localité :</div><div class="fv" id="cv-ro-com">—</div></div>
-      <div class="fr"><div class="fl">Téléphone :</div><div class="fv" id="cv-ro-tel">—</div></div>
-      <div class="fr"><div class="fl">E-mail :</div><div class="fv" id="cv-ro-email">—</div></div>
-      <div class="fr"><div class="fl">Site internet :</div><div class="fv" id="cv-ro-site">—</div></div>
-      <div class="fr"><div class="fl">Contact principal :</div><div class="fv" id="cv-ro-contact">—</div></div>
-    </div>
-    <div style="font-size:11px;color:#888;margin:4px 2px;">✏️ Pour modifier ces champs, retournez à l'onglet « Fiche membre ».</div>
-    <div class="sec" style="margin-top:7px;">🌍 Pays, province & réseaux sociaux</div>
-    <div class="fg">
-      <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="cv-province" oninput="markCvDirty()" style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Facebook :</div><div class="fv"><input type="url" id="cv-fb" oninput="markCvDirty()" placeholder="https://facebook.com/..." style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Twitter / X :</div><div class="fv"><input type="url" id="cv-tw" oninput="markCvDirty()" placeholder="https://x.com/..." style="width:100%;"></div></div>
-      <div class="fr"><div class="fl">Instagram :</div><div class="fv"><input type="url" id="cv-ig" oninput="markCvDirty()" placeholder="https://instagram.com/..." style="width:100%;"></div></div>
+    <div class="two-col">
+      <!-- ── COLONNE GAUCHE : adresse + localisation/publication ── -->
+      <div>
+        <div class="sec">📍 Adresse & coordonnées (depuis la fiche membre — non modifiables ici)</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Rue :</div><div class="fv" id="cv-ro-rue">—</div></div>
+          <div class="fr"><div class="fl">CP :</div><div class="fv" id="cv-ro-cp">—</div></div>
+          <div class="fr"><div class="fl">Localité :</div><div class="fv" id="cv-ro-com">—</div></div>
+          <div class="fr"><div class="fl">Téléphone :</div><div class="fv" id="cv-ro-tel">—</div></div>
+          <div class="fr"><div class="fl">E-mail :</div><div class="fv" id="cv-ro-email">—</div></div>
+          <div class="fr"><div class="fl">Site internet :</div><div class="fv" id="cv-ro-site">—</div></div>
+          <div class="fr"><div class="fl">Contact principal :</div><div class="fv" id="cv-ro-contact">—</div></div>
+        </div>
+        <div style="font-size:11px;color:#888;margin:4px 2px;">✏️ Pour modifier ces champs, retournez à l'onglet « Fiche membre ».</div>
+        <div class="sec" style="margin-top:7px;">📍 Localisation & publication</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Coordonnées GPS :</div><div class="fv"><input type="text" id="cv-gps" oninput="markCvDirty()" placeholder="ex: 50.4123, 5.8734" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Publié dans l'app :</div><div class="fv"><input type="checkbox" id="cv-publie" onchange="markCvDirty()" style="width:auto;"></div></div>
+        </div>
+      </div>
+      <!-- ── COLONNE DROITE : pays, province, réseaux sociaux ── -->
+      <div>
+        <div class="sec">🌍 Pays, province & réseaux sociaux</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="cv-province" oninput="markCvDirty()" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Facebook :</div><div class="fv"><input type="url" id="cv-fb" oninput="markCvDirty()" placeholder="https://facebook.com/..." style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Twitter / X :</div><div class="fv"><input type="url" id="cv-tw" oninput="markCvDirty()" placeholder="https://x.com/..." style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Instagram :</div><div class="fv"><input type="url" id="cv-ig" oninput="markCvDirty()" placeholder="https://instagram.com/..." style="width:100%;"></div></div>
+        </div>
+      </div>
     </div>
   </div>
 
