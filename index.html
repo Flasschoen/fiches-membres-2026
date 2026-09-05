@@ -928,7 +928,11 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         <div class="sec" style="background:#c55a11;">🎫 Affichage coupon</div>
         <div class="fg">
           <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte exact affiché/imprimé sur le coupon-éclaireur :</div></div>
-          <div class="fr"><div class="fv"><textarea id="cv-avantage" oninput="markCvDirty()" style="min-height:120px;" placeholder="ex: 1 entrée gratuite pour l'enseignant. Valable à partir du 1er septembre 2026 jusqu'au 31 décembre 2027."></textarea></div></div>
+          <div class="fr"><div class="fv">
+            <textarea id="cv-avantage" maxlength="200" oninput="markCvDirty();updateAvantageCounter();" style="min-height:120px;" placeholder="ex: 1 entrée gratuite pour l'enseignant.&#10;Valable du 1er septembre 2026 au 31 décembre 2027."></textarea>
+            <div id="cv-avantage-count" style="font-size:11px;text-align:right;margin-top:2px;">0 / 200 caractères — 0 ligne(s)</div>
+            <div style="font-size:11px;color:#888;margin-top:2px;">✏️ Format conseillé pour un bon affichage sur le coupon : 200 caractères et 4 lignes maximum. Utilisez la touche Entrée pour forcer les retours à la ligne aux bons endroits (ex: après la phrase d'avantage, avant la date de validité).</div>
+          </div></div>
         </div>
       </div>
     </div>
@@ -1042,6 +1046,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           </div>
           <div style="padding:0 14px 10px;text-align:right;">
             <div id="cvp-avantage" style="font-size:10px;font-weight:700;color:#c0392b;white-space:pre-line;">—</div>
+            <div id="cvp-avantage-warning" style="display:none;font-size:9px;color:#c0392b;font-weight:700;margin-top:4px;">⚠️ Texte long : risque de dépassement sur le coupon</div>
           </div>
           <div style="background:#f7f7f7;border-top:1px solid #eee;padding:10px 14px;">
             <div style="font-size:9px;color:#999;font-weight:700;">Info titulaire enseignant <span style="font-weight:400;">(exemple)</span></div>
@@ -2698,6 +2703,8 @@ function showView(v){
 // ══════════════════════════════════════
 let curCarteId=null;
 let cvDirty=false;
+const AVANTAGE_MAXLEN=200;
+const AVANTAGE_MAXLINES=4;
 let carteAttachments={};
 
 function markCvDirty(){
@@ -2778,6 +2785,7 @@ function fillCarteForm(f){
   sv('cv-horaires', f['Horaires et fermetures']);
   sv('cv-tarifs', f['Tarifs, réservation et infos pratiques']);
   sv('cv-avantage', f['Avantage coupon']);
+  updateAvantageCounter();
   sv('cv-gps', f['Coordonnées GPS']);
   sv('cv-publie', f['Publié'], true);
   sv('cv-video', f['Vidéo YouTube']);
@@ -2935,6 +2943,24 @@ function updateVideoPreview(){
   else { frame.src=''; frame.style.display='none'; if(empty) empty.style.display='block'; }
 }
 
+function avantageFormatStatus(txt){
+  txt=txt||'';
+  const len=txt.length;
+  const lines=txt?txt.split('\n').length:0;
+  const over=(len>AVANTAGE_MAXLEN)||(lines>AVANTAGE_MAXLINES);
+  const near=!over && (len>AVANTAGE_MAXLEN*0.8 || lines===AVANTAGE_MAXLINES);
+  return {len,lines,over,near};
+}
+
+function updateAvantageCounter(){
+  const el=document.getElementById('cv-avantage-count');
+  if(!el) return;
+  const txt=gv('cv-avantage')||'';
+  const st=avantageFormatStatus(txt);
+  el.textContent=st.len+' / '+AVANTAGE_MAXLEN+' caractères — '+st.lines+' ligne(s)';
+  el.style.color=st.over?'#c0392b':(st.near?'#c55a11':'#888');
+}
+
 function updateCouponPreview(){
   // Logo coupon
   const logoImg=document.getElementById('cvp-logo');
@@ -2964,10 +2990,10 @@ function updateCouponPreview(){
   }
   // Avantage coupon (Cadre 5)
   const avantageEl=document.getElementById('cvp-avantage');
-  if(avantageEl){
-    const txt=gv('cv-avantage');
-    avantageEl.textContent=txt?txt:'—';
-  }
+  const warnEl=document.getElementById('cvp-avantage-warning');
+  const txt=gv('cv-avantage');
+  if(avantageEl) avantageEl.textContent=txt?txt:'—';
+  if(warnEl) warnEl.style.display=avantageFormatStatus(txt).over?'block':'none';
 }
 
 function newMember(){
