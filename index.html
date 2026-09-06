@@ -46,6 +46,9 @@ body{background:#dce3ef;min-height:100vh;}
 
 /* ── SECTION HEADER ── */
 .sec{background:#2e5096;color:#fff;padding:4px 10px;font-weight:700;font-size:12px;text-transform:uppercase;letter-spacing:.8px;margin-top:7px;border-left:4px solid #ffd966;}
+/* Bascule FR/NL (2026-09-06) : cadres des zones de texte de la Carte de visite en jaune
+   quand la version NL est active, pour bien distinguer visuellement la langue en cours. */
+.sec-nl{background:#f1c40f;color:#3a2f00;border-left-color:#6c3483;}
 
 /* ── CARTE DE VISITE : ONGLETS ── */
 .cv-tabs{display:flex;gap:2px;border-bottom:2px solid #6c3483;margin-bottom:12px;flex-wrap:wrap;}
@@ -890,6 +893,10 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 <div class="hdr-bar" style="display:flex;gap:8px;padding:8px 14px;background:#f0f4fb;border-bottom:1px solid #c8d6ea;align-items:center;flex-wrap:wrap;">
   <button class="btn btn-back" onclick="showView('fiche')">← Retour à la fiche</button>
   <span style="margin-left:10px;font-size:15px;font-weight:700;color:#6c3483;letter-spacing:.5px;text-transform:uppercase;">🎫 Carte de visite</span>
+  <!-- Bascule FR/NL globale (2026-09-06), déplacée ici à côté du titre pour être visible depuis
+       tous les onglets. Contrôle à la fois les zones de texte éditables (onglet Description) et
+       les 2 aperçus (coupon / carte de visite) — une seule langue active pour toute la vue. -->
+  <button type="button" id="cv-lang-btn" onclick="toggleCvLang()" style="margin-left:10px;padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">Version FR</button>
   <span id="cv-dirty-indicator" style="margin-left:6px;color:#c55a11;font-weight:700;font-size:12px;display:none;">● Non enregistré</span>
   <span id="cv-save-info" style="font-size:12px;font-weight:700;color:#1a7a3d;margin-left:auto;"></span>
   <button class="btn btn-save" onclick="saveCarteVisite()" style="background:#6c3483;color:#fff;">💾 Enregistrer la carte de visite</button>
@@ -913,27 +920,25 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 1 : DESCRIPTION ── -->
   <div id="cv-tab-desc" class="cv-tab-panel active">
-    <!-- Bascule FR/NL (2026-09-06) : les mêmes zones de texte ci-dessous affichent/éditent
-         soit la version FR, soit la version NL — le texte non basculé reste en mémoire
-         (voir cvTextFR/cvTextNL en JS), rien n'est perdu tant qu'on n'a pas cliqué Enregistrer. -->
-    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 8px;">
-      <span style="font-size:11px;color:#888;">Langue des textes (Description, Horaires, Tarifs, Avantage) :</span>
-      <button type="button" id="cv-lang-btn" onclick="toggleCvLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
-    </div>
+    <!-- Bascule FR/NL (2026-09-06, bouton déplacé dans l'en-tête le même jour) : les mêmes
+         zones de texte ci-dessous affichent/éditent soit la version FR, soit la version NL —
+         le texte non basculé reste en mémoire (voir cvTextFR/cvTextNL en JS), rien n'est perdu
+         tant qu'on n'a pas cliqué Enregistrer. Les 3 cadres ci-dessous passent en jaune (classe
+         .sec-nl) quand la version NL est active, pour bien distinguer visuellement la langue. -->
     <div class="two-col">
       <!-- ── COLONNE GAUCHE : description, horaires, tarifs, avantage Educpass ── -->
       <div>
-        <div class="sec">📝 Description (Cadres 1 et 2)</div>
+        <div class="sec" id="cv-sec-desc">📝 Description (Cadres 1 et 2)</div>
         <div class="fg">
           <div class="fr"><div class="fl">Accroche (Cadre 1) :</div><div class="fv"><textarea id="cv-desc-courte" oninput="markCvDirty()" style="min-height:40px;" placeholder="Phrase d'accroche en gras affichée en haut de la carte"></textarea></div></div>
           <div class="fr"><div class="fl">Description complète (Cadre 2) :</div><div class="fv"><textarea id="cv-desc-longue" oninput="markCvDirty()" style="min-height:90px;"></textarea></div></div>
         </div>
-        <div class="sec" style="margin-top:7px;">🕒 Horaires et tarifs (Cadres 3 et 4)</div>
+        <div class="sec" id="cv-sec-horaires" style="margin-top:7px;">🕒 Horaires et tarifs (Cadres 3 et 4)</div>
         <div class="fg">
           <div class="fr"><div class="fl">Horaires et fermetures :</div><div class="fv"><textarea id="cv-horaires" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
           <div class="fr"><div class="fl">Tarifs, réservation, infos :</div><div class="fv"><textarea id="cv-tarifs" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
         </div>
-        <div class="sec" style="margin-top:7px;">🏷️ AVANTAGE EDUCPASS</div>
+        <div class="sec" id="cv-sec-avantage" style="margin-top:7px;">🏷️ AVANTAGE EDUCPASS</div>
         <div class="fg">
           <div class="fr"><div class="fl" style="min-width:100%;background:#eaf1fb;color:#2e5096;">Texte complet de l'avantage, affiché sur la carte de visite publique :</div></div>
           <div class="fr"><div class="fv">
@@ -1073,9 +1078,6 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 5 : APERÇU COUPON ── -->
   <div id="cv-tab-preview" class="cv-tab-panel">
-    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 4px;">
-      <button type="button" id="cvp-lang-btn" onclick="toggleCvPreviewLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
-    </div>
     <div style="font-size:11px;color:#888;margin:4px 2px 12px;">📱 Aperçu de l'écran affiché sur le téléphone de l'enseignant quand il ouvre son coupon-éclaireur. Le nom/adresse de l'enseignant et le QR code ci-dessous sont des <b>exemples fictifs</b> (ces infos sont propres à chaque prof au moment réel de la validation, pas à la fiche de l'attraction). L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
     <div style="display:flex;justify-content:center;padding:10px 0 30px;">
       <div style="width:330px;background:#1a1a1a;border-radius:38px;padding:16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);">
@@ -1120,9 +1122,6 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 6 : APERÇU CARTE DE VISITE (site internet / appli) ── -->
   <div id="cv-tab-webpreview" class="cv-tab-panel">
-    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 4px;">
-      <button type="button" id="wp-lang-btn" onclick="toggleCvWebPreviewLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
-    </div>
     <div style="font-size:11px;color:#888;margin:4px 2px 12px;">🌐 Aperçu de la page publique "Carte de visite" telle qu'elle s'affichera sur le site Internet educpass.eu et sur l'appli, quand un enseignant clique sur le logo de l'attraction depuis la liste des partenaires. L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
     <div style="display:flex;justify-content:center;padding:10px 0 30px;">
       <div style="width:100%;max-width:640px;background:#262626;border-radius:10px;padding:22px 22px 30px;font-family:Arial,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);">
@@ -2836,19 +2835,21 @@ const AVANTAGE_MAXLEN=200;
 const AVANTAGE_MAXLINES=4;
 let carteAttachments={};
 
-// ── Bascule FR/NL (2026-09-06) ──
+// ── Bascule FR/NL (2026-09-06, consolidée en un seul bouton global le même jour) ──
 // Les 6 champs texte de la Carte de visite (Description courte/longue, Horaires, Tarifs,
 // Avantage Educpass, Avantage coupon affichage) existent chacun en 2 versions côté Airtable
-// (nom normal = FR, nom + " (NL)" = NL). L'onglet Description garde un seul jeu de zones de
-// texte à l'écran ; un bouton bascule FR⇄NL (cvLang) échange leur contenu. Les 2 aperçus
-// (coupon / carte de visite) ont chacun leur PROPRE bascule (cvPreviewLang / cvWebPreviewLang),
-// indépendante de celle de l'onglet Description, pour prévisualiser dans la langue choisie
-// sans devoir revenir basculer l'onglet d'édition.
+// (nom normal = FR, nom + " (NL)" = NL). Un seul bouton, dans l'en-tête de la vue Carte de
+// visite (à côté du titre, visible depuis tous les onglets), bascule la langue (cvLang) pour
+// TOUTE la vue à la fois : les zones de texte éditables (onglet Description) ET les 2 aperçus
+// (coupon / carte de visite) suivent la même langue — plus simple et plus lisible qu'une
+// bascule différente par onglet (retour de Marc le 2026-09-06).
 let cvLang='FR';
-let cvPreviewLang='FR';
-let cvWebPreviewLang='FR';
 let cvTextFR={descCourte:'',descLongue:'',horaires:'',tarifs:'',avantage:'',avantageCoupon:''};
 let cvTextNL={descCourte:'',descLongue:'',horaires:'',tarifs:'',avantage:'',avantageCoupon:''};
+// Les 3 cadres de texte de la colonne gauche passent en jaune (classe .sec-nl) quand la
+// version NL est active, pour bien distinguer visuellement la langue en cours (retour de
+// Marc, 2026-09-06) — le cadre orange "Affichage coupon" garde sa couleur dédiée dans les 2 cas.
+const CV_LANG_SEC_IDS=['cv-sec-desc','cv-sec-horaires','cv-sec-avantage'];
 
 // Copie le contenu actuellement affiché dans les zones de texte de l'onglet Description
 // vers le magasin de la langue active (cvLang) — à appeler AVANT toute bascule, tout rendu
@@ -2863,7 +2864,8 @@ function captureCvLangFields(){
   store.avantageCoupon=gv('cv-avantage-coupon');
 }
 // Affiche dans les zones de texte de l'onglet Description le contenu du magasin de la
-// langue active (cvLang), et met à jour le libellé du bouton bascule.
+// langue active (cvLang), met à jour le libellé/la couleur du bouton bascule et la couleur
+// des 3 cadres de texte (bleu en FR, jaune en NL).
 function renderCvLangFields(){
   const store=cvLang==='NL'?cvTextNL:cvTextFR;
   sv('cv-desc-courte', store.descCourte);
@@ -2874,41 +2876,29 @@ function renderCvLangFields(){
   sv('cv-avantage-coupon', store.avantageCoupon);
   const btn=document.getElementById('cv-lang-btn');
   if(btn){
-    btn.textContent=cvLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
-    btn.style.background=cvLang==='NL'?'#c55a11':'#6c3483';
+    btn.textContent=cvLang==='NL'?'Version NL':'Version FR';
+    btn.style.background=cvLang==='NL'?'#f1c40f':'#6c3483';
+    btn.style.color=cvLang==='NL'?'#3a2f00':'#fff';
   }
+  CV_LANG_SEC_IDS.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el) el.classList[cvLang==='NL'?'add':'remove']('sec-nl');
+  });
 }
+// Bascule FR⇄NL globale : synchronise l'écran vers le magasin de la langue active, change de
+// langue, réaffiche l'onglet Description dans la nouvelle langue, et rafraîchit les 2 aperçus
+// (même s'ils ne sont pas affichés à l'instant — mise à jour DOM sans coût, garde tout cohérent).
 function toggleCvLang(){
   captureCvLangFields();
   cvLang=cvLang==='NL'?'FR':'NL';
   renderCvLangFields();
-}
-function toggleCvPreviewLang(){
-  cvPreviewLang=cvPreviewLang==='NL'?'FR':'NL';
-  const btn=document.getElementById('cvp-lang-btn');
-  if(btn){
-    btn.textContent=cvPreviewLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
-    btn.style.background=cvPreviewLang==='NL'?'#c55a11':'#6c3483';
-  }
   updateCouponPreview();
-}
-function toggleCvWebPreviewLang(){
-  cvWebPreviewLang=cvWebPreviewLang==='NL'?'FR':'NL';
-  const btn=document.getElementById('wp-lang-btn');
-  if(btn){
-    btn.textContent=cvWebPreviewLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
-    btn.style.background=cvWebPreviewLang==='NL'?'#c55a11':'#6c3483';
-  }
   updateWebPreview();
 }
-// Remet les 3 bascules FR/NL (édition + 2 aperçus) sur FR — appelé à chaque chargement
-// d'une fiche carte de visite, pour repartir dans un état prévisible.
+// Remet la bascule FR/NL sur FR — appelé à chaque chargement d'une fiche carte de visite,
+// pour repartir dans un état prévisible.
 function resetCvLangButtons(){
-  cvLang='FR'; cvPreviewLang='FR'; cvWebPreviewLang='FR';
-  ['cv-lang-btn','cvp-lang-btn','wp-lang-btn'].forEach(id=>{
-    const b=document.getElementById(id);
-    if(b){ b.textContent='🇫🇷 FR'; b.style.background='#6c3483'; }
-  });
+  cvLang='FR';
 }
 
 function markCvDirty(){
@@ -3275,11 +3265,10 @@ function truncateForCoupon(txt){
 
 function updateCouponPreview(){
   // Synchronise le texte actuellement affiché à l'écran (onglet Description) dans le
-  // magasin de sa langue, pour que l'aperçu reflète bien la dernière frappe de Marc,
-  // même si la langue affichée à l'écran (cvLang) diffère de la langue de l'aperçu
-  // (cvPreviewLang) — dans ce cas l'aperçu montre le dernier texte connu pour sa langue.
+  // magasin de sa langue, pour que l'aperçu reflète bien la dernière frappe de Marc, puis
+  // lit ce magasin selon la bascule FR/NL globale (cvLang, partagée avec l'onglet Description).
   captureCvLangFields();
-  const cvLangStore=cvPreviewLang==='NL'?cvTextNL:cvTextFR;
+  const cvLangStore=cvLang==='NL'?cvTextNL:cvTextFR;
   // Logo coupon
   const logoImg=document.getElementById('cvp-logo');
   const logoEmpty=document.getElementById('cvp-logo-empty');
@@ -3344,9 +3333,10 @@ function renderWpPhotos(){
 
 function updateWebPreview(){
   // Synchronise le texte actuellement affiché à l'écran dans le magasin de sa langue
-  // (voir commentaire équivalent dans updateCouponPreview) avant de lire cvWebPreviewLang.
+  // (voir commentaire équivalent dans updateCouponPreview) avant de lire la bascule FR/NL
+  // globale (cvLang, partagée avec l'onglet Description et l'aperçu coupon).
   captureCvLangFields();
-  const cvLangStore=cvWebPreviewLang==='NL'?cvTextNL:cvTextFR;
+  const cvLangStore=cvLang==='NL'?cvTextNL:cvTextFR;
   const nomBar=(document.getElementById('name-bar')||{}).textContent||'';
   const nom=(nomBar==='— MEMBRE —'||nomBar==='— SÉLECTIONNEZ UN MEMBRE —')?'—':nomBar;
   const set=(id,v,dash)=>{const e=document.getElementById(id); if(e) e.textContent=(v==null||v==='')?(dash!==false?'—':''):v;};
