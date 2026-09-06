@@ -3089,11 +3089,19 @@ function renderWpPhotos(){
   if(!photos.length){ if(empty) empty.style.display='block'; return; }
   if(empty) empty.style.display='none';
   photos.forEach(att=>{
-    const url=(att.thumbnails&&att.thumbnails.large&&att.thumbnails.large.url)||att.url;
+    const thumbUrl=(att.thumbnails&&att.thumbnails.large&&att.thumbnails.large.url)||att.url;
+    const fullUrl=att.url||thumbUrl;
+    // Photo cliquable : ouvre la photo en pleine résolution dans un nouvel onglet
+    const link=document.createElement('a');
+    link.href=fullUrl;
+    link.target='_blank';
+    link.rel='noopener';
+    link.style.cssText='display:block;width:90px;height:90px;border-radius:6px;overflow:hidden;';
     const img=document.createElement('img');
-    img.src=url;
-    img.style.cssText='width:90px;height:90px;object-fit:cover;border-radius:6px;';
-    box.appendChild(img);
+    img.src=thumbUrl;
+    img.style.cssText='width:90px;height:90px;object-fit:cover;border-radius:6px;display:block;cursor:pointer;';
+    link.appendChild(img);
+    box.appendChild(link);
   });
 }
 
