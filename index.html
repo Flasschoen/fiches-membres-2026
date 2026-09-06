@@ -1246,6 +1246,10 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
       </div>
       <button class="btn" onclick="exportFiltered()" style="background:#217346;color:#fff;padding:4px 11px;font-size:12px;">📤 Exporter CSV</button>
       <button class="btn" id="btn-export-sel" onclick="exportSelected()" style="background:#7b2d8b;color:#fff;padding:4px 11px;font-size:12px;display:none;">📋 Exporter sélection (<span id="sel-count">0</span>)</button>
+      <!-- Bascule "Avec carte de visite" (2026-09-06, demande de Marc) : filtre la liste pour
+           n'afficher que les membres ayant une fiche Carte de visite liée (champ MEMBRES
+           "CARTE DE VISITE" non vide). Un second clic annule le filtre. -->
+      <button class="btn" id="btn-only-carte" onclick="toggleOnlyCarte()" style="background:#6c3483;color:#fff;padding:4px 11px;font-size:12px;">🎫 Avec carte de visite</button>
       <button class="btn btn-nouveau" style="margin-left:auto;" onclick="newMember()">➕ NOUVEAU MEMBRE +</button>
     </div>
   </div>
@@ -1608,6 +1612,19 @@ TRIMS.forEach((t,i)=>{
 //  STATE
 // ══════════════════════════════════════
 let members=[], curId=null, isDirty=false, lastFiltered=[], _autoSelDone=false, _loadingAll=false;
+// Bascule "Avec carte de visite" (RECHERCHE, 2026-09-06) : quand actif, buildTable() ne
+// garde que les membres dont le champ MEMBRES "CARTE DE VISITE" (reverse-link vers la
+// table CARTE DE VISITE) est non vide.
+let rchOnlyCarte=false;
+function toggleOnlyCarte(){
+  rchOnlyCarte=!rchOnlyCarte;
+  const btn=document.getElementById('btn-only-carte');
+  if(btn){
+    btn.style.background=rchOnlyCarte?'#f1c40f':'#6c3483';
+    btn.style.color=rchOnlyCarte?'#3a2f00':'#fff';
+  }
+  buildTable();
+}
 // Cases 🧾 cochées dans RECHERCHE (demande de Marc, 2026-08-31) : ces IDs pilotent le
 // Récapitulatif Workshop (vue CONFIRMATION) à la place du filtre code+année, de façon
 // INSTANTANÉE. Conservé en mémoire indépendamment des recherches successives : affiner
@@ -2544,6 +2561,7 @@ function buildTable(){
       const _isNum=filterVal!==''&&!isNaN(filterVal)&&filterVal.trim()!==''&&fv!==''&&!isNaN(fv)&&fv.trim()!=='';
       if(_isNum ? fv!==filterVal : !fv.includes(filterVal)) return false;
     }
+    if(rchOnlyCarte && !(f['CARTE DE VISITE']&&f['CARTE DE VISITE'].length)) return false;
     return true;
   });
   // Réinitialiser la sélection à chaque nouvelle recherche
