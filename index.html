@@ -1083,10 +1083,14 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
     <div style="font-size:11px;color:#888;margin:4px 2px 12px;">🌐 Aperçu de la page publique "Carte de visite" telle qu'elle s'affichera sur le site Internet educpass.eu et sur l'appli, quand un enseignant clique sur le logo de l'attraction depuis la liste des partenaires. L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
     <div style="display:flex;justify-content:center;padding:10px 0 30px;">
       <div style="width:100%;max-width:640px;background:#262626;border-radius:10px;padding:22px 22px 30px;font-family:Arial,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);">
+        <div style="margin-bottom:14px;">
+          <a id="wp-itineraire" href="#" target="_blank" rel="noopener" style="color:#ff9800;font-size:13px;font-weight:700;text-decoration:none;">📍 Calculer mon itinéraire</a>
+        </div>
         <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
           <div style="flex:1;min-width:200px;">
             <div id="wp-nom" style="font-size:20px;font-weight:700;color:#8bc34a;">—</div>
             <div id="wp-adresse" style="font-size:13px;color:#ddd;margin-top:6px;line-height:1.5;">—</div>
+            <div id="wp-province" style="font-size:13px;color:#ddd;margin-top:4px;">—</div>
             <div id="wp-tel" style="font-size:13px;color:#ddd;margin-top:4px;">—</div>
           </div>
           <div style="width:150px;flex-shrink:0;text-align:center;">
@@ -1112,7 +1116,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         </div>
 
         <div style="margin-top:20px;">
-          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Votre avantage</div>
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Votre avantage Educpass</div>
           <div id="wp-avantage" style="font-size:13px;color:#c0392b;font-weight:700;white-space:pre-line;line-height:1.5;background:#fff;border-radius:6px;padding:10px 12px;">—</div>
         </div>
 
@@ -3106,8 +3110,19 @@ function updateWebPreview(){
   const adresseParts=[clean(rue), [clean(cp),clean(com)].filter(Boolean).join(' ')].filter(Boolean);
   set('wp-adresse', adresseParts.length?adresseParts.join(' — '):'—');
 
+  const province=gv('cv-province');
+  set('wp-province', province?('Province : '+province):'—');
+
   const tel=clean((document.getElementById('cv-ro-tel')||{}).textContent||'');
   set('wp-tel', tel?('📞 '+tel):'—');
+
+  // Lien "Calculer mon itinéraire" — priorité aux coordonnées GPS, sinon adresse texte
+  const itinEl=document.getElementById('wp-itineraire');
+  if(itinEl){
+    const gps=gv('cv-gps');
+    const dest=gps?gps:(adresseParts.length?adresseParts.join(', '):'');
+    itinEl.href=dest?('https://www.google.com/maps/dir/?api=1&destination='+encodeURIComponent(dest)):'#';
+  }
 
   // Logo (carte de visite)
   const logoImg=document.getElementById('wp-logo');
