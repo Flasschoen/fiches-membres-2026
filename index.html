@@ -56,6 +56,9 @@ body{background:#dce3ef;min-height:100vh;}
 .cv-att-grid{display:flex;flex-wrap:wrap;gap:4px;padding:8px 6px;min-height:40px;}
 .cv-att-add{display:flex;gap:6px;padding:6px;align-items:center;flex-wrap:wrap;}
 .cv-att-add input[type=text]{flex:1;min-width:220px;padding:4px 6px;border:1px solid #aaa;border-radius:3px;font-size:12px;}
+.cv-att-drop{margin:6px;padding:14px 10px;border:2px dashed #aaa;border-radius:6px;text-align:center;font-size:12px;color:#666;cursor:pointer;background:#fafafa;transition:background .15s,border-color .15s;}
+.cv-att-drop:hover{background:#f0eefa;border-color:#6c3483;color:#6c3483;}
+.cv-att-drop.drag{background:#ece4f7;border-color:#6c3483;color:#6c3483;}
 
 /* ── FORM GRID ── */
 .fg{background:#fff;border:1px solid #c0cce0;}
@@ -924,14 +927,22 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fr"><div class="fl">Tarifs, réservation, infos :</div><div class="fv"><textarea id="cv-tarifs" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
         </div>
       </div>
-      <!-- ── COLONNE DROITE : affichage coupon (Cadre 5) ── -->
+      <!-- ── COLONNE DROITE : affichage coupon (Cadre 5, scindé en 2 cadres le 2026-09-06) ── -->
       <div>
-        <div class="sec" style="background:#c55a11;">🎫 Affichage coupon</div>
+        <div class="sec" style="background:#c55a11;">🎫 Cadre 1 — Informations carte de visite (Avantage Educpass)</div>
         <div class="fg">
-          <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte exact affiché/imprimé sur le coupon-éclaireur :</div></div>
+          <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte complet de l'avantage, affiché sur la carte de visite publique :</div></div>
           <div class="fr"><div class="fv">
-            <textarea id="cv-avantage" oninput="markCvDirty();" style="min-height:120px;" placeholder="ex: 1 entrée gratuite pour l'enseignant. Valable à partir du 1er septembre 2026 jusqu'au 31 décembre 2027."></textarea>
-            <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Texte libre, sans limite — c'est l'information complète sur l'avantage. L'affichage sur l'écran du coupon (onglet « 📱 Aperçu coupon ») en montre une version résumée et limitée en longueur.</div>
+            <textarea id="cv-avantage" oninput="markCvDirty();updateCouponPreview();" style="min-height:100px;" placeholder="ex: 1 entrée gratuite pour l'enseignant. Valable à partir du 1er septembre 2026 jusqu'au 31 décembre 2027."></textarea>
+            <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Texte libre, sans limite — c'est l'information complète affichée sur la carte de visite (onglet « 🌐 Aperçu carte de visite »).</div>
+          </div></div>
+        </div>
+        <div class="sec" style="margin-top:7px;background:#c55a11;">🎟️ Cadre 2 — Affichage coupon (restreint, modifiable)</div>
+        <div class="fg">
+          <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte affiché sur l'écran du coupon-éclaireur :</div></div>
+          <div class="fr"><div class="fv">
+            <textarea id="cv-avantage-coupon" oninput="markCvDirty();updateCouponPreview();" style="min-height:80px;" placeholder="Laissez vide pour reprendre automatiquement une version résumée du Cadre 1 ci-dessus."></textarea>
+            <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Contrôle total sur le texte visible sur le coupon (onglet « 📱 Aperçu coupon »). Laissez vide pour reprendre automatiquement une version résumée du Cadre 1.</div>
           </div></div>
         </div>
         <div class="sec" style="margin-top:7px;">✅ Statut &amp; validation coupon</div>
@@ -978,8 +989,27 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         <div style="font-size:11px;color:#888;margin:4px 2px;">ℹ️ Publication de la carte et du coupon : voir onglet « 📝 Description » (cadre « ✅ Statut &amp; validation coupon »).</div>
         <div class="sec" style="margin-top:7px;">🌍 Pays, province & réseaux sociaux</div>
         <div class="fg">
-          <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
-          <div class="fr"><div class="fl">Province :</div><div class="fv"><input type="text" id="cv-province" oninput="markCvDirty()" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Pays :</div><div class="fv"><select id="cv-pays" onchange="markCvDirty()" style="width:100%;">
+            <option value="">— Choisir —</option>
+            <option value="BELGIQUE">BELGIQUE</option>
+            <option value="FRANCE">FRANCE</option>
+            <option value="PAYS-BAS">PAYS-BAS</option>
+            <option value="GD DUCHE DE LUXEMBOURG">GD DUCHE DE LUXEMBOURG</option>
+            <option value="ALLEMAGNE">ALLEMAGNE</option>
+          </select></div></div>
+          <div class="fr"><div class="fl">Province :</div><div class="fv"><select id="cv-province" onchange="markCvDirty()" style="width:100%;">
+            <option value="">— Choisir —</option>
+            <option value="Anvers">Anvers</option>
+            <option value="Brabant flamand">Brabant flamand</option>
+            <option value="Brabant wallon">Brabant wallon</option>
+            <option value="Flandre occidentale">Flandre occidentale</option>
+            <option value="Flandre orientale">Flandre orientale</option>
+            <option value="Hainaut">Hainaut</option>
+            <option value="Liège">Liège</option>
+            <option value="Limbourg">Limbourg</option>
+            <option value="Luxembourg">Luxembourg</option>
+            <option value="Namur">Namur</option>
+          </select></div></div>
           <div class="fr"><div class="fl">Facebook :</div><div class="fv"><input type="url" id="cv-fb" oninput="markCvDirty()" placeholder="https://facebook.com/..." style="width:100%;"></div></div>
           <div class="fr"><div class="fl">Twitter / X :</div><div class="fv"><input type="url" id="cv-tw" oninput="markCvDirty()" placeholder="https://x.com/..." style="width:100%;"></div></div>
           <div class="fr"><div class="fl">Instagram :</div><div class="fv"><input type="url" id="cv-ig" oninput="markCvDirty()" placeholder="https://instagram.com/..." style="width:100%;"></div></div>
@@ -990,35 +1020,35 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 3 : LOGOS ET IMAGES ── -->
   <div id="cv-tab-logos" class="cv-tab-panel">
-    <div style="font-size:11px;color:#888;margin:4px 2px;">ℹ️ Collez l'URL d'une image (ex: un lien direct vers un fichier .jpg/.png) pour l'ajouter. L'ajout et le retrait sont immédiats (pas besoin de cliquer sur Enregistrer).</div>
+    <div style="font-size:11px;color:#888;margin:4px 2px;">ℹ️ Cliquez ou glissez-déposez une image depuis votre PC pour l'ajouter. L'ajout et le retrait sont immédiats (pas besoin de cliquer sur Enregistrer).</div>
     <span id="cv-att-status" style="font-size:12px;font-weight:700;color:#1a7a3d;"></span>
 
     <div class="sec" style="margin-top:7px;">🪪 Logo carte de visite (format WinDev 374×201)</div>
     <div class="fg"><div class="cv-att-grid" id="cv-att-logo1"></div></div>
-    <div class="cv-att-add">
-      <input type="text" id="cv-url-logo1" placeholder="Coller l'URL de l'image…">
-      <button type="button" class="btn" style="background:#6c3483;color:#fff;" onclick="cvAddAttachmentByUrl('Logo carte de visite','cv-url-logo1','cv-att-logo1')">➕ Ajouter</button>
+    <div class="cv-att-drop" id="cv-drop-logo1" onclick="document.getElementById('cv-file-logo1').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');cvHandleDrop(event,'Logo carte de visite','cv-att-logo1')">
+      📤 Cliquez ou glissez une image ici
+      <input type="file" accept="image/*" id="cv-file-logo1" style="display:none;" onchange="cvUploadFilesFromInput(this,'Logo carte de visite','cv-att-logo1')">
     </div>
 
     <div class="sec" style="margin-top:7px;">🎫 Logo coupon (format WinDev 250×375)</div>
     <div class="fg"><div class="cv-att-grid" id="cv-att-logo2"></div></div>
-    <div class="cv-att-add">
-      <input type="text" id="cv-url-logo2" placeholder="Coller l'URL de l'image…">
-      <button type="button" class="btn" style="background:#6c3483;color:#fff;" onclick="cvAddAttachmentByUrl('Logo coupon','cv-url-logo2','cv-att-logo2')">➕ Ajouter</button>
+    <div class="cv-att-drop" id="cv-drop-logo2" onclick="document.getElementById('cv-file-logo2').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');cvHandleDrop(event,'Logo coupon','cv-att-logo2')">
+      📤 Cliquez ou glissez une image ici
+      <input type="file" accept="image/*" id="cv-file-logo2" style="display:none;" onchange="cvUploadFilesFromInput(this,'Logo coupon','cv-att-logo2')">
     </div>
 
     <div class="sec" style="margin-top:7px;">🖼️ Photos (galerie)</div>
     <div class="fg"><div class="cv-att-grid" id="cv-att-photos"></div></div>
-    <div class="cv-att-add">
-      <input type="text" id="cv-url-photos" placeholder="Coller l'URL de l'image…">
-      <button type="button" class="btn" style="background:#6c3483;color:#fff;" onclick="cvAddAttachmentByUrl('Photos','cv-url-photos','cv-att-photos')">➕ Ajouter</button>
+    <div class="cv-att-drop" id="cv-drop-photos" onclick="document.getElementById('cv-file-photos').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');cvHandleDrop(event,'Photos','cv-att-photos')">
+      📤 Cliquez ou glissez une ou plusieurs images ici
+      <input type="file" accept="image/*" multiple id="cv-file-photos" style="display:none;" onchange="cvUploadFilesFromInput(this,'Photos','cv-att-photos')">
     </div>
 
     <div class="sec" style="margin-top:7px;">🌐 Logo (pour le futur site internet)</div>
     <div class="fg"><div class="cv-att-grid" id="cv-att-logo3"></div></div>
-    <div class="cv-att-add">
-      <input type="text" id="cv-url-logo3" placeholder="Coller l'URL de l'image…">
-      <button type="button" class="btn" style="background:#6c3483;color:#fff;" onclick="cvAddAttachmentByUrl('Logo (site internet)','cv-url-logo3','cv-att-logo3')">➕ Ajouter</button>
+    <div class="cv-att-drop" id="cv-drop-logo3" onclick="document.getElementById('cv-file-logo3').click()" ondragover="event.preventDefault();this.classList.add('drag')" ondragleave="this.classList.remove('drag')" ondrop="event.preventDefault();this.classList.remove('drag');cvHandleDrop(event,'Logo (site internet)','cv-att-logo3')">
+      📤 Cliquez ou glissez une image ici
+      <input type="file" accept="image/*" id="cv-file-logo3" style="display:none;" onchange="cvUploadFilesFromInput(this,'Logo (site internet)','cv-att-logo3')">
     </div>
   </div>
 
@@ -1995,6 +2025,23 @@ function sv(id,val,cb=false){
   else el.value=val??'';
 }
 
+// Remplit un <select> (ex: cv-pays, cv-province) SANS perdre silencieusement une ancienne
+// valeur en texte libre qui ne correspondrait à aucune option de la liste fixe : dans ce cas,
+// on ajoute dynamiquement une option "(valeur existante)" plutôt que de vider le champ — sinon
+// un simple ré-enregistrement effacerait la donnée d'origine sans que personne ne s'en aperçoive.
+function svSelect(id,val){
+  const el=document.getElementById(id); if(!el) return;
+  const v=val??'';
+  el.value=v;
+  if(v!=='' && el.value!==v){
+    const opt=document.createElement('option');
+    opt.value=v;
+    opt.textContent=v+' (valeur existante)';
+    el.appendChild(opt);
+    el.value=v;
+  }
+}
+
 function fillForm(f){
   document.getElementById('name-bar').textContent=f['Enseigne commerciale']||f['ENSEIGNE']||f['NOM ATTRACTION']||'— MEMBRE —';
   document.getElementById('f-num').value=f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||'';
@@ -2858,8 +2905,8 @@ function fillCarteAdresseTab(f){
   st('cv-ro-email', f['EMAIL']);
   st('cv-ro-site', f['SITE INTERNET']);
   st('cv-ro-contact', [f['CONTACT'],f['TITRE']].filter(Boolean).join(' — '));
-  sv('cv-pays', f['Pays']);
-  sv('cv-province', f['Province']);
+  svSelect('cv-pays', f['Pays']);
+  svSelect('cv-province', f['Province']);
   sv('cv-fb', f['Facebook']);
   sv('cv-tw', f['Twitter / X']);
   sv('cv-ig', f['Instagram']);
@@ -2873,6 +2920,7 @@ function fillCarteForm(f){
   sv('cv-horaires', f['Horaires et fermetures']);
   sv('cv-tarifs', f['Tarifs, réservation et infos pratiques']);
   sv('cv-avantage', f['Avantage coupon']);
+  sv('cv-avantage-coupon', f['Avantage coupon (affichage)']);
   sv('cv-gps', f['Coordonnées GPS']);
   sv('cv-publie', f['Publié'], true);
   sv('cv-coupon-publie', f['Coupon publié'], true);
@@ -2930,6 +2978,7 @@ async function saveCarteVisite(){
       'Horaires et fermetures': gv('cv-horaires'),
       'Tarifs, réservation et infos pratiques': gv('cv-tarifs'),
       'Avantage coupon': gv('cv-avantage'),
+      'Avantage coupon (affichage)': gv('cv-avantage-coupon'),
       'Coordonnées GPS': gv('cv-gps'),
       'Publié': !!gv('cv-publie'),
       'Coupon publié': !!gv('cv-coupon-publie'),
@@ -2969,28 +3018,85 @@ function renderCvAttachments(fieldName, containerId){
   });
 }
 
-async function cvAddAttachmentByUrl(fieldName, inputId, containerId){
-  const inp=document.getElementById(inputId);
-  const url=(inp.value||'').trim();
-  if(!url) return;
-  if(!/^https?:\/\//i.test(url)){ alert("Merci de coller une URL d'image commençant par http:// ou https://"); return; }
+// Champs (fieldId) associés à chaque champ multipleAttachments — nécessaires pour
+// l'endpoint d'upload direct d'Airtable (content.airtable.com), qui exige l'ID du champ.
+const CV_ATTACHMENT_FIELD_IDS={
+  'Logo carte de visite':'fldLefYs5yxgkxreH',
+  'Logo coupon':'fldk5dam4YlZAACwT',
+  'Photos':'fldhidYDWVrOAKWZ5',
+  'Logo (site internet)':'fldxCDH27AFldL7oN'
+};
+
+// Lit un fichier local et renvoie son contenu encodé en base64 (sans le préfixe data:...;base64,).
+function fileToBase64(file){
+  return new Promise((resolve,reject)=>{
+    const reader=new FileReader();
+    reader.onload=()=>{
+      const result=reader.result||'';
+      const idx=String(result).indexOf(',');
+      resolve(idx>=0?String(result).slice(idx+1):String(result));
+    };
+    reader.onerror=()=>reject(reader.error||new Error('Lecture du fichier impossible'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// Upload direct depuis le PC de Marc (glisser-déposer ou clic) vers Airtable — remplace
+// l'ancien ajout par URL. Utilise l'endpoint content.airtable.com/.../uploadAttachment qui
+// accepte le contenu du fichier en base64, sans avoir besoin d'un hébergement intermédiaire.
+async function cvUploadFiles(fieldName, files, containerId){
+  files=(files||[]).filter(Boolean);
+  if(!files.length) return;
   const status=document.getElementById('cv-att-status');
+  const fieldId=CV_ATTACHMENT_FIELD_IDS[fieldName];
+  if(!fieldId){ if(status) status.textContent='⚠️ Champ pièce jointe inconnu.'; return; }
+  let uploadedCount=0;
+  const skipped=[];
   try{
-    if(status) status.textContent='⏳ Ajout en cours...';
     await ensureCarteRecord();
-    const current=(carteAttachments[fieldName]||[]).map(a=>({url:a.url}));
-    current.push({url});
-    const res=await cvPatch(curCarteId, {[fieldName]:current});
-    if(res.error) throw new Error(res.error.message);
-    const rec=res.records&&res.records[0];
-    carteAttachments[fieldName]=(rec&&rec.fields[fieldName])||current;
+    for(const file of files){
+      if(!/^image\//i.test(file.type)){
+        skipped.push(file.name);
+        continue;
+      }
+      if(status) status.textContent='⏳ Envoi de "'+file.name+'"...';
+      const base64=await fileToBase64(file);
+      const uploadUrl='https://content.airtable.com/v0/'+B+'/'+curCarteId+'/'+fieldId+'/uploadAttachment';
+      const res=await fetch(uploadUrl,{
+        method:'POST',
+        headers:{'Authorization':'Bearer '+TK,'Content-Type':'application/json'},
+        body:JSON.stringify({contentType:file.type||'application/octet-stream', file:base64, filename:file.name})
+      }).then(r=>r.json());
+      if(res.error) throw new Error((res.error.message||res.error)+' ("'+file.name+'")');
+      const updated=res.fields&&res.fields[fieldName];
+      if(updated) carteAttachments[fieldName]=updated;
+      uploadedCount++;
+    }
     renderCvAttachments(fieldName, containerId);
-    inp.value='';
-    if(status){ status.textContent='✅ Image ajoutée'; setTimeout(()=>{ if(status.textContent.startsWith('✅')) status.textContent=''; },2500); }
+    if(status){
+      if(uploadedCount && !skipped.length){
+        status.textContent='✅ Image(s) ajoutée(s)';
+        setTimeout(()=>{ if(status.textContent.startsWith('✅')) status.textContent=''; },2500);
+      } else if(uploadedCount && skipped.length){
+        status.textContent='✅ Image(s) ajoutée(s) — ignoré (pas une image) : '+skipped.join(', ');
+      } else if(skipped.length){
+        status.textContent='⚠️ "'+skipped.join('", "')+'" n\'est pas une image — ignoré.';
+      }
+    }
   }catch(e){
     if(status) status.textContent='⚠️ '+e.message;
     console.error(e);
   }
+}
+
+function cvUploadFilesFromInput(inputEl, fieldName, containerId){
+  const files=inputEl&&inputEl.files?Array.from(inputEl.files):[];
+  cvUploadFiles(fieldName, files, containerId).finally(()=>{ if(inputEl) inputEl.value=''; });
+}
+
+function cvHandleDrop(ev, fieldName, containerId){
+  const files=(ev&&ev.dataTransfer&&ev.dataTransfer.files)?Array.from(ev.dataTransfer.files):[];
+  cvUploadFiles(fieldName, files, containerId);
 }
 
 async function cvRemoveAttachment(fieldName, idx, containerId){
@@ -3070,13 +3176,23 @@ function updateCouponPreview(){
       logoEmpty.style.display='flex';
     }
   }
-  // Avantage coupon (Cadre 5) — version résumée/limitée pour l'affichage sur le coupon
+  // Avantage coupon — priorité au Cadre 2 (texte dédié, modifiable, contrôle total de Marc) ;
+  // si vide, retombe automatiquement sur une version résumée/limitée du Cadre 1 (cv-avantage),
+  // pour ne pas laisser les coupons existants vides tant que le nouveau champ n'a pas été rempli.
   const avantageEl=document.getElementById('cvp-avantage');
   const truncEl=document.getElementById('cvp-avantage-truncated');
-  const txt=gv('cv-avantage');
-  const st=truncateForCoupon(txt);
-  if(avantageEl) avantageEl.textContent=txt?st.text:'—';
-  if(truncEl) truncEl.style.display=(txt&&st.truncated)?'block':'none';
+  const manualTxt=gv('cv-avantage-coupon');
+  let dispText='', isTruncated=false;
+  if(manualTxt){
+    dispText=manualTxt;
+  } else {
+    const txt=gv('cv-avantage');
+    const st=truncateForCoupon(txt);
+    dispText=txt?st.text:'';
+    isTruncated=!!(txt&&st.truncated);
+  }
+  if(avantageEl) avantageEl.textContent=dispText||'—';
+  if(truncEl) truncEl.style.display=isTruncated?'block':'none';
 }
 
 // ── Aperçu carte de visite (site internet / appli) ──
