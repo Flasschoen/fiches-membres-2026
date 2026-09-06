@@ -913,6 +913,13 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 1 : DESCRIPTION ── -->
   <div id="cv-tab-desc" class="cv-tab-panel active">
+    <!-- Bascule FR/NL (2026-09-06) : les mêmes zones de texte ci-dessous affichent/éditent
+         soit la version FR, soit la version NL — le texte non basculé reste en mémoire
+         (voir cvTextFR/cvTextNL en JS), rien n'est perdu tant qu'on n'a pas cliqué Enregistrer. -->
+    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 8px;">
+      <span style="font-size:11px;color:#888;">Langue des textes (Description, Horaires, Tarifs, Avantage) :</span>
+      <button type="button" id="cv-lang-btn" onclick="toggleCvLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
+    </div>
     <div class="two-col">
       <!-- ── COLONNE GAUCHE : description, horaires, tarifs, avantage Educpass ── -->
       <div>
@@ -1066,6 +1073,9 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 5 : APERÇU COUPON ── -->
   <div id="cv-tab-preview" class="cv-tab-panel">
+    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 4px;">
+      <button type="button" id="cvp-lang-btn" onclick="toggleCvPreviewLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
+    </div>
     <div style="font-size:11px;color:#888;margin:4px 2px 12px;">📱 Aperçu de l'écran affiché sur le téléphone de l'enseignant quand il ouvre son coupon-éclaireur. Le nom/adresse de l'enseignant et le QR code ci-dessous sont des <b>exemples fictifs</b> (ces infos sont propres à chaque prof au moment réel de la validation, pas à la fiche de l'attraction). L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
     <div style="display:flex;justify-content:center;padding:10px 0 30px;">
       <div style="width:330px;background:#1a1a1a;border-radius:38px;padding:16px 12px;box-shadow:0 10px 30px rgba(0,0,0,.35);">
@@ -1110,6 +1120,9 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
 
   <!-- ── ONGLET 6 : APERÇU CARTE DE VISITE (site internet / appli) ── -->
   <div id="cv-tab-webpreview" class="cv-tab-panel">
+    <div style="display:flex;justify-content:flex-end;align-items:center;gap:8px;margin:0 0 4px;">
+      <button type="button" id="wp-lang-btn" onclick="toggleCvWebPreviewLang()" style="padding:4px 16px;border-radius:14px;border:none;background:#6c3483;color:#fff;font-weight:700;font-size:12px;cursor:pointer;">🇫🇷 FR</button>
+    </div>
     <div style="font-size:11px;color:#888;margin:4px 2px 12px;">🌐 Aperçu de la page publique "Carte de visite" telle qu'elle s'affichera sur le site Internet educpass.eu et sur l'appli, quand un enseignant clique sur le logo de l'attraction depuis la liste des partenaires. L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
     <div style="display:flex;justify-content:center;padding:10px 0 30px;">
       <div style="width:100%;max-width:640px;background:#262626;border-radius:10px;padding:22px 22px 30px;font-family:Arial,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);">
@@ -2823,6 +2836,81 @@ const AVANTAGE_MAXLEN=200;
 const AVANTAGE_MAXLINES=4;
 let carteAttachments={};
 
+// ── Bascule FR/NL (2026-09-06) ──
+// Les 6 champs texte de la Carte de visite (Description courte/longue, Horaires, Tarifs,
+// Avantage Educpass, Avantage coupon affichage) existent chacun en 2 versions côté Airtable
+// (nom normal = FR, nom + " (NL)" = NL). L'onglet Description garde un seul jeu de zones de
+// texte à l'écran ; un bouton bascule FR⇄NL (cvLang) échange leur contenu. Les 2 aperçus
+// (coupon / carte de visite) ont chacun leur PROPRE bascule (cvPreviewLang / cvWebPreviewLang),
+// indépendante de celle de l'onglet Description, pour prévisualiser dans la langue choisie
+// sans devoir revenir basculer l'onglet d'édition.
+let cvLang='FR';
+let cvPreviewLang='FR';
+let cvWebPreviewLang='FR';
+let cvTextFR={descCourte:'',descLongue:'',horaires:'',tarifs:'',avantage:'',avantageCoupon:''};
+let cvTextNL={descCourte:'',descLongue:'',horaires:'',tarifs:'',avantage:'',avantageCoupon:''};
+
+// Copie le contenu actuellement affiché dans les zones de texte de l'onglet Description
+// vers le magasin de la langue active (cvLang) — à appeler AVANT toute bascule, tout rendu
+// d'aperçu ou tout enregistrement, pour ne jamais perdre une saisie non encore basculée.
+function captureCvLangFields(){
+  const store=cvLang==='NL'?cvTextNL:cvTextFR;
+  store.descCourte=gv('cv-desc-courte');
+  store.descLongue=gv('cv-desc-longue');
+  store.horaires=gv('cv-horaires');
+  store.tarifs=gv('cv-tarifs');
+  store.avantage=gv('cv-avantage');
+  store.avantageCoupon=gv('cv-avantage-coupon');
+}
+// Affiche dans les zones de texte de l'onglet Description le contenu du magasin de la
+// langue active (cvLang), et met à jour le libellé du bouton bascule.
+function renderCvLangFields(){
+  const store=cvLang==='NL'?cvTextNL:cvTextFR;
+  sv('cv-desc-courte', store.descCourte);
+  sv('cv-desc-longue', store.descLongue);
+  sv('cv-horaires', store.horaires);
+  sv('cv-tarifs', store.tarifs);
+  sv('cv-avantage', store.avantage);
+  sv('cv-avantage-coupon', store.avantageCoupon);
+  const btn=document.getElementById('cv-lang-btn');
+  if(btn){
+    btn.textContent=cvLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
+    btn.style.background=cvLang==='NL'?'#c55a11':'#6c3483';
+  }
+}
+function toggleCvLang(){
+  captureCvLangFields();
+  cvLang=cvLang==='NL'?'FR':'NL';
+  renderCvLangFields();
+}
+function toggleCvPreviewLang(){
+  cvPreviewLang=cvPreviewLang==='NL'?'FR':'NL';
+  const btn=document.getElementById('cvp-lang-btn');
+  if(btn){
+    btn.textContent=cvPreviewLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
+    btn.style.background=cvPreviewLang==='NL'?'#c55a11':'#6c3483';
+  }
+  updateCouponPreview();
+}
+function toggleCvWebPreviewLang(){
+  cvWebPreviewLang=cvWebPreviewLang==='NL'?'FR':'NL';
+  const btn=document.getElementById('wp-lang-btn');
+  if(btn){
+    btn.textContent=cvWebPreviewLang==='NL'?'🇳🇱 NL':'🇫🇷 FR';
+    btn.style.background=cvWebPreviewLang==='NL'?'#c55a11':'#6c3483';
+  }
+  updateWebPreview();
+}
+// Remet les 3 bascules FR/NL (édition + 2 aperçus) sur FR — appelé à chaque chargement
+// d'une fiche carte de visite, pour repartir dans un état prévisible.
+function resetCvLangButtons(){
+  cvLang='FR'; cvPreviewLang='FR'; cvWebPreviewLang='FR';
+  ['cv-lang-btn','cvp-lang-btn','wp-lang-btn'].forEach(id=>{
+    const b=document.getElementById(id);
+    if(b){ b.textContent='🇫🇷 FR'; b.style.background='#6c3483'; }
+  });
+}
+
 function markCvDirty(){
   cvDirty=true;
   const el=document.getElementById('cv-dirty-indicator'); if(el) el.style.display='';
@@ -2915,12 +3003,24 @@ function fillCarteAdresseTab(f){
 }
 
 function fillCarteForm(f){
-  sv('cv-desc-courte', f['Description courte']);
-  sv('cv-desc-longue', f['Description longue']);
-  sv('cv-horaires', f['Horaires et fermetures']);
-  sv('cv-tarifs', f['Tarifs, réservation et infos pratiques']);
-  sv('cv-avantage', f['Avantage coupon']);
-  sv('cv-avantage-coupon', f['Avantage coupon (affichage)']);
+  cvTextFR={
+    descCourte: f['Description courte'],
+    descLongue: f['Description longue'],
+    horaires: f['Horaires et fermetures'],
+    tarifs: f['Tarifs, réservation et infos pratiques'],
+    avantage: f['Avantage coupon'],
+    avantageCoupon: f['Avantage coupon (affichage)']
+  };
+  cvTextNL={
+    descCourte: f['Description courte (NL)'],
+    descLongue: f['Description longue (NL)'],
+    horaires: f['Horaires et fermetures (NL)'],
+    tarifs: f['Tarifs, réservation et infos pratiques (NL)'],
+    avantage: f['Avantage coupon (NL)'],
+    avantageCoupon: f['Avantage coupon (affichage) (NL)']
+  };
+  resetCvLangButtons();
+  renderCvLangFields();
   sv('cv-gps', f['Coordonnées GPS']);
   sv('cv-publie', f['Publié'], true);
   sv('cv-coupon-publie', f['Coupon publié'], true);
@@ -2972,13 +3072,23 @@ async function saveCarteVisite(){
     }
     // 2) Champs CARTE DE VISITE (créée à la volée si elle n'existe pas encore)
     await ensureCarteRecord();
+    // Synchronise dans cvTextFR/cvTextNL le texte actuellement affiché à l'écran (langue
+    // active cvLang) AVANT de construire cvFields, sinon la langue non affichée serait
+    // écrite avec une valeur obsolète (celle du dernier chargement/bascule).
+    captureCvLangFields();
     const cvFields={
-      'Description courte': gv('cv-desc-courte'),
-      'Description longue': gv('cv-desc-longue'),
-      'Horaires et fermetures': gv('cv-horaires'),
-      'Tarifs, réservation et infos pratiques': gv('cv-tarifs'),
-      'Avantage coupon': gv('cv-avantage'),
-      'Avantage coupon (affichage)': gv('cv-avantage-coupon'),
+      'Description courte': cvTextFR.descCourte,
+      'Description longue': cvTextFR.descLongue,
+      'Horaires et fermetures': cvTextFR.horaires,
+      'Tarifs, réservation et infos pratiques': cvTextFR.tarifs,
+      'Avantage coupon': cvTextFR.avantage,
+      'Avantage coupon (affichage)': cvTextFR.avantageCoupon,
+      'Description courte (NL)': cvTextNL.descCourte,
+      'Description longue (NL)': cvTextNL.descLongue,
+      'Horaires et fermetures (NL)': cvTextNL.horaires,
+      'Tarifs, réservation et infos pratiques (NL)': cvTextNL.tarifs,
+      'Avantage coupon (NL)': cvTextNL.avantage,
+      'Avantage coupon (affichage) (NL)': cvTextNL.avantageCoupon,
       'Coordonnées GPS': gv('cv-gps'),
       'Publié': !!gv('cv-publie'),
       'Coupon publié': !!gv('cv-coupon-publie'),
@@ -3164,6 +3274,12 @@ function truncateForCoupon(txt){
 }
 
 function updateCouponPreview(){
+  // Synchronise le texte actuellement affiché à l'écran (onglet Description) dans le
+  // magasin de sa langue, pour que l'aperçu reflète bien la dernière frappe de Marc,
+  // même si la langue affichée à l'écran (cvLang) diffère de la langue de l'aperçu
+  // (cvPreviewLang) — dans ce cas l'aperçu montre le dernier texte connu pour sa langue.
+  captureCvLangFields();
+  const cvLangStore=cvPreviewLang==='NL'?cvTextNL:cvTextFR;
   // Logo coupon
   const logoImg=document.getElementById('cvp-logo');
   const logoEmpty=document.getElementById('cvp-logo-empty');
@@ -3186,12 +3302,12 @@ function updateCouponPreview(){
   // pour ne pas laisser les coupons existants vides tant que le nouveau champ n'a pas été rempli.
   const avantageEl=document.getElementById('cvp-avantage');
   const truncEl=document.getElementById('cvp-avantage-truncated');
-  const manualTxt=gv('cv-avantage-coupon');
+  const manualTxt=cvLangStore.avantageCoupon;
   let dispText='', isTruncated=false;
   if(manualTxt){
     dispText=manualTxt;
   } else {
-    const txt=gv('cv-avantage');
+    const txt=cvLangStore.avantage;
     const st=truncateForCoupon(txt);
     dispText=txt?st.text:'';
     isTruncated=!!(txt&&st.truncated);
@@ -3227,6 +3343,10 @@ function renderWpPhotos(){
 }
 
 function updateWebPreview(){
+  // Synchronise le texte actuellement affiché à l'écran dans le magasin de sa langue
+  // (voir commentaire équivalent dans updateCouponPreview) avant de lire cvWebPreviewLang.
+  captureCvLangFields();
+  const cvLangStore=cvWebPreviewLang==='NL'?cvTextNL:cvTextFR;
   const nomBar=(document.getElementById('name-bar')||{}).textContent||'';
   const nom=(nomBar==='— MEMBRE —'||nomBar==='— SÉLECTIONNEZ UN MEMBRE —')?'—':nomBar;
   const set=(id,v,dash)=>{const e=document.getElementById(id); if(e) e.textContent=(v==null||v==='')?(dash!==false?'—':''):v;};
@@ -3272,15 +3392,15 @@ function updateWebPreview(){
   }
 
   // Description = accroche en gras (Cadre 1) + description complète (Cadre 2) à la suite
-  const accroche=gv('cv-desc-courte');
-  const description=gv('cv-desc-longue');
+  const accroche=cvLangStore.descCourte;
+  const description=cvLangStore.descLongue;
   const accEl=document.getElementById('wp-desc-accroche');
   if(accEl) accEl.textContent=accroche||'';
   set('wp-description', description);
 
-  set('wp-horaires', gv('cv-horaires'));
-  set('wp-tarifs', gv('cv-tarifs'));
-  set('wp-avantage', gv('cv-avantage'));
+  set('wp-horaires', cvLangStore.horaires);
+  set('wp-tarifs', cvLangStore.tarifs);
+  set('wp-avantage', cvLangStore.avantage);
 
   renderWpPhotos();
 
