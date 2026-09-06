@@ -905,6 +905,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-logos" onclick="showCarteTab('cv-tab-logos')">🖼️ Logos et images</button>
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-video" onclick="showCarteTab('cv-tab-video')">🎬 Vidéo</button>
     <button type="button" class="cv-tab-btn" data-tab="cv-tab-preview" onclick="showCarteTab('cv-tab-preview')">📱 Aperçu coupon</button>
+    <button type="button" class="cv-tab-btn" data-tab="cv-tab-webpreview" onclick="showCarteTab('cv-tab-webpreview')">🌐 Aperçu carte de visite</button>
   </div>
 
   <!-- ── ONGLET 1 : DESCRIPTION ── -->
@@ -933,6 +934,20 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
             <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Texte libre, sans limite — c'est l'information complète sur l'avantage. L'affichage sur l'écran du coupon (onglet « 📱 Aperçu coupon ») en montre une version résumée et limitée en longueur.</div>
           </div></div>
         </div>
+        <div class="sec" style="margin-top:7px;">✅ Statut &amp; validation coupon</div>
+        <div class="fg">
+          <div class="fr"><div class="fl">Code de validation :</div><div class="fv"><input type="text" id="cv-code-validation" oninput="markCvDirty()" placeholder="ex: educ2021" style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Email envoi coupon :</div><div class="fv"><input type="email" id="cv-email-coupon" oninput="markCvDirty()" placeholder="ex: educatif@..." style="width:100%;"></div></div>
+          <div class="fr"><div class="fl">Carte publiée :</div><div class="fv">
+            <input type="checkbox" id="cv-publie" style="display:none;" onchange="markCvDirty();renderYesNoBadge('cv-publie','cv-publie-badge')">
+            <span id="cv-publie-badge" onclick="toggleYesNo('cv-publie','cv-publie-badge')" style="display:inline-block;padding:3px 14px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;user-select:none;">NON</span>
+          </div></div>
+          <div class="fr"><div class="fl">Coupon publié :</div><div class="fv">
+            <input type="checkbox" id="cv-coupon-publie" style="display:none;" onchange="markCvDirty();renderYesNoBadge('cv-coupon-publie','cv-coupon-publie-badge')">
+            <span id="cv-coupon-publie-badge" onclick="toggleYesNo('cv-coupon-publie','cv-coupon-publie-badge')" style="display:inline-block;padding:3px 14px;border-radius:12px;font-size:11px;font-weight:700;cursor:pointer;user-select:none;">NON</span>
+          </div></div>
+          <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Cliquez sur le badge OUI/NON pour le faire basculer. « Carte publiée » = visible dans l'app ; « Coupon publié » = coupon activé/imprimable pour ce partenaire (indépendant l'un de l'autre).</div>
+        </div>
       </div>
     </div>
   </div>
@@ -959,8 +974,8 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         <div class="sec">📍 Localisation & publication</div>
         <div class="fg">
           <div class="fr"><div class="fl">Coordonnées GPS :</div><div class="fv"><input type="text" id="cv-gps" oninput="markCvDirty()" placeholder="ex: 50.4123, 5.8734" style="width:100%;"></div></div>
-          <div class="fr"><div class="fl">Publié dans l'app :</div><div class="fv"><input type="checkbox" id="cv-publie" onchange="markCvDirty()" style="width:auto;"></div></div>
         </div>
+        <div style="font-size:11px;color:#888;margin:4px 2px;">ℹ️ Publication de la carte et du coupon : voir onglet « 📝 Description » (cadre « ✅ Statut &amp; validation coupon »).</div>
         <div class="sec" style="margin-top:7px;">🌍 Pays, province & réseaux sociaux</div>
         <div class="fg">
           <div class="fr"><div class="fl">Pays :</div><div class="fv"><input type="text" id="cv-pays" oninput="markCvDirty()" style="width:100%;"></div></div>
@@ -1058,6 +1073,60 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
             </div>
           </div>
           <div style="background:#1a1a1a;color:#fff;text-align:center;font-weight:700;font-size:13px;padding:11px;">Valider le coupon</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── ONGLET 6 : APERÇU CARTE DE VISITE (site internet / appli) ── -->
+  <div id="cv-tab-webpreview" class="cv-tab-panel">
+    <div style="font-size:11px;color:#888;margin:4px 2px 12px;">🌐 Aperçu de la page publique "Carte de visite" telle qu'elle s'affichera sur le site Internet educpass.eu et sur l'appli, quand un enseignant clique sur le logo de l'attraction depuis la liste des partenaires. L'aperçu se met à jour à chaque fois que vous ouvrez cet onglet.</div>
+    <div style="display:flex;justify-content:center;padding:10px 0 30px;">
+      <div style="width:100%;max-width:640px;background:#262626;border-radius:10px;padding:22px 22px 30px;font-family:Arial,sans-serif;color:#fff;box-shadow:0 10px 30px rgba(0,0,0,.35);">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:16px;flex-wrap:wrap;">
+          <div style="flex:1;min-width:200px;">
+            <div id="wp-nom" style="font-size:20px;font-weight:700;color:#8bc34a;">—</div>
+            <div id="wp-adresse" style="font-size:13px;color:#ddd;margin-top:6px;line-height:1.5;">—</div>
+            <div id="wp-tel" style="font-size:13px;color:#ddd;margin-top:4px;">—</div>
+            <div id="wp-contact" style="font-size:12px;color:#aaa;margin-top:4px;">—</div>
+          </div>
+          <div style="width:150px;flex-shrink:0;text-align:center;">
+            <img id="wp-logo" src="" style="width:100%;max-width:150px;height:auto;display:none;border-radius:4px;background:#fff;padding:4px;">
+            <div id="wp-logo-empty" style="width:100%;min-height:80px;border:1px dashed #555;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#777;text-align:center;padding:4px;">Pas de logo carte de visite</div>
+          </div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Description</div>
+          <div id="wp-desc-accroche" style="font-size:14px;font-weight:700;color:#fff;white-space:pre-line;margin-bottom:6px;"></div>
+          <div id="wp-description" style="font-size:13px;color:#ddd;white-space:pre-line;line-height:1.5;">—</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Ouvertures</div>
+          <div id="wp-horaires" style="font-size:13px;color:#ddd;white-space:pre-line;line-height:1.5;">—</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Tarifs</div>
+          <div id="wp-tarifs" style="font-size:13px;color:#ddd;white-space:pre-line;line-height:1.5;">—</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Votre avantage</div>
+          <div id="wp-avantage" style="font-size:13px;color:#c0392b;font-weight:700;white-space:pre-line;line-height:1.5;background:#fff;border-radius:6px;padding:10px 12px;">—</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Galerie photos</div>
+          <div id="wp-photos" style="display:flex;flex-wrap:wrap;gap:8px;"></div>
+          <div id="wp-photos-empty" style="font-size:12px;color:#888;">Aucune photo — ajoutez-en dans l'onglet Logos et images.</div>
+        </div>
+
+        <div style="margin-top:20px;">
+          <div style="font-size:13px;font-weight:700;color:#ff9800;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid #444;padding-bottom:4px;margin-bottom:8px;">Vidéo</div>
+          <div id="wp-video-empty" style="font-size:12px;color:#888;">Aucune vidéo — collez un lien YouTube dans l'onglet Vidéo.</div>
+          <iframe id="wp-video-frame" style="display:none;width:100%;max-width:560px;height:280px;border:0;border-radius:6px;" allowfullscreen></iframe>
         </div>
       </div>
     </div>
@@ -2708,6 +2777,22 @@ function markCvDirty(){
   cvDirty=true;
   const el=document.getElementById('cv-dirty-indicator'); if(el) el.style.display='';
 }
+function renderYesNoBadge(checkboxId, badgeId){
+  const cb=document.getElementById(checkboxId);
+  const badge=document.getElementById(badgeId);
+  if(!cb||!badge) return;
+  const on=!!cb.checked;
+  badge.textContent = on ? 'OUI' : 'NON';
+  badge.style.background = on ? '#1e8449' : '#a93226';
+  badge.style.color = '#fff';
+}
+function toggleYesNo(checkboxId, badgeId){
+  const cb=document.getElementById(checkboxId);
+  if(!cb) return;
+  cb.checked=!cb.checked;
+  markCvDirty();
+  renderYesNoBadge(checkboxId, badgeId);
+}
 function cvClearDirty(){
   cvDirty=false;
   const el=document.getElementById('cv-dirty-indicator'); if(el) el.style.display='none';
@@ -2721,6 +2806,7 @@ function showCarteTab(tab){
   const btn=document.querySelector('.cv-tab-btn[data-tab="'+tab+'"]');
   if(btn) btn.classList.add('active');
   if(tab==='cv-tab-preview') updateCouponPreview();
+  if(tab==='cv-tab-webpreview') updateWebPreview();
 }
 
 async function openCarteVisite(){
@@ -2774,6 +2860,8 @@ function fillCarteAdresseTab(f){
   sv('cv-fb', f['Facebook']);
   sv('cv-tw', f['Twitter / X']);
   sv('cv-ig', f['Instagram']);
+  sv('cv-code-validation', f['CODE ATTRACTION']);
+  sv('cv-email-coupon', f['ADRESSE MAIL COUPON']);
 }
 
 function fillCarteForm(f){
@@ -2784,6 +2872,9 @@ function fillCarteForm(f){
   sv('cv-avantage', f['Avantage coupon']);
   sv('cv-gps', f['Coordonnées GPS']);
   sv('cv-publie', f['Publié'], true);
+  sv('cv-coupon-publie', f['Coupon publié'], true);
+  renderYesNoBadge('cv-publie','cv-publie-badge');
+  renderYesNoBadge('cv-coupon-publie','cv-coupon-publie-badge');
   sv('cv-video', f['Vidéo YouTube']);
   updateVideoPreview();
   carteAttachments={
@@ -2820,6 +2911,8 @@ async function saveCarteVisite(){
       'Facebook': gv('cv-fb'),
       'Twitter / X': gv('cv-tw'),
       'Instagram': gv('cv-ig'),
+      'CODE ATTRACTION': gv('cv-code-validation'),
+      'ADRESSE MAIL COUPON': gv('cv-email-coupon'),
     };
     Object.keys(memFields).forEach(k=>{ if(memFields[k]===null) delete memFields[k]; });
     if(Object.keys(memFields).length){
@@ -2836,6 +2929,7 @@ async function saveCarteVisite(){
       'Avantage coupon': gv('cv-avantage'),
       'Coordonnées GPS': gv('cv-gps'),
       'Publié': !!gv('cv-publie'),
+      'Coupon publié': !!gv('cv-coupon-publie'),
       'Vidéo YouTube': gv('cv-video'),
     };
     Object.keys(cvFields).forEach(k=>{ if(cvFields[k]===null) delete cvFields[k]; });
@@ -2980,6 +3074,85 @@ function updateCouponPreview(){
   const st=truncateForCoupon(txt);
   if(avantageEl) avantageEl.textContent=txt?st.text:'—';
   if(truncEl) truncEl.style.display=(txt&&st.truncated)?'block':'none';
+}
+
+// ── Aperçu carte de visite (site internet / appli) ──
+function renderWpPhotos(){
+  const box=document.getElementById('wp-photos');
+  const empty=document.getElementById('wp-photos-empty');
+  if(!box) return;
+  box.innerHTML='';
+  const photos=carteAttachments['Photos']||[];
+  if(!photos.length){ if(empty) empty.style.display='block'; return; }
+  if(empty) empty.style.display='none';
+  photos.forEach(att=>{
+    const url=(att.thumbnails&&att.thumbnails.large&&att.thumbnails.large.url)||att.url;
+    const img=document.createElement('img');
+    img.src=url;
+    img.style.cssText='width:90px;height:90px;object-fit:cover;border-radius:6px;';
+    box.appendChild(img);
+  });
+}
+
+function updateWebPreview(){
+  const nomBar=(document.getElementById('name-bar')||{}).textContent||'';
+  const nom=(nomBar==='— MEMBRE —'||nomBar==='— SÉLECTIONNEZ UN MEMBRE —')?'—':nomBar;
+  const set=(id,v,dash)=>{const e=document.getElementById(id); if(e) e.textContent=(v==null||v==='')?(dash!==false?'—':''):v;};
+  set('wp-nom', nom);
+
+  const rue=(document.getElementById('cv-ro-rue')||{}).textContent||'';
+  const cp=(document.getElementById('cv-ro-cp')||{}).textContent||'';
+  const com=(document.getElementById('cv-ro-com')||{}).textContent||'';
+  const clean=v=>(v==='—'?'':v);
+  const adresseParts=[clean(rue), [clean(cp),clean(com)].filter(Boolean).join(' ')].filter(Boolean);
+  set('wp-adresse', adresseParts.length?adresseParts.join(' — '):'—');
+
+  const tel=clean((document.getElementById('cv-ro-tel')||{}).textContent||'');
+  set('wp-tel', tel?('📞 '+tel):'—');
+
+  const contact=clean((document.getElementById('cv-ro-contact')||{}).textContent||'');
+  set('wp-contact', contact||'—');
+
+  // Logo (carte de visite)
+  const logoImg=document.getElementById('wp-logo');
+  const logoEmpty=document.getElementById('wp-logo-empty');
+  const logoArr=carteAttachments['Logo carte de visite']||[];
+  if(logoImg && logoEmpty){
+    if(logoArr.length){
+      const att=logoArr[0];
+      const url=(att.thumbnails&&att.thumbnails.large&&att.thumbnails.large.url)||att.url;
+      logoImg.src=url;
+      logoImg.style.display='block';
+      logoEmpty.style.display='none';
+    } else {
+      logoImg.src='';
+      logoImg.style.display='none';
+      logoEmpty.style.display='flex';
+    }
+  }
+
+  // Description = accroche en gras (Cadre 1) + description complète (Cadre 2) à la suite
+  const accroche=gv('cv-desc-courte');
+  const description=gv('cv-desc-longue');
+  const accEl=document.getElementById('wp-desc-accroche');
+  if(accEl) accEl.textContent=accroche||'';
+  set('wp-description', description);
+
+  set('wp-horaires', gv('cv-horaires'));
+  set('wp-tarifs', gv('cv-tarifs'));
+  set('wp-avantage', gv('cv-avantage'));
+
+  renderWpPhotos();
+
+  // Vidéo
+  const videoUrl=gv('cv-video');
+  const embed=youTubeEmbedUrl(videoUrl);
+  const frame=document.getElementById('wp-video-frame');
+  const vEmpty=document.getElementById('wp-video-empty');
+  if(frame){
+    if(embed){ frame.src=embed; frame.style.display='block'; if(vEmpty) vEmpty.style.display='none'; }
+    else { frame.src=''; frame.style.display='none'; if(vEmpty) vEmpty.style.display='block'; }
+  }
 }
 
 function newMember(){
