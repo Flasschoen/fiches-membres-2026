@@ -914,7 +914,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
   <!-- ── ONGLET 1 : DESCRIPTION ── -->
   <div id="cv-tab-desc" class="cv-tab-panel active">
     <div class="two-col">
-      <!-- ── COLONNE GAUCHE : description, horaires, tarifs ── -->
+      <!-- ── COLONNE GAUCHE : description, horaires, tarifs, avantage Educpass ── -->
       <div>
         <div class="sec">📝 Description (Cadres 1 et 2)</div>
         <div class="fg">
@@ -926,23 +926,23 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fr"><div class="fl">Horaires et fermetures :</div><div class="fv"><textarea id="cv-horaires" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
           <div class="fr"><div class="fl">Tarifs, réservation, infos :</div><div class="fv"><textarea id="cv-tarifs" oninput="markCvDirty()" style="min-height:60px;"></textarea></div></div>
         </div>
-      </div>
-      <!-- ── COLONNE DROITE : affichage coupon (Cadre 5, scindé en 2 cadres le 2026-09-06) ── -->
-      <div>
-        <div class="sec" style="background:#c55a11;">🎫 Cadre 1 — Informations carte de visite (Avantage Educpass)</div>
+        <div class="sec" style="margin-top:7px;">🏷️ AVANTAGE EDUCPASS</div>
         <div class="fg">
-          <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte complet de l'avantage, affiché sur la carte de visite publique :</div></div>
+          <div class="fr"><div class="fl" style="min-width:100%;background:#eaf1fb;color:#2e5096;">Texte complet de l'avantage, affiché sur la carte de visite publique :</div></div>
           <div class="fr"><div class="fv">
             <textarea id="cv-avantage" oninput="markCvDirty();updateCouponPreview();" style="min-height:100px;" placeholder="ex: 1 entrée gratuite pour l'enseignant. Valable à partir du 1er septembre 2026 jusqu'au 31 décembre 2027."></textarea>
             <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Texte libre, sans limite — c'est l'information complète affichée sur la carte de visite (onglet « 🌐 Aperçu carte de visite »).</div>
           </div></div>
         </div>
-        <div class="sec" style="margin-top:7px;background:#c55a11;">🎟️ Cadre 2 — Affichage coupon (restreint, modifiable)</div>
+      </div>
+      <!-- ── COLONNE DROITE : affichage coupon (le 2026-09-06, l'Avantage Educpass a été déplacé dans la colonne gauche, sous Horaires) ── -->
+      <div>
+        <div class="sec" style="background:#c55a11;">🎟️ Affichage coupon</div>
         <div class="fg">
           <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte affiché sur l'écran du coupon-éclaireur :</div></div>
           <div class="fr"><div class="fv">
-            <textarea id="cv-avantage-coupon" oninput="markCvDirty();updateCouponPreview();" style="min-height:80px;" placeholder="Laissez vide pour reprendre automatiquement une version résumée du Cadre 1 ci-dessus."></textarea>
-            <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Contrôle total sur le texte visible sur le coupon (onglet « 📱 Aperçu coupon »). Laissez vide pour reprendre automatiquement une version résumée du Cadre 1.</div>
+            <textarea id="cv-avantage-coupon" oninput="markCvDirty();updateCouponPreview();" style="min-height:80px;" placeholder="Laissez vide pour reprendre automatiquement une version résumée de l'Avantage Educpass."></textarea>
+            <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Contrôle total sur le texte visible sur le coupon (onglet « 📱 Aperçu coupon »). Laissez vide pour reprendre automatiquement une version résumée de l'Avantage Educpass.</div>
           </div></div>
         </div>
         <div class="sec" style="margin-top:7px;">✅ Statut &amp; validation coupon</div>
