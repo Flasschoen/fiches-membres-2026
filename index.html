@@ -3068,7 +3068,12 @@ async function cvUploadFiles(fieldName, files, containerId){
         body:JSON.stringify({contentType:file.type||'application/octet-stream', file:base64, filename:file.name})
       }).then(r=>r.json());
       if(res.error) throw new Error((res.error.message||res.error)+' ("'+file.name+'")');
-      const updated=res.fields&&res.fields[fieldName];
+      // ⚠️ Piège Airtable : contrairement à l'API REST classique (api.airtable.com), l'endpoint
+      // d'upload direct (content.airtable.com) renvoie les champs de la réponse indexés par
+      // ID de champ (ex: "fldhidYDWVrOAKWZ5"), PAS par nom de champ (ex: "Photos"). Lire par nom
+      // renvoie toujours undefined et laisse croire à un échec silencieux alors que l'upload a
+      // réellement réussi côté Airtable.
+      const updated=res.fields&&(res.fields[fieldId]||res.fields[fieldName]);
       if(updated) carteAttachments[fieldName]=updated;
       uploadedCount++;
     }
