@@ -526,6 +526,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         </div>
         <div class="fr">
           <button type="button" id="btn-notecredit" class="btn" onclick="ouvrirSelectionNoteCredit()" style="background:#a94442;color:#fff;padding:4px 10px;font-size:11px;white-space:nowrap;">↩️ Note de crédit (annuler une facture)</button>
+          <button type="button" id="btn-notecredit-libre" class="btn" onclick="ouvrirChoixEntiteNoteCreditLibre()" style="background:#a94442;color:#fff;padding:4px 10px;font-size:11px;white-space:nowrap;margin-left:4px;">↩️ Note de crédit libre</button>
         </div>
       </div>
 
@@ -1247,6 +1248,13 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
       </div>
       <button class="btn" onclick="exportFiltered()" style="background:#217346;color:#fff;padding:4px 11px;font-size:12px;">📤 Exporter CSV</button>
       <button class="btn" id="btn-export-sel" onclick="exportSelected()" style="background:#7b2d8b;color:#fff;padding:4px 11px;font-size:12px;display:none;">📋 Exporter sélection (<span id="sel-count">0</span>)</button>
+      <!-- Export "fiches contact" (2026-09-08, demande de Marc) : format dédié pour les
+           envois par code (ex: filtrer sur CODE puis exporter les coordonnées du contact
+           responsable de chaque attraction). Colonnes : Enseigne, Nom attraction, Responsable
+           (Contact 1), Rue et n°, Code postal, Localité, Email responsable, GSM/Tél
+           responsable, Agent. Ne remplace pas "Exporter CSV" (colonnes différentes, usage
+           différent) — bouton séparé. -->
+      <button class="btn" onclick="exportFichesContact()" style="background:#0e7c86;color:#fff;padding:4px 11px;font-size:12px;">📇 Exporter fiches contact</button>
       <!-- Bascule "Avec carte de visite" (2026-09-06, demande de Marc) : filtre la liste pour
            n'afficher que les membres ayant une fiche Carte de visite liée (champ MEMBRES
            "CARTE DE VISITE" non vide). Un second clic annule le filtre. -->
@@ -1264,20 +1272,19 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <th>N°</th>
           <th>ENSEIGNE</th>
           <th>ATTRACTION / MUSÉE</th>
-          <th>CATÉGORIE</th>
           <th>COMMUNE</th>
-          <th>PROVINCE</th>
           <th>CODE</th>
           <th style="width:40px;text-align:center;">TRI 1</th>
           <th style="width:40px;text-align:center;">TRI 2</th>
           <th style="width:40px;text-align:center;">TRI 3</th>
-          <th style="width:55px;text-align:center;">PROFS</th>
-          <th>AGENT</th>
-          <th>LANGUE</th>
           <th>COTIS. BE</th>
           <th>ÉCHÉANCE BE</th>
         </tr>
       </thead>
+      <!-- Colonnes PROVINCE / CATÉGORIE / PROFS / AGENT / LANGUE retirées de l'affichage
+           le 2026-09-08 à la demande de Marc (écran trop chargé) — les valeurs restent
+           bien sûr disponibles dans les fiches et dans les exports CSV (l'export "fiches
+           contact" ci-dessous inclut d'ailleurs AGENT). -->
       <tbody id="rch-tbody"></tbody>
     </table>
   </div>
@@ -2633,16 +2640,11 @@ function buildTable(){
     tr.appendChild(td(f['N° MEMBRE']||f['Nº de membre']||f['﻿N°']||f['N°']||''));
     tr.appendChild(td(f['Enseigne commerciale']||f['ENSEIGNE']||''));
     tr.appendChild(td(f['NOM ATTRACTION']||''));
-    tr.appendChild(td(f['CATÉGORIE']||''));
     tr.appendChild(td(f['COMMUNE']||''));
-    tr.appendChild(td(f['PROVINCE']||''));
     tr.appendChild(td(f['CODE']!==undefined&&f['CODE']!==null?String(f['CODE']):''));
     tr.appendChild(td(f['Clé de TRI 2']!==undefined&&f['Clé de TRI 2']!==null?String(f['Clé de TRI 2']):'',true));
     tr.appendChild(td(f['Clé de TRI 3']!==undefined&&f['Clé de TRI 3']!==null?String(f['Clé de TRI 3']):'',true));
     tr.appendChild(td(f['Clé de TRI 4']!==undefined&&f['Clé de TRI 4']!==null?String(f['Clé de TRI 4']):'',true));
-    tr.appendChild(td(f['PROFS-CONTACTS']!==undefined&&f['PROFS-CONTACTS']!==null?String(f['PROFS-CONTACTS']):'',true));
-    tr.appendChild(td(f['AGENT']||''));
-    tr.appendChild(td(f['LANGUE']||''));
     tr.appendChild(td(f['COTISATION BE']||''));
     tr.appendChild(td(f['ÉCHÉANCE BE']?f['ÉCHÉANCE BE'].substring(0,10):''));
     tbody.appendChild(tr);
@@ -2710,11 +2712,11 @@ async function exportSelected(){
     }catch(e){if(e.name==='AbortError')return;}
   }
   // Fallback download standard
-  const url=URL.createObjectURL(blob);
+  const url=window.URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;a.download=fname;
   document.body.appendChild(a);a.click();document.body.removeChild(a);
-  URL.revokeObjectURL(url);
+  window.URL.revokeObjectURL(url);
 }
 
 function exportRecap(){
@@ -2736,11 +2738,11 @@ function exportRecap(){
   });
   const csv='﻿'+[hdr,...dataRows].join('\r\n');
   const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
-  const url=URL.createObjectURL(blob);
+  const url=window.URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;
   a.download='recap_workshop_profs'+profsVal+'_'+new Date().toISOString().slice(0,10)+'.csv';
-  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  document.body.appendChild(a);a.click();document.body.removeChild(a);window.URL.revokeObjectURL(url);
 }
 
 async function exportFiltered(){
@@ -2788,11 +2790,63 @@ async function exportFiltered(){
     }catch(e){if(e.name==='AbortError')return;}
   }
   // Fallback download standard
-  const url=URL.createObjectURL(blob);
+  const url=window.URL.createObjectURL(blob);
   const a=document.createElement('a');
   a.href=url;a.download=fname;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);URL.revokeObjectURL(url);
+  document.body.appendChild(a);a.click();document.body.removeChild(a);window.URL.revokeObjectURL(url);
   setSt(`✅ Export ${lastFiltered.length} membres — voir Téléchargements`);
+  setTimeout(()=>setSt(`✅ ${members.length} membres chargés`),4000);
+}
+
+// Export "fiches contact" (2026-09-08, demande de Marc) : colonnes dédiées aux envois
+// vers le responsable de chaque attraction, distinctes de "Exporter CSV" (colonnes gestion
+// interne). Le "responsable" = CONTACT 1 de la fiche (Nom / E-mail 1 / GSM 1) ; le GSM/Tél
+// retombe sur le Tél. Général si GSM 1 est vide (même logique de repli que pour la fiche
+// de confirmation Workshop, voir plus haut dans ce fichier).
+async function exportFichesContact(){
+  if(!lastFiltered||lastFiltered.length===0){
+    setSt('⚠️ Aucun membre à exporter — chargez la liste d\'abord');
+    setTimeout(()=>setSt(members.length?`✅ ${members.length} membres chargés`:''),4000);
+    return;
+  }
+  const cols=[
+    ['ENSEIGNE',r=>String(r['Enseigne commerciale']||r['ENSEIGNE']||'')],
+    ['NOM ATTRACTION',r=>String(r['NOM ATTRACTION']||'')],
+    ['RESPONSABLE',r=>String(r['CONTACT']||r['Responsable']||r['RESPONSABLE']||'')],
+    ['RUE ET N°',r=>String(r['RUE']||r['Rue']||'')],
+    ['CODE POSTAL',r=>String(r['CP']||r['CODE POSTAL']||'')],
+    ['LOCALITÉ',r=>String(r['COMMUNE']||'')],
+    ['EMAIL RESPONSABLE',r=>String(r['EMAIL_CONTACT']||r['EMAIL']||'')],
+    ['GSM/TÉL RESPONSABLE',r=>String(r['GSM']||r['TÉLÉPHONE']||'')],
+    ['AGENT',r=>String(r['AGENT']||'')],
+  ];
+  const esc=v=>'"'+String(v).replace(/"/g,'""')+'"';
+  const hdr=cols.map(c=>esc(c[0])).join(';');
+  const rows=lastFiltered.map(m=>cols.map(c=>esc(c[1](m.fields))).join(';'));
+  const csv='﻿'+[hdr,...rows].join('\r\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8;'});
+  const fname='fiches_contact_'+new Date().toISOString().slice(0,10)+'_'+lastFiltered.length+'m.csv';
+  if(window.showSaveFilePicker){
+    try{
+      const fh=await window.showSaveFilePicker({
+        suggestedName:fname,
+        types:[{description:'Fichier CSV',accept:{'text/csv':['.csv']}}],
+        startIn:'desktop'
+      });
+      const w=await fh.createWritable();
+      await w.write(blob);
+      await w.close();
+      setSt(`✅ Export fiches contact ${lastFiltered.length} membres enregistré`);
+      setTimeout(()=>setSt(`✅ ${members.length} membres chargés`),3000);
+      return;
+    }catch(e){if(e.name==='AbortError')return;}
+  }
+  // Fallback download standard
+  const url=window.URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.download=fname;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);window.URL.revokeObjectURL(url);
+  setSt(`✅ Export fiches contact ${lastFiltered.length} membres — voir Téléchargements`);
   setTimeout(()=>setSt(`✅ ${members.length} membres chargés`),4000);
 }
 
@@ -4299,22 +4353,32 @@ function factBuildDoc(numero){
   const numeroTxt = numero || '(aperçu — n° attribué à la génération)';
   const isNC = (_factDocKind==='notecredit');
   const isPub = (_factDocKind==='publicite');
-  const editable = (numero===null) && !isNC; // une note de crédit est toujours "totale" (2026-08-22) : jamais de lignes modifiables — la facture publicité, elle, reste modifiable comme une facture normale
+  // 2026-09-07 (demande de Marc) : une note de crédit LIBRE (créée via "Note de crédit
+  // libre", _factCreditRef===null) n'a aucune facture à recopier — ses lignes ET son
+  // "Concerne" doivent donc être librement modifiables, comme une facture normale. Une
+  // note de crédit LIÉE (créée via "Note de crédit (annuler une facture)", _factCreditRef
+  // rempli) reste, elle, toujours "totale" et bloquée (choix du 2026-08-22, sécurité
+  // comptable : elle doit annuler EXACTEMENT la facture visée).
+  const isNCLibre = isNC && !_factCreditRef;
+  const editable = (numero===null) && (!isNC || isNCLibre); // la facture publicité reste modifiable comme une facture normale
 
   const montantHT = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
   const {tvaLabel, tvaAmountStr, totalAPayer, mentionBox} = factComputeTvaBlock(montantHT);
   // 2026-09-02 (demande de Marc) : le texte "Concerne" est désormais modifiable à la main
   // pour les factures normales ET les factures publicité VM (pré-rempli avec le texte par
-  // défaut habituel) — SAUF pour une note de crédit, qui doit toujours rester liée à la
-  // facture qu'elle annule (texte fixe, jamais éditable). _factConcerneTxt (global) garde la
-  // valeur tapée par Marc tant que l'aperçu reste ouvert (voir factOnConcerneInput) ; une fois
-  // la facture générée (numero !== null), le texte est figé comme les lignes du tableau.
+  // défaut habituel) — SAUF pour une note de crédit LIÉE, qui doit toujours rester liée à
+  // la facture qu'elle annule (texte fixe, jamais éditable). Une note de crédit LIBRE
+  // (2026-09-07) suit au contraire la même règle que les factures normales : modifiable,
+  // texte par défaut vide (aucun motif automatique n'a de sens sans facture à recopier).
+  // _factConcerneTxt (global) garde la valeur tapée par Marc tant que l'aperçu reste ouvert
+  // (voir factOnConcerneInput) ; une fois le document généré (numero !== null), le texte
+  // est figé comme les lignes du tableau.
   const concerneNC = 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '');
   const concerneDefault = isPub
     ? 'Insertions publicitaires d\'EDUCPASS'
-    : 'Adhésion 12 mois'+(echFr?' > '+echFr:'');
+    : (isNCLibre ? '' : 'Adhésion 12 mois'+(echFr?' > '+echFr:''));
   const concerneVal = (_factConcerneTxt!==null && _factConcerneTxt!==undefined) ? _factConcerneTxt : concerneDefault;
-  const concerneHtml = isNC
+  const concerneHtml = (isNC && !isNCLibre)
     ? `<b>${concerneNC}</b>`
     : (editable
         ? `<b class="fact-editable" contenteditable="true" oninput="factOnConcerneInput(this)">${factEsc(concerneVal)}</b>`
@@ -4362,10 +4426,13 @@ function factBuildDoc(numero){
       </tbody>
     </table>
     ${editable?'<div class="fact-noprint" style="margin-top:6px;"><button type="button" class="fact-addline-btn" onclick="factAddLine()">+ Ajouter une ligne</button></div>':''}
-    ${isNC ? `
+    ${isNC ? (_factCreditRef ? `
     <div class="fact-cgv" style="margin-top:18px;">
-      Cette note de crédit annule intégralement la facture n° ${factEsc(_factCreditRef ? _factCreditRef.numero : '')}. Elle doit être conservée avec la facture correspondante à des fins comptables.
+      Cette note de crédit annule intégralement la facture n° ${factEsc(_factCreditRef.numero)}. Elle doit être conservée avec la facture correspondante à des fins comptables.
     </div>` : `
+    <div class="fact-cgv" style="margin-top:18px;">
+      Cette note de crédit est émise indépendamment de toute facture. Elle doit être conservée à des fins comptables.
+    </div>`) : `
     <div style="text-align:right;font-size:13px;margin-top:6px;">Échéance : <b>${echeancePaieFr}</b></div>
     ${_factType==='VM'?'<div style="margin-top:14px;font-size:13px;"><b>A partir du 01/09/2026, VM-COMMUNICATION devient la Régie Publicitaire pour toutes les éditions d\'EDUCPASS.</b></div>':''}
     <div style="margin-top:18px;font-size:13px;">Merci d'effectuer votre paiement sur le compte ci-dessous.</div>
@@ -4487,6 +4554,48 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   fermerSelectionNoteCredit();
   document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
   document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — cette note de crédit annule intégralement la facture n° '+numero+'.';
+  document.getElementById('btn-fact-generer').textContent = '↩️ Générer la note de crédit (attribue le n° définitif)';
+  document.getElementById('btn-fact-generer').style.display='';
+  document.getElementById('btn-fact-generer').disabled=false;
+  document.getElementById('btn-fact-print').style.display='none';
+  showView('facture');
+  factShowDirStatus();
+  factShowNumeroPrevu();
+}
+
+// ══════════════════════════════════════
+// NOTE DE CRÉDIT LIBRE (2026-09-07, demande de Marc : "il faudrait que je puisse éditer
+// les notes de crédit librement sur Educpass et VM communication et non pas liée à une
+// facture"). Contrairement à demarrerNoteCredit() ci-dessus (qui exige de choisir une
+// facture existante à annuler intégralement, _factCreditRef non-null, lignes bloquées),
+// ici _factCreditRef reste null : le motif ("Concerne") et les lignes sont librement
+// modifiables comme sur une facture normale (voir factBuildDoc(), variable isNCLibre).
+// Même compteur/numérotation que les notes de crédit liées (cfg.ctrFieldNC/formatNumNC),
+// même registre Airtable — seul le champ "Réf. facture créditée" reste vide (accord de
+// Marc, AskUserQuestion du 2026-09-07 : mêmes 4 entités BE/LUX/FR/VM, même compteur).
+function ouvrirChoixEntiteNoteCreditLibre(){
+  if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
+  document.getElementById('modal-nc-libre').style.display = 'flex';
+}
+function fermerChoixEntiteNoteCreditLibre(){
+  document.getElementById('modal-nc-libre').style.display = 'none';
+}
+function demarrerNoteCreditLibre(type){
+  const cfg = FACT_ENTITES[type];
+  _factType = type;
+  _factNumero = null;
+  _factDocKind = 'notecredit';
+  _factCreditRef = null; // note de crédit LIBRE : aucune facture créditée
+  _factConcerneTxt = ''; // motif tapé librement par Marc, pas de texte fixe
+  _factLines = [{
+    date: factDateFR(factTodayISO()),
+    libelle: '',
+    qte: 1,
+    prixUnit: 0
+  }];
+  fermerChoixEntiteNoteCreditLibre();
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
+  document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu — note de crédit libre ('+cfg.label+') : complétez le motif et les lignes (montants négatifs) puis cliquez sur "Générer".';
   document.getElementById('btn-fact-generer').textContent = '↩️ Générer la note de crédit (attribue le n° définitif)';
   document.getElementById('btn-fact-generer').style.display='';
   document.getElementById('btn-fact-generer').disabled=false;
@@ -5096,9 +5205,9 @@ function factGenerateUBLCreditNote(numero, cfg, nom, rue, cp, com, tva, montantA
   <cbc:IssueDate>${todayISO}</cbc:IssueDate>
   <cbc:CreditNoteTypeCode>381</cbc:CreditNoteTypeCode>
   <cbc:DocumentCurrencyCode>EUR</cbc:DocumentCurrencyCode>
-  <cac:BillingReference>
+  ${refNumero ? `<cac:BillingReference>
     <cac:InvoiceDocumentReference><cbc:ID>${factEsc(refNumero)}</cbc:ID></cac:InvoiceDocumentReference>
-  </cac:BillingReference>
+  </cac:BillingReference>` : ''}
   <cac:AccountingSupplierParty>
     <cac:Party>
       <cbc:EndpointID schemeID="${FACT_PEPPOL_EP_SCHEME}">${cfg.peppolEpId}</cbc:EndpointID>
@@ -5303,7 +5412,11 @@ async function genererNoteCredit(){
   document.getElementById('fact-numero-prevu').textContent='';
   document.getElementById('fact-save-msg').textContent='';
   try{
-    if(!_factCreditRef || !_factCreditRef.numero){ throw new Error('Facture créditée introuvable.'); }
+    // 2026-09-07 : la note de crédit peut désormais être LIBRE (_factCreditRef===null,
+    // voir demarrerNoteCreditLibre()) — l'ancien blocage "Facture créditée introuvable"
+    // exigeait systématiquement une facture liée, ce qui empêchait toute note de crédit
+    // libre ; retiré sur demande explicite de Marc (accord donné, AskUserQuestion du
+    // 2026-09-07). Le champ "Réf. facture créditée" reste simplement vide dans ce cas.
     await factPreauthDirs(_factType); // TOUT DE SUITE, geste utilisateur encore frais (2026-09-01)
     const cfg=FACT_ENTITES[_factType];
     const ctr = await factGetCounter();
@@ -5313,7 +5426,7 @@ async function genererNoteCredit(){
     const numero = cfg.formatNumNC(next);
     _factNumero = numero;
 
-    const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0); // négatif (toujours totale)
+    const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0); // négatif (liée : toujours totale ; libre : tapée librement par Marc)
     const todayISO = factTodayISO();
     const agent = sessionStorage.getItem('auth_agent')||'';
     const nom = gv('f-attr')||gv('f-ens')||'';
@@ -5333,11 +5446,13 @@ async function genererNoteCredit(){
       'Échéance paiement': todayISO,
       'Généré par': agent,
       'Type document': 'Note de crédit',
-      'Réf. facture créditée': _factCreditRef.numero
+      'Réf. facture créditée': _factCreditRef ? _factCreditRef.numero : ''
     });
 
     document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
-    document.getElementById('fact-statut-msg').textContent = '✅ Note de crédit n° '+numero+' générée et enregistrée (annule la facture n° '+_factCreditRef.numero+').';
+    document.getElementById('fact-statut-msg').textContent = _factCreditRef
+      ? ('✅ Note de crédit n° '+numero+' générée et enregistrée (annule la facture n° '+_factCreditRef.numero+').')
+      : ('✅ Note de crédit libre n° '+numero+' générée et enregistrée.');
     document.getElementById('btn-fact-generer').style.display='none';
     document.getElementById('btn-fact-print').style.display='';
 
@@ -5559,6 +5674,25 @@ document.addEventListener('DOMContentLoaded', function(){
     <div id="nc-liste-container"></div>
     <div style="display:flex;justify-content:flex-end;margin-top:14px;">
       <button type="button" class="nc-btn-fermer" onclick="fermerSelectionNoteCredit()">Fermer</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ MODAL CHOIX ENTITÉ — NOTE DE CRÉDIT LIBRE (2026-09-07, demande de Marc : pouvoir
+     éditer librement une note de crédit sur Educpass/VM-COMMUNICATION sans qu'elle soit
+     liée à une facture précise) ═══ -->
+<div id="modal-nc-libre" class="modal-rr" onclick="if(event.target===this)fermerChoixEntiteNoteCreditLibre()">
+  <div class="modal-nc-box" style="min-width:320px;max-width:380px;">
+    <h3>↩️ Note de crédit libre — choisir l'entité</h3>
+    <div style="font-size:12px;color:#666;margin-bottom:14px;">Cette note de crédit n'annule aucune facture précise — le motif ("Concerne") et les lignes se remplissent librement, comme sur une facture normale.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;">
+      <button type="button" class="nc-btn-crediter" style="text-align:left;padding:8px 12px;" onclick="demarrerNoteCreditLibre('BE')">🧾 EDUCPASS BE</button>
+      <button type="button" class="nc-btn-crediter" style="text-align:left;padding:8px 12px;" onclick="demarrerNoteCreditLibre('LU')">🧾 EDUCPASS LUX</button>
+      <button type="button" class="nc-btn-crediter" style="text-align:left;padding:8px 12px;" onclick="demarrerNoteCreditLibre('FR')">🧾 EDUCPASS FRANCE</button>
+      <button type="button" class="nc-btn-crediter" style="text-align:left;padding:8px 12px;" onclick="demarrerNoteCreditLibre('VM')">🧾 VM-COMMUNICATION</button>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:14px;">
+      <button type="button" class="nc-btn-fermer" onclick="fermerChoixEntiteNoteCreditLibre()">Fermer</button>
     </div>
   </div>
 </div>
