@@ -954,8 +954,8 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
         <div class="sec" style="background:#c55a11;">🎟️ Affichage coupon</div>
         <div class="fg">
           <div class="fr"><div class="fl" style="min-width:100%;background:#fff3e6;color:#c55a11;">Texte affiché sur l'écran du coupon-éclaireur :</div></div>
-          <div class="fr"><div class="fv">
-            <textarea id="cv-avantage-coupon" oninput="markCvDirty();updateCouponPreview();" style="min-height:80px;" placeholder="Laissez vide pour reprendre automatiquement une version résumée de l'Avantage Educpass."></textarea>
+          <div class="fr"><div class="fv" style="background:#fff200;border-radius:6px;padding:8px 10px;">
+            <textarea id="cv-avantage-coupon" oninput="markCvDirty();updateCouponPreview();" style="min-height:80px;background:#fff;" placeholder="Laissez vide pour reprendre automatiquement une version résumée de l'Avantage Educpass."></textarea>
             <div style="font-size:11px;color:#888;margin-top:2px;">ℹ️ Contrôle total sur le texte visible sur le coupon (onglet « 📱 Aperçu coupon »). Laissez vide pour reprendre automatiquement une version résumée de l'Avantage Educpass.</div>
           </div></div>
         </div>
@@ -1096,7 +1096,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
             <img id="cvp-logo" src="" style="width:54%;object-fit:cover;border-radius:4px;display:none;">
             <div id="cvp-logo-empty" style="width:54%;min-height:115px;border:1px dashed #ccc;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:9px;color:#aaa;text-align:center;">Pas de logo coupon</div>
             <div style="flex:1;display:flex;align-items:center;justify-content:center;text-align:center;">
-              <div id="cvp-avantage" style="font-size:12px;font-weight:700;color:#c0392b;white-space:pre-line;">—</div>
+              <div id="cvp-avantage" style="font-size:12px;font-weight:700;color:#c0392b;white-space:pre-line;background:#fff200;border-radius:6px;padding:8px 10px;">—</div>
             </div>
           </div>
           <div id="cvp-avantage-truncated" style="display:none;font-size:8px;color:#999;text-align:center;padding:0 16px 6px;">(texte résumé pour l'affichage sur le coupon — version complète dans l'onglet Description)</div>
@@ -1896,6 +1896,19 @@ async function loadAll(){
           const _btnPubVM=document.getElementById('btn-fact-pub-vm');
           if(_btnPubVM && _btnPubVM.style.display!=='none') openFacturePublicite('VM');
           else console.warn('[autoSel] ?fact=vm ignoré : bouton Facture Publicité VM non disponible pour ce membre.');
+        }
+        // 2026-09-09 (demande de Marc) : ?cv=1 en plus de ?id=recXXX ouvre directement l'onglet
+        // "Carte de visite" du membre, pour permettre un clic depuis CARTES-VISITE.html (bouton
+        // "🎪 Fichier Attractions" sur une fiche) jusqu'à la fiche complète, sans étape intermédiaire.
+        // ?cvtab=web ou ?cvtab=coupon (ajouté le même jour, en soirée) va plus loin : bascule en
+        // plus directement sur l'onglet "🌐 Aperçu carte de visite" ou "📱 Aperçu coupon" — pour
+        // les boutons "Afficher la carte de visite" / "Afficher le coupon" de CARTES-VISITE.html,
+        // qui réutilisent ces aperçus déjà construits plutôt que d'en refaire des nouveaux.
+        if(_params.get('cv')==='1'){
+          await openCarteVisite();
+          const _cvTab = _params.get('cvtab');
+          if(_cvTab==='web') showCarteTab('cv-tab-webpreview');
+          else if(_cvTab==='coupon') showCarteTab('cv-tab-preview');
         }
       } else {
         // ── Restauration depuis sessionStorage (refresh de page) ────────────
