@@ -1804,9 +1804,36 @@ function nq(s){
 //  API HELPERS
 // ══════════════════════════════════════
 const hdrs={'Authorization':'Bearer '+TK};
+
+// ── Migration temporaire du 2026-09-18 ──
+// L'ancien jeton Airtable (TK ci-dessus) a été supprimé le 2026-09-17 (il était partagé
+// avec CARTES-VISITE.html/COUPONS.html, sécurisés entre-temps via ce même Worker) : toute
+// requête utilisant `hdrs` échoue désormais (401). En attendant la migration complète
+// (écriture des fiches / facturation, phase 2), les LECTURES (recherche, affichage d'un
+// membre, carte de visite) passent par ce Worker déjà déployé et sécurisé, qui connaît un
+// jeton Airtable valide côté serveur — jamais exposé au navigateur. Le Worker n'expose que
+// GET /records/:tableId (liste/filtre, pas d'ID dans le chemin), donc un appel par ID
+// (p commençant par '/') est traduit ici en filtre RECORD_ID().
+const PROXY_BASE='https://educpass-attractions-proxy.marc-flasschoen.workers.dev';
+const PROXY_KEY='s0usEmEVnof0Js74MgIIeSGTD6DY5e4M';
+const proxyHdrs={'X-Proxy-Key':PROXY_KEY};
+async function _proxyGet(tableId,p){
+  let realP=p;
+  let singleId=null;
+  if(p.startsWith('/')){
+    singleId=p.slice(1);
+    realP='?filterByFormula='+encodeURIComponent(`RECORD_ID()='${singleId}'`);
+  }
+  const r=await fetch(PROXY_BASE+'/records/'+tableId+realP,{headers:proxyHdrs});
+  const d=await r.json();
+  if(singleId){
+    return (d.records&&d.records[0])||{error:{message:'Enregistrement introuvable (id '+singleId+')'}};
+  }
+  return d;
+}
+
 async function atGet(p=''){
-  const r=await fetch(URL+p,{headers:hdrs});
-  return r.json();
+  return _proxyGet(T,p);
 }
 async function atPatch(id,fields){
   const r=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
@@ -1821,8 +1848,7 @@ async function atPost(fields){
 
 // ── Helpers table CARTE DE VISITE ──
 async function cvGet(p=''){
-  const r=await fetch(CARTE_URL+p,{headers:hdrs});
-  return r.json();
+  return _proxyGet(CARTE_TBL,p);
 }
 async function cvPatch(id,fields){
   const r=await fetch(CARTE_URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
