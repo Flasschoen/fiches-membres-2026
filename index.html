@@ -1835,13 +1835,19 @@ async function _proxyGet(tableId,p){
 async function atGet(p=''){
   return _proxyGet(T,p);
 }
+// ── Migration du 2026-09-18 (suite, écriture) ──
+// Même cause que pour atGet/cvGet (voir plus haut) : PATCH/POST/DELETE utilisaient
+// l'ancien jeton mort. Le Worker a été étendu pour accepter aussi l'écriture sur la table
+// Membres (PATCH/POST en lot, format déjà utilisé ici — body {records:[...]} — et DELETE
+// par id), donc SEULE la destination change ci-dessous ; le format des appels/réponses
+// reste identique à avant (aucun autre endroit du fichier à modifier).
 async function atPatch(id,fields){
-  const r=await fetch(URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
+  const r=await fetch(PROXY_BASE+'/records/'+T,{method:'PATCH',headers:{...proxyHdrs,'Content-Type':'application/json'},
     body:JSON.stringify({records:[{id,fields}],typecast:true})});
   return r.json();
 }
 async function atPost(fields){
-  const r=await fetch(URL,{method:'POST',headers:{...hdrs,'Content-Type':'application/json'},
+  const r=await fetch(PROXY_BASE+'/records/'+T,{method:'POST',headers:{...proxyHdrs,'Content-Type':'application/json'},
     body:JSON.stringify({records:[{fields}],typecast:true})});
   return r.json();
 }
@@ -1851,18 +1857,18 @@ async function cvGet(p=''){
   return _proxyGet(CARTE_TBL,p);
 }
 async function cvPatch(id,fields){
-  const r=await fetch(CARTE_URL,{method:'PATCH',headers:{...hdrs,'Content-Type':'application/json'},
+  const r=await fetch(PROXY_BASE+'/records/'+CARTE_TBL,{method:'PATCH',headers:{...proxyHdrs,'Content-Type':'application/json'},
     body:JSON.stringify({records:[{id,fields}],typecast:true})});
   return r.json();
 }
 async function cvPost(fields){
-  const r=await fetch(CARTE_URL,{method:'POST',headers:{...hdrs,'Content-Type':'application/json'},
+  const r=await fetch(PROXY_BASE+'/records/'+CARTE_TBL,{method:'POST',headers:{...proxyHdrs,'Content-Type':'application/json'},
     body:JSON.stringify({records:[{fields}],typecast:true})});
   return r.json();
 }
 
 async function atDelete(id){
-  const r=await fetch(URL+'/'+id,{method:'DELETE',headers:hdrs});
+  const r=await fetch(PROXY_BASE+'/records/'+T+'/'+id,{method:'DELETE',headers:proxyHdrs});
   return r.json();
 }
 
