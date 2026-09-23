@@ -304,7 +304,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
   <span style="margin-left:14px;font-weight:700;color:#1e3a6e;font-size:12px;white-space:nowrap;">👤 Agent :</span>
   <select id="f-agent" onchange="markDirty();updateDelBtn()" style="margin-left:4px;padding:3px 6px;font-size:12px;font-weight:700;border:2px solid #c55a11;border-radius:4px;background:#fff8f0;color:#1e3a6e;min-width:100px;">
     <option value="">— OBLIGATOIRE —</option>
-    <option>MARC</option><option>MAÏTE</option><option>PASCAL</option><option>VANESSA</option>
+    <option>MARC</option><option>MAÏTE</option><option>ANTOINE</option><option>VANESSA</option>
   </select>
   <a href="openplanning:" class="btn" style="background:#d35400;color:#fff;margin-left:10px;text-decoration:none;" title="Ouvrir le dossier PLANNING (protocole Windows — lancer INSTALLER_PROTOCOLE_PLANNING.reg une fois)">📁 PLANNING</a>
   <span id="dirty-indicator" style="margin-left:10px;color:#c55a11;font-weight:700;font-size:12px;display:none;">● Non sauvegardé</span>
@@ -546,7 +546,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           <div class="fl" style="min-width:100px;">Effectué par :</div>
           <div class="fv">
             <select id="f-majp" onchange="markDirty()" style="width:110px;">
-              <option value="">—</option><option>MARC</option><option>MAÏTE</option><option>PASCAL</option><option>VANESSA</option>
+              <option value="">—</option><option>MARC</option><option>MAÏTE</option><option>ANTOINE</option><option>VANESSA</option>
             </select>
           </div>
         </div>
@@ -3262,6 +3262,11 @@ function fileToBase64(file){
 // Upload direct depuis le PC de Marc (glisser-déposer ou clic) vers Airtable — remplace
 // l'ancien ajout par URL. Utilise l'endpoint content.airtable.com/.../uploadAttachment qui
 // accepte le contenu du fichier en base64, sans avoir besoin d'un hébergement intermédiaire.
+// Migré le 2026-09-22 vers le Worker "educpass-attractions-proxy" (voir _proxyGet/atWrite
+// plus haut) : cet upload utilisait encore l'ancien jeton direct (TK), resté cassé après la
+// migration du 2026-09-18 qui n'avait couvert que la lecture/écriture des fiches, pas l'envoi
+// de logos/photos. Le Worker relaie l'appel à content.airtable.com côté serveur, sans exposer
+// de jeton au navigateur.
 async function cvUploadFiles(fieldName, files, containerId){
   files=(files||[]).filter(Boolean);
   if(!files.length) return;
@@ -3279,10 +3284,10 @@ async function cvUploadFiles(fieldName, files, containerId){
       }
       if(status) status.textContent='⏳ Envoi de "'+file.name+'"...';
       const base64=await fileToBase64(file);
-      const uploadUrl='https://content.airtable.com/v0/'+B+'/'+curCarteId+'/'+fieldId+'/uploadAttachment';
+      const uploadUrl=PROXY_BASE+'/upload/'+curCarteId+'/'+encodeURIComponent(fieldId)+'/uploadAttachment';
       const res=await fetch(uploadUrl,{
         method:'POST',
-        headers:{'Authorization':'Bearer '+TK,'Content-Type':'application/json'},
+        headers:{...proxyHdrs,'Content-Type':'application/json'},
         body:JSON.stringify({contentType:file.type||'application/octet-stream', file:base64, filename:file.name})
       }).then(r=>r.json());
       if(res.error) throw new Error((res.error.message||res.error)+' ("'+file.name+'")');
@@ -5572,7 +5577,7 @@ ${pages}
 const AGENT_PINS_DEFAULT = {
   'MARC':    '1111',
   'MAÏTE':   '2222',
-  'PASCAL':  '3333',
+  'ANTOINE':  '3333',
   'VANESSA': '4444'
 };
 // Charger depuis localStorage si MARC les a déjà modifiés
@@ -5624,7 +5629,7 @@ function showGestionPins(){
   if(sessionStorage.getItem('auth_agent')!=='MARC') return;
   document.getElementById('pm-marc').value    = AGENT_PINS['MARC']    || '';
   document.getElementById('pm-maite').value   = AGENT_PINS['MAÏTE']   || '';
-  document.getElementById('pm-pascal').value  = AGENT_PINS['PASCAL']  || '';
+  document.getElementById('pm-antoine').value  = AGENT_PINS['ANTOINE']  || '';
   document.getElementById('pm-vanessa').value = AGENT_PINS['VANESSA'] || '';
   document.getElementById('pm-msg').textContent = '';
   document.getElementById('overlay-pin-mgr').classList.remove('hidden');
@@ -5636,7 +5641,7 @@ function saveGestionPins(){
   const pins = {
     'MARC':    document.getElementById('pm-marc').value.trim(),
     'MAÏTE':   document.getElementById('pm-maite').value.trim(),
-    'PASCAL':  document.getElementById('pm-pascal').value.trim(),
+    'ANTOINE':  document.getElementById('pm-antoine').value.trim(),
     'VANESSA': document.getElementById('pm-vanessa').value.trim(),
   };
   for(const [agent, pin] of Object.entries(pins)){
@@ -5680,7 +5685,7 @@ document.addEventListener('DOMContentLoaded', function(){
     <h2>🔑 Gestion des codes PIN</h2>
     <div class="pin-row"><label>MARC :</label><input type="password" id="pm-marc" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
     <div class="pin-row"><label>MAÏTE :</label><input type="password" id="pm-maite" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
-    <div class="pin-row"><label>PASCAL :</label><input type="password" id="pm-pascal" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
+    <div class="pin-row"><label>ANTOINE :</label><input type="password" id="pm-antoine" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
     <div class="pin-row"><label>VANESSA :</label><input type="password" id="pm-vanessa" maxlength="4" inputmode="numeric" placeholder="••••" autocomplete="off"></div>
     <div class="pin-mgr-msg" id="pm-msg"></div>
     <div class="pin-mgr-btns">
@@ -5699,7 +5704,7 @@ document.addEventListener('DOMContentLoaded', function(){
       <option value="">— Sélectionnez —</option>
       <option>MARC</option>
       <option>MAÏTE</option>
-      <option>PASCAL</option>
+      <option>ANTOINE</option>
       <option>VANESSA</option>
     </select>
     <label>Code PIN (4 chiffres) :</label>
