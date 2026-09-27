@@ -756,14 +756,14 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           </thead>
           <tbody>
             <tr>
-              <td><input type="checkbox" id="p-nlm1" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-nlm1" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-nlm-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
                 <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
                 <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp1" onchange="markDirty();updateFactureButtons()"></td>
               <td style="background:#eef4fb"><select id="p-nlp-per1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
@@ -772,14 +772,14 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar1" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-nlm2" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-nlm2" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-nlm-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
                 <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
                 <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp2" onchange="markDirty();updateFactureButtons()"></td>
               <td style="background:#eef4fb"><select id="p-nlp-per2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
@@ -788,14 +788,14 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar2" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-nlm3" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-nlm3" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-nlm-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
                 <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
                 <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp3" onchange="markDirty();updateFactureButtons()"></td>
               <td style="background:#eef4fb"><select id="p-nlp-per3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
@@ -804,14 +804,14 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td style="background:#eef4fb"><input type="number" id="p-nlp-tar3" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-nlm4" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-nlm4" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-nlm-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
                 <option>MAR 2027</option><option>AVR 2027</option><option>MAI 2027</option>
                 <option>JUIN 2027</option><option>JUIL 2027</option><option>AOÛT 2027</option></select></td>
               <td><input type="number" id="p-nlm-tar4" style="width:70px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
-              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty()"></td>
+              <td style="background:#eef4fb"><input type="checkbox" id="p-nlp4" onchange="markDirty();updateFactureButtons()"></td>
               <td style="background:#eef4fb"><select id="p-nlp-per4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()"><option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
                 <option>DEC 2026</option><option>JAN 2027</option><option>FEV 2027</option>
@@ -836,7 +836,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
           </thead>
           <tbody>
             <tr>
-              <td><input type="checkbox" id="p-ban1" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-ban1" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-banp1" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
                 <option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
@@ -847,7 +847,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td><input type="number" id="p-ban-tar1" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-ban2" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-ban2" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-banp2" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
                 <option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
@@ -858,7 +858,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td><input type="number" id="p-ban-tar2" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-ban3" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-ban3" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-banp3" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
                 <option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
@@ -869,7 +869,7 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
               <td><input type="number" id="p-ban-tar3" style="width:60px;border:1px solid #ddd;border-radius:2px;padding:2px 4px;font-size:11px;" oninput="markDirty()" placeholder="0"></td>
             </tr>
             <tr>
-              <td><input type="checkbox" id="p-ban4" onchange="markDirty()"></td>
+              <td><input type="checkbox" id="p-ban4" onchange="markDirty();updateFactureButtons()"></td>
               <td><select id="p-banp4" style="width:100%;font-size:11px;border:1px solid #bbb;border-radius:2px;padding:1px 2px;" onchange="markDirty()">
                 <option value="">—</option>
                 <option>SEPT 2026</option><option>OCT 2026</option><option>NOV 2026</option>
@@ -881,6 +881,17 @@ table.fact-table td{padding:7px;border:1px solid #ccc;text-align:center;}
             </tr>
           </tbody>
         </table>
+      </div>
+      <!-- 2026-09-27 (point 11 EDUCPASS.FR) : facturation Newsletters & Bannières — visibles dès qu'au moins une case ✓ du tableau ci-dessus est cochée -->
+      <div class="fr" id="nl-fact-row" style="margin-top:5px;display:none;gap:6px 14px;flex-wrap:wrap;">
+        <span style="display:inline-flex;gap:4px;">
+          <button type="button" id="btn-fact-nl-vm" class="btn btn-fact" onclick="openFactureNL('VM')" style="padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Newsletters &amp; Bannières — VM</button>
+          <button type="button" id="btn-fact-nl-correct-vm" class="btn btn-fact" onclick="corrigerDerniereFacture('VM')" title="Corriger la dernière facture VM générée aujourd'hui pour ce membre (même numéro)" style="padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger (même jour)</button>
+        </span>
+        <span style="display:inline-flex;gap:4px;">
+          <button type="button" id="btn-fact-nl-be" class="btn btn-fact" onclick="openFactureNL('BE')" style="padding:4px 10px;font-size:11px;white-space:nowrap;">🧾 Newsletters &amp; Bannières — EDUCPASS BE</button>
+          <button type="button" id="btn-fact-nl-correct-be" class="btn btn-fact" onclick="corrigerDerniereFacture('BE')" title="Corriger la dernière facture EDUCPASS BE générée aujourd'hui pour ce membre (même numéro)" style="padding:4px 10px;font-size:11px;white-space:nowrap;background:#c55a11;color:#fff;">✏️ Corriger (même jour)</button>
+        </span>
       </div>
     </div><!-- /right col -->
   </div><!-- /two-col -->
@@ -4218,6 +4229,8 @@ const FACT_ENTITES = {
 let _factType=null;   // 'BE' ou 'LU' — défini au clic sur le bouton de la fiche
 let _factNumero=null; // numéro définitif une fois la facture générée (sinon null = aperçu)
 let _factLines=[];    // lignes modifiables de la facture (date, libellé, quantité, prix unité) — voir factOnLineInput/factAddLine/factRemoveLine (2026-08-22)
+let _factSousType=null; // 2026-09-27 : 'NL' = facture Newsletters & Bannières (VM ou BE), null sinon
+const FACT_REF_NL='NEWSLETTERS & BANNIÈRES'; // marqueur dans le champ Référence du registre
 let _factDocKind='facture'; // 'facture' ou 'notecredit' — bascule l'affichage (titre, libellés, CGV) — 2026-08-22
 let _factCreditRef=null;    // { numero, dateISO } de la facture créditée, uniquement en mode 'notecredit'
 let _factConcerneTxt=null;  // texte "Concerne" modifié manuellement (2026-09-02) — null = utiliser le texte automatique par défaut ; jamais utilisé pour une note de crédit (toujours fixe, cf. factBuildDoc)
@@ -4292,6 +4305,17 @@ function updateFactureButtons(){
   // corrigerDerniereFacture('VM'), pour éviter un appel Airtable à chaque ouverture de fiche.
   const btnCorrectVM=document.getElementById('btn-fact-correct-vm');
   if(btnCorrectVM) btnCorrectVM.style.display = (gv('f-cotbe')||gv('f-cotlu')||gv('f-cotfr')) ? '' : 'none';
+  // 2026-09-27 (demande de Marc) : facturation Newsletters & Bannières — NE dépend PAS des
+  // cotisations, uniquement des cases ✓ cochées du tableau Newsletters & Bannières.
+  const nlRow=document.getElementById('nl-fact-row');
+  if(nlRow) nlRow.style.display = factNLAuMoinsUneCochee() ? 'flex' : 'none';
+}
+function factNLAuMoinsUneCochee(){
+  for(const p of ['nlm','nlp','ban']) for(let i=1;i<=4;i++){
+    const cb=document.getElementById('p-'+p+i);
+    if(cb && cb.checked) return true;
+  }
+  return false;
 }
 
 // Formate un nombre pour édition (contenteditable) en style FR : "150,00"
@@ -4424,7 +4448,9 @@ function factBuildDoc(numero){
   // (voir factOnConcerneInput) ; une fois le document généré (numero !== null), le texte
   // est figé comme les lignes du tableau.
   const concerneNC = 'Annule la facture n° '+factEsc(_factCreditRef ? _factCreditRef.numero : '')+(_factCreditRef && _factCreditRef.dateISO ? ' du '+factDateFR(_factCreditRef.dateISO) : '');
-  const concerneDefault = isPub
+  const concerneDefault = (_factSousType==='NL')
+    ? 'Newsletters et bannières sur site d\'EDUCPASS'
+    : isPub
     ? 'Insertions publicitaires d\'EDUCPASS'
     : (isNCLibre ? '' : 'Adhésion 12 mois'+(echFr?' > '+echFr:''));
   const concerneVal = (_factConcerneTxt!==null && _factConcerneTxt!==undefined) ? _factConcerneTxt : concerneDefault;
@@ -4505,6 +4531,7 @@ function openFacture(type){
   _factType=type;
   _factNumero=null;
   _factDocKind='facture';
+  _factSousType=null;
   _factCreditRef=null;
   _factConcerneTxt=null;
   const cfg = FACT_ENTITES[type];
@@ -4593,6 +4620,7 @@ function demarrerNoteCredit(numero, entite, dateISO, montant){
   _factType = typeKey;
   _factNumero = null;
   _factDocKind = 'notecredit';
+  _factSousType = null;
   _factCreditRef = { numero: numero, dateISO: dateISO };
   _factConcerneTxt = null;
   _factLines = [{
@@ -4635,6 +4663,7 @@ function demarrerNoteCreditLibre(type){
   _factType = type;
   _factNumero = null;
   _factDocKind = 'notecredit';
+  _factSousType = null;
   _factCreditRef = null; // note de crédit LIBRE : aucune facture créditée
   _factConcerneTxt = ''; // motif tapé librement par Marc, pas de texte fixe
   _factLines = [{
@@ -4720,11 +4749,55 @@ function factBuildPubLines(){
   if(lines.length===0) lines.push({ date:today, libelle:'', qte:1, prixUnit:0 });
   return lines;
 }
+// 2026-09-27 (point 11 EDUCPASS.FR) : lignes de la facture Newsletters & Bannières —
+// seulement les lignes COCHÉES ✓ ET avec un tarif > 0 (choix de Marc).
+function factBuildNLLines(){
+  const lines=[];
+  const today = factDateFR(factTodayISO());
+  const SRC=[
+    {cb:'p-nlm', per:'p-nlm-per', tar:'p-nlm-tar', label:'Newsletter mensuelle'},
+    {cb:'p-nlp', per:'p-nlp-per', tar:'p-nlp-tar', label:'Newsletter personnalisée'},
+    {cb:'p-ban', per:'p-banp',    tar:'p-ban-tar', label:'Bannière sur site'}
+  ];
+  SRC.forEach(src=>{
+    for(let i=1;i<=4;i++){
+      const cb=document.getElementById(src.cb+i);
+      if(!cb || !cb.checked) continue;
+      const tarif=parseFloat(document.getElementById(src.tar+i)?.value)||0;
+      if(tarif<=0) continue;
+      const per=document.getElementById(src.per+i)?.value||'';
+      lines.push({ date:today, libelle:src.label+(per?' — '+per:''), qte:1, prixUnit:tarif });
+    }
+  });
+  if(lines.length===0) lines.push({ date:today, libelle:'', qte:1, prixUnit:0 });
+  return lines;
+}
+// type = 'VM' (suite FV1-…, comme la facture publicité) ou 'BE' (suite BE-26/…, comme les cotisations BE)
+function openFactureNL(type){
+  if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
+  _factType=type;
+  _factNumero=null;
+  _factDocKind = (type==='VM') ? 'publicite' : 'facture';
+  _factSousType='NL';
+  _factCreditRef=null;
+  _factConcerneTxt=null;
+  _factLines = factBuildNLLines();
+  document.getElementById('fact-doc-container').innerHTML = factBuildDoc(null);
+  document.getElementById('fact-statut-msg').textContent = '👁️ Aperçu Newsletters & Bannières — lignes cochées ✓ avec tarif pré-remplies : vérifiez, retirez (✕) ou ajoutez des lignes, puis cliquez sur "Générer".';
+  const b=document.getElementById('btn-fact-generer');
+  b.textContent = '🧾 Générer la facture Newsletters & Bannières (attribue le n° définitif)';
+  b.style.display=''; b.disabled=false;
+  document.getElementById('btn-fact-print').style.display='none';
+  showView('facture');
+  factShowDirStatus();
+  factShowNumeroPrevu();
+}
 function openFacturePublicite(type){
   if(!curId){ alert('Sélectionnez d\'abord une attraction.'); return; }
   _factType=type;
   _factNumero=null;
   _factDocKind='publicite';
+  _factSousType=null;
   _factCreditRef=null;
   _factConcerneTxt=null;
   _factLines = factBuildPubLines();
@@ -4775,7 +4848,8 @@ async function genererFacturePublicite(){
       'Date émission': todayISO,
       'Échéance paiement': echISO,
       'Généré par': agent,
-      'Type document': 'Facture Publicité'
+      'Type document': 'Facture Publicité',
+      ...(_factSousType==='NL' ? {'Référence': FACT_REF_NL} : {})
     });
 
     document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
@@ -4879,6 +4953,7 @@ async function corrigerDerniereFacture(type){
 
     const montant = Number(rec.fields['Montant'])||0;
     const enseigne = rec.fields['Enseigne']||'';
+    const etaitNL = (rec.fields['Référence']===FACT_REF_NL); // 2026-09-27 : facture Newsletters & Bannières
     const ok = confirm('Corriger la facture '+numero+' ('+enseigne+', '+factEUR(montant)+') ?\n\n'
       + 'Elle sera marquée annulée dans le registre, puis vous allez immédiatement régénérer une nouvelle facture '+cfg.label+' sous LE MÊME numéro '+numero+', avec les données actuelles de la fiche.\n\n'
       + '⚠️ Vérifiez que les champs erronés sur la fiche sont déjà corrigés avant de continuer.');
@@ -4889,7 +4964,7 @@ async function corrigerDerniereFacture(type){
     });
     await factPatchCounter({ [ctrField]: current-1 });
 
-    if(isVM) openFacturePublicite('VM'); else openFacture(type);
+    if(etaitNL) openFactureNL(type); else if(isVM) openFacturePublicite('VM'); else openFacture(type);
     document.getElementById('fact-statut-msg').textContent = '✏️ Facture '+numero+' annulée dans le registre — vérifiez/complétez les lignes ci-dessous puis cliquez sur "Générer" pour la régénérer sous ce même numéro.';
   }catch(e){
     console.error(e);
@@ -5401,7 +5476,7 @@ async function genererFacture(){
     _factNumero = numero;
 
     const montant = _factLines.reduce((s,l)=> s + (Number(l.qte)||0)*(Number(l.prixUnit)||0), 0);
-    const annee = gv({BE:'f-cotbe', LU:'f-cotlu', FR:'f-cotfr'}[_factType]||'f-cotlu')||'';
+    const annee = (_factSousType==='NL') ? '' : (gv({BE:'f-cotbe', LU:'f-cotlu', FR:'f-cotfr'}[_factType]||'f-cotlu')||'');
     const todayISO = factTodayISO();
     const echISO = factAddDaysISO(todayISO,15);
     const agent = sessionStorage.getItem('auth_agent')||'';
@@ -5421,7 +5496,8 @@ async function genererFacture(){
       'Date émission': todayISO,
       'Échéance paiement': echISO,
       'Généré par': agent,
-      'Type document': 'Facture'
+      'Type document': 'Facture',
+      ...(_factSousType==='NL' ? {'Référence': FACT_REF_NL} : {})
     });
 
     document.getElementById('fact-doc-container').innerHTML = factBuildDoc(numero);
