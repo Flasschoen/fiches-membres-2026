@@ -1977,7 +1977,14 @@ async function loadAll(){
         console.warn('[DOUBLONS] N° membre identique sur plusieurs records :',
           _dups.map(([k,ids])=>k+' → '+ids.join(', ')));
         const st=document.getElementById('status');
-        st.textContent=`⚠️ ${members.length} membres — ${_dups.length} doublon(s) détecté(s) ! (voir console F12)`;
+        // 2026-09-29 (demande Marc) : afficher directement le N° et le nom des attractions en doublon
+        // (au lieu de « voir console F12 ») ; chaque nom est cliquable et ouvre la fiche concernée.
+        const _esc=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        const _nomDe=id=>{const m=members.find(x=>x.id===id);const f=(m&&m.fields)||{};return f['ENSEIGNE']||f['Enseigne commerciale']||f['NOM ATTRACTION']||id;};
+        const _liste=_dups.map(([k,ids])=>'N° '+_esc(k)+' : '+ids.map(id=>
+          '<a href="#" onclick="document.getElementById(\'msel\').value=\''+_esc(id)+'\';loadMember();return false;" style="color:#c0392b;text-decoration:underline;">'+_esc(_nomDe(id))+'</a>').join(' / ')).join(' &nbsp;•&nbsp; ');
+        st.innerHTML=`⚠️ ${members.length} membres — ${_dups.length} doublon(s) : `+_liste;
+        st.title=_dups.map(([k,ids])=>'N° '+k+' : '+ids.map(_nomDe).join(' / ')).join('\n');
         st.style.cssText='color:#c0392b;font-weight:700;background:#fdecea;padding:2px 6px;border-radius:4px;';
       }
     }
@@ -2510,6 +2517,28 @@ async function saveMember(){
   fields['Date de modification']=today;
   const wasExisting=!!curId;
   try{
+    // 2026-09-29 (demande Marc) : anti-doublon de N° MEMBRE pour une NOUVELLE fiche.
+    // Le N° proposé par newMember() vient de la liste chargée dans CE navigateur ; si un autre
+    // agent a créé une fiche entre-temps, il peut déjà être pris (cas du N° 1486 le 29/09).
+    // On relit donc les N° actuels dans Airtable juste avant la création ; si le N° est pris
+    // (ou vide), on prend le suivant libre et on prévient l'agent.
+    if(!curId){
+      const _num=String(fields['N° MEMBRE']||'').trim();
+      const _pris=new Set(); let _max=0, _off='';
+      do{
+        const _d=await _proxyGet(T,'?pageSize=100'+(_off?'&offset='+encodeURIComponent(_off):''));
+        if(_d.error) throw new Error('vérification du N° impossible ('+(_d.error.message||_d.error)+')');
+        (_d.records||[]).forEach(m=>{const k=String(m.fields['N° MEMBRE']||'').trim(); if(k){_pris.add(k); const n=parseInt(k,10); if(!isNaN(n)&&n>_max)_max=n;}});
+        _off=_d.offset||'';
+      }while(_off);
+      if(!_num || _pris.has(_num)){
+        const _libre=String(_max+1);
+        fields['N° MEMBRE']=_libre;
+        document.getElementById('f-num').value=_libre;
+        alert(_num ? ('⚠️ Le N° '+_num+' vient d\'être attribué à une autre fiche (par un autre agent).\n\nCette nouvelle fiche reçoit le N° '+_libre+'.')
+                   : ('ℹ️ Cette nouvelle fiche reçoit le N° '+_libre+'.'));
+      }
+    }
     let res;
     for(let attempt=0;attempt<12;attempt++){
       if(curId){
