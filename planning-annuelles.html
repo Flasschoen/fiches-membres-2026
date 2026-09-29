@@ -118,7 +118,10 @@ tfoot td{background:#1E3A6E!important;color:#fff!important;font-weight:bold;bord
 
 <script>
 // ── CONFIG ────────────────────────────────────────────────────────────────
-const TK       = "pat2HkJhQsqj6clFJ.a1fb4a3a4d51f8f7e57d4eca2a0c633051bd89b80b90c2edbf66e93ed5657bcd";
+// 2026-09-29 : l'ancien jeton Airtable (TK) était désactivé → « Invalid authentication token ».
+// Le planning passe désormais par le relais sécurisé educpass-attractions-proxy (même clé que index.html).
+const PROXY_BASE = 'https://educpass-attractions-proxy.marc-flasschoen.workers.dev';
+const PROXY_KEY  = 's0usEmEVnof0Js74MgIIeSGTD6DY5e4M';
 const BASE     = "appixzcrs5T5kRQ36";
 const TABLE_ID = "tblMiiIYVibfpe0L3";
 const SF       = "SUIVI_ANNUELLES";   // champ JSON SUIVI dans Airtable
@@ -212,7 +215,13 @@ function switchTab(i){
 }
 
 // ── API ─────────────────────────────────────────────────────────────────────
-function headers(){return{Authorization:"Bearer "+TK,"Content-Type":"application/json"};}
+function headers(){return{"X-Proxy-Key":PROXY_KEY,"Content-Type":"application/json"};}
+// Écriture d'une fiche via le relais (format {records:[{id,fields}]}) — lève une erreur si refus.
+async function patchRec(recId,fields){
+  const r=await fetch(`${PROXY_BASE}/records/${TABLE_ID}`,{method:"PATCH",headers:headers(),body:JSON.stringify({records:[{id:recId,fields}]})});
+  if(!r.ok){const t=await r.text().catch(()=>"");throw new Error("Airtable "+r.status+" "+t.slice(0,120));}
+  return r.json();
+}
 
 async function loadData(){
   showOv("⟳ Chargement depuis Airtable…");
@@ -221,8 +230,9 @@ async function loadData(){
   records=[];
   let offset=null;
   do{
-    const url=`https://api.airtable.com/v0/${BASE}/${TABLE_ID}?pageSize=100`+(offset?`&offset=${offset}`:"");
+    const url=`${PROXY_BASE}/records/${TABLE_ID}?pageSize=100`+(offset?`&offset=${offset}`:"");
     const d=await fetch(url,{headers:headers()}).then(r=>r.json());
+    if(d.error){hideOv();status("❌ Chargement impossible : "+(d.error.message||d.error));return;}
     records.push(...(d.records||[]));
     offset=d.offset||null;
   }while(offset);
@@ -255,7 +265,7 @@ async function saveAll(){
     const rec=records.find(r=>r.id===recId);if(!rec)continue;
     rec.fields[SF]=JSON.stringify(merge[recId]);
     try{
-      await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{method:"PATCH",headers:headers(),body:JSON.stringify({fields:{[SF]:JSON.stringify(merge[recId])}})});
+      await patchRec(recId,{[SF]:JSON.stringify(merge[recId])});
       ok++;
     }catch{err++;}
   }
@@ -275,10 +285,7 @@ async function saveSuivi(recId,edLabel,key,val){
   await new Promise(r=>setTimeout(r,60)); // force repaint avant fetch
   status("💾 Sauvegarde…");
   try{
-    await fetch(`https://api.airtable.com/v0/${BASE}/${TABLE_ID}/${recId}`,{
-      method:"PATCH",headers:headers(),
-      body:JSON.stringify({fields:{[SF]:JSON.stringify(all)}})
-    });
+    await patchRec(recId,{[SF]:JSON.stringify(all)});
     hideOv();
     status("✅ Sauvegardé — "+new Date().toLocaleTimeString());
   }catch(e){hideOv();status("❌ Erreur sauvegarde : "+e.message);}
